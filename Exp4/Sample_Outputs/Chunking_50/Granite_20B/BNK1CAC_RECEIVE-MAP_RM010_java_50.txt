@@ -1,0 +1,45 @@
+public void receiveMapRm010() {
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    WsFailInfo wsFailInfo = new WsFailInfo();
+
+    String wsAbendPgm = "ABNDPROC";
+    try {
+        HttpRequest jdeclHttpRequest = HttpRequest.getHttpRequestInstance();
+        jdeclHttpRequest.setNoServerConvert();
+        jdeclHttpRequest.setCharacterset("IBM037");
+        jdeclHttpRequest.setMap("BNK1CA");
+        jdeclHttpRequest.setMapset("BNK1CAM");
+        bnk1cai = jdeclHttpRequest.getContent();
+    } catch (Exception e) {
+
+        wsTimeNowGrp = new WsTimeNowGrp();
+        abndinfoRec = new AbndinfoRec();
+        wsFailInfo = new WsFailInfo();
+        wsFailInfo.setWsCicsFailMsg("BNK1CAC - RM010 - RECEIVE MAP FAIL ");
+        wsFailInfo.setWsCicsRespDisp(this.getWsCicsResp());
+        wsFailInfo.setWsCicsResp2Disp(this.getWsCicsResp2());
+        abndinfoRec.setAbndRespcode(eibresp);
+        abndinfoRec.setAbndResp2Code(eibresp2);
+        abndinfoRec.setAbndTranid(eibtrnid);
+        abndinfoRec.setAbndTasknoKey(eibtaskn);
+        abndinfoRec.setAbndDate(wsTimeNowGrp.getWsOrigDate());
+        abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":"
+                + wsTimeNowGrp.getWsTimeNowGrpMm());
+        abndinfoRec.setAbndUtimeKey(this.getWsUTime());
+        abndinfoRec.setAbndCode("HBNK");
+        abndinfoRec.setAbndProgram(Task.getTask().getProgramName());
+        abndinfoRec.setAbndSqlcode(0);
+        abndinfoRec.setAbndFreeform("RM010 - RECEIVE MAP FAIL  EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2="
+                + abndinfoRec.getAbndResp2Code());
+        abndinfoRec.setAbndApplid(Region.getAPPLID());
+
+        abndInfoRec.setAbndcodenumber(12);
+        abndInfoRec.setAbndcodevalue("12");
+        abndInfoRec.setAbndsource("SNIPPET-1");
+        abndInfoRec.setAbndreason("RECEIVER");
+        abndInfoRec.writeTo(YwjimQkkDA10.getInstance().getAbndInfoRec());
+        throw e;
+    }
+
+}

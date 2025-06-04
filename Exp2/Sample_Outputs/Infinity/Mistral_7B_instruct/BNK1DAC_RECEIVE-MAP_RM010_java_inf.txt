@@ -1,0 +1,62 @@
+```java
+public void receiveMapRm010() {
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    String wsAbendPgm = "ABNDPROC";
+    WsFailInfo wsFailInfo = new WsFailInfo();
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+
+    CicsResponse cicsResponse = cicsReceive("BNK1DAI", "BNK1DAM");
+    if (cicsResponse.getResponseCode() != CicsResponse.NORMAL) {
+        initializeAbndinfoRec(abndinfoRec);
+        abndinfoRec.setAbndRespcode(cicsResponse.getResponseCode());
+        abndinfoRec.setAbndResp2Code(cicsResponse.getResponse2Code());
+        assignApplid(abndinfoRec, "ABND-APPLID");
+        abndinfoRec.setAbndTasknoKey(0);
+        abndinfoRec.setAbndTranid("0000");
+        populateTimeDatePtd010(wsTimeNowGrp);
+        abndinfoRec.setAbndDate(wsTimeNowGrp.getWsOrigDate());
+        abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm());
+        abndinfoRec.setAbndUtimeKey(System.currentTimeMillis());
+        abndinfoRec.setAbndCode("HBNK");
+        assignProgram(abndinfoRec, wsAbendPgm);
+        abndinfoRec.setAbndSqlcode(0);
+        String errorMessage = "RM010 - RECEIVE MAP FAIL."
+                + " EIBRESP=" + cicsResponse.getResponseCode()
+                + " RESP2=" + cicsResponse.getResponse2Code();
+        abndinfoRec.setAbndFreeform(errorMessage.getBytes());
+        link(abndinfoRec);
+        wsFailInfo.setWsCicsResp(cicsResponse.getResponseCode());
+        wsFailInfo.setWsCicsResp2(cicsResponse.getResponse2Code());
+        wsFailInfo.setWsCicsFailMsg(errorMessage);
+        abendThisTaskAtt010(wsFailInfo);
+    }
+}
+
+public CicsResponse cicsReceive(String inArea, String outArea) {
+    // Implement CICS receive operation here
+}
+
+public void initializeAbndinfoRec(AbndinfoRec abndinfoRec) {
+    // Initialize AbndinfoRec here
+}
+
+public void assignApplid(AbndinfoRec abndinfoRec, String applid) {
+    // Assign applid to AbndinfoRec here
+}
+
+public void populateTimeDatePtd010(WsTimeNowGrp wsTimeNowGrp) {
+    // Populate time and date here
+}
+
+public void assignProgram(AbndinfoRec abndinfoRec, String program) {
+    // Assign program to AbndinfoRec here
+}
+
+public void link(AbndinfoRec abndinfoRec) {
+    // Implement CICS link operation here
+}
+
+public void abendThisTaskAtt010(WsFailInfo wsFailInfo) {
+    // Abend this task here
+}
+```

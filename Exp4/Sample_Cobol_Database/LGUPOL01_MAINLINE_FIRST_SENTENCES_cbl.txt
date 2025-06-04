@@ -1,0 +1,65 @@
+       MAINLINE SECTION.                                                
+                                                                        
+      *----------------------------------------------------------------*
+      * Common code                                                    *
+      *----------------------------------------------------------------*
+      * initialize working storage variables                            
+           INITIALIZE WS-HEADER.                                        
+      * set up general variable                                         
+           MOVE EIBTRNID TO WS-TRANSID.                                 
+           MOVE EIBTRMID TO WS-TERMID.                                  
+           MOVE EIBTASKN TO WS-TASKNUM.                                 
+                                                                        
+      *----------------------------------------------------------------*
+      * Check commarea and obtain required details                     *
+      *----------------------------------------------------------------*
+      * If NO commarea received issue an ABEND                          
+           IF EIBCALEN IS EQUAL TO ZERO                                 
+               MOVE ' NO COMMAREA RECEIVED' TO EM-VARIABLE              
+               PERFORM WRITE-ERROR-MESSAGE                              
+               EXEC CICS ABEND ABCODE('LGCA') NODUMP END-EXEC           
+           END-IF                                                       
+      * initialize commarea return code to zero                         
+           MOVE '00' TO CA-RETURN-CODE                                  
+           MOVE EIBCALEN TO WS-CALEN.                                   
+           SET WS-ADDR-DFHCOMMAREA TO ADDRESS OF DFHCOMMAREA.           
+                                                                        
+      * and save in error msg field incase required                     
+           MOVE CA-CUSTOMER-NUM TO EM-CUSNUM                            
+           MOVE CA-POLICY-NUM   TO EM-POLNUM                            
+                                                                        
+      *----------------------------------------------------------------*
+      * Check which policy type is being requested                     *
+      *   and chec commarea length                                     *
+      *----------------------------------------------------------------*
+           EVALUATE CA-REQUEST-ID                                       
+                                                                        
+             WHEN '01UEND'                                              
+               ADD WS-CA-HEADER-LEN  TO WS-REQUIRED-CA-LEN              
+               ADD WS-FULL-ENDOW-LEN TO WS-REQUIRED-CA-LEN              
+               IF EIBCALEN IS LESS THAN WS-REQUIRED-CA-LEN              
+                 MOVE '98' TO CA-RETURN-CODE                            
+                 EXEC CICS RETURN END-EXEC                              
+               END-IF                                                   
+                                                                        
+             WHEN '01UHOU'                                              
+               ADD WS-CA-HEADER-LEN  TO WS-REQUIRED-CA-LEN              
+               ADD WS-FULL-HOUSE-LEN TO WS-REQUIRED-CA-LEN              
+               IF EIBCALEN IS LESS THAN WS-REQUIRED-CA-LEN              
+                 MOVE '98' TO CA-RETURN-CODE                            
+                 EXEC CICS RETURN END-EXEC                              
+               END-IF                                                   
+                                                                        
+             WHEN '01UMOT'                                              
+               ADD WS-CA-HEADER-LEN  TO WS-REQUIRED-CA-LEN              
+               ADD WS-FULL-MOTOR-LEN TO WS-REQUIRED-CA-LEN              
+               IF EIBCALEN IS LESS THAN WS-REQUIRED-CA-LEN              
+                 MOVE '98' TO CA-RETURN-CODE                            
+                 EXEC CICS RETURN END-EXEC                              
+               END-IF                                                   
+                                                                        
+             WHEN OTHER                                                 
+               MOVE '99' TO CA-RETURN-CODE                              
+           END-EVALUATE                                                 
+                                                                        
+           PERFORM UPDATE-POLICY-DB2-INFO.                              

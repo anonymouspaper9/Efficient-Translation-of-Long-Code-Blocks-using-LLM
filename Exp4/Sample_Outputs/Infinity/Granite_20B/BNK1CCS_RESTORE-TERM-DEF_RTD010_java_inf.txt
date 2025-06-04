@@ -1,0 +1,37 @@
+public void restoreTermDefRtd010(Dfhcommarea dfhcommarea, WsFailInfo wsFailInfo) {
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    String wsAbendPgm = "ABNDPROC";
+    WsCommArea wsCommArea = new WsCommArea();
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+    int wsUctrans = 0;
+    try {
+        wsUctrans = dfhcommarea.getWsCommTerm();
+        TerminalPrincipalFacility jdeclTerm;
+        Object jdeclO = Task.getTask().getPrincipalFacility();
+        if (jdeclO instanceof TerminalPrincipalFacility) {
+            jdeclTerm = (TerminalPrincipalFacility) jdeclO;
+            jdeclTerm.setUnescapedUCTransId(wsUctrans);
+        }
+    } catch (CicsConditionException e) {
+        abndinfoRec.setAbndRespcode(e.getErrno());
+        abndinfoRec.setAbndResp2Code(e.getErrCode());
+        abndinfoRec.setAbndCode("HBNK");
+        abndinfoRec.setAbndTranid(Task.getTask().getTransactionName());
+        abndinfoRec.setAbndTasknoKey(Task.getTask().getTaskNumber());
+        populateTimeDate(abndinfoRec);
+        abndinfoRec.setAbndDate(this.getWsOrigDate());
+        abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":"
+                + wsTimeNowGrp.getWsTimeNowGrpSs());
+        abndinfoRec.setAbndUtimeKey(this.getWsUTime());
+        abndinfoRec.setAbndProgram(Task.getTask().getProgramName());
+        abndinfoRec.setAbndSqlcode(0);
+        abndinfoRec.setAbndFreeform("RTD010 - SET TERMINAL UC FAIL EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2="
+                + abndinfoRec.getAbndResp2Code());
+        abndinfoRec.setAbndApplid(Region.getAPPLID());
+        abndThisTaskAtt010(dfhcommarea, wsFailInfo);
+        wsFailInfo.setWsCicsFailMsg("BNK1CCS - RTD010 - SET TERMINAL UC FAIL ");
+        wsFailInfo.setWsCicsRespDisp(abndinfoRec.getAbndRespcode());
+        wsFailInfo.setWsCicsResp2Disp(abndinfoRec.getAbndResp2Code());
+        abendThisTask(wsFailInfo);
+    }
+}

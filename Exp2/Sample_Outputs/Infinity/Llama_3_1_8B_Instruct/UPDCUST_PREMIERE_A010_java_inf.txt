@@ -1,0 +1,55 @@
+public void premiereA010(Dfhcommarea dfhcommarea){
+    DesiredCustKey desiredCustKey = new DesiredCustKey();
+    int sortcode = 987654;
+    char wsTitleValid = ' ';
+    String wsUnstrTitle = " ";
+    /* A010 */
+    dfhcommarea.setCommScode(String.valueOf(sortcode));
+    wsUnstrTitle = dfhcommarea.getCommName();
+    wsUnstrTitle = wsUnstrTitle.trim();
+    wsTitleValid = 'Y';
+    switch(wsUnstrTitle){
+        case "Professor":
+            wsTitleValid = 'Y';
+            break;
+        case "Mr       ":
+            wsTitleValid = 'Y';
+            break;
+        case "Mrs      ":
+            wsTitleValid = 'Y';
+            break;
+        case "Miss     ":
+            wsTitleValid = 'Y';
+            break;
+        case "Ms       ":
+            wsTitleValid = 'Y';
+            break;
+        case "Dr       ":
+            wsTitleValid = 'Y';
+            break;
+        case "Drs      ":
+            wsTitleValid = 'Y';
+            break;
+        case "Lord     ":
+            wsTitleValid = 'Y';
+            break;
+        case "Sir      ":
+            wsTitleValid = 'Y';
+            break;
+        case "Lady     ":
+            wsTitleValid = 'Y';
+            break;
+        case "         ":
+            wsTitleValid = 'Y';
+            break;
+        default:
+            wsTitleValid = 'N';
+    }
+    if(wsTitleValid == 'N'){
+        dfhcommarea.setCommUpdSuccess('N');
+        dfhcommarea.setCommUpdFailCd('T');
+        return;
+    }
+    updateCustomerVsamUcv010(desiredCustKey, dfhcommarea);
+    getMeOutOfHereGmooh010();
+} 

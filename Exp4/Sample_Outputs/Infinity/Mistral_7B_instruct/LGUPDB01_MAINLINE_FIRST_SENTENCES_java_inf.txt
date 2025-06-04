@@ -1,0 +1,51 @@
+
+```java
+public void invokeMainline(Dfhcommarea dfhcommarea) {
+    Db2InIntegers db2InIntegers = new Db2InIntegers();
+    Db2Policy db2Policy = new Db2Policy();
+    ErrorMsg errorMsg = new ErrorMsg();
+    String lgupvs01 = "LGUPVS01";
+    WsHeader wsHeader = new WsHeader();
+
+    if (dfhcommarea.getEibcalen() == 0) {
+        errorMsg.setEmVariable(ByteBuffer.wrap(new byte[] { 'N', 'O', ' ', 'C', 'O', 'M', 'M', 'A', 'R', 'E', 'A', ' ', 'R', 'E', 'C', 'E', 'I', 'V', 'E', 'D' }));
+        mainlineWriteErrorMessage(dfhcommarea, errorMsg);
+        throw new RuntimeException("LGCA Abend");
+    }
+
+    dfhcommarea.setCaReturnCode(0);
+    wsHeader.setWsTransid(dfhcommarea.getEibtrnid());
+    wsHeader.setWsTermid(dfhcommarea.getEibtrmid());
+    wsHeader.setWsTasknum(dfhcommarea.getEibtaskn());
+    wsHeader.setWsRetry(' ');
+
+    db2InIntegers.setDb2CustomernumInt(dfhcommarea.getCaCustomerNum());
+    db2InIntegers.setDb2PolicynumInt(dfhcommarea.getCaPolicyNum());
+    db2Policy.setBytes(dfhcommarea.getDb2Policy());
+
+    wsHeader.setWsAddrDfhcommarea(dfhcommarea.getBytes());
+    wsHeader.setWsCalen(dfhcommarea.getEibcalen());
+    wsHeader.setCaCustomerNum(dfhcommarea.getCaCustomerNum());
+    wsHeader.setCaPolicyNum(dfhcommarea.getCaPolicyNum());
+
+    mainlineUpdatePolicyDb2Info(new CaPolicyRequest(dfhcommarea), db2InIntegers, errorMsg);
+
+    try {
+        CicsLink link = new CicsLink();
+        link.setCommarea(dfhcommarea.getBytes());
+        link.setLength(225);
+        link.setProgram(lgupvs01);
+        link.link();
+    } catch (CicsLinkException e) {
+        throw new RuntimeException(e);
+    }
+}
+
+public void mainlineWriteErrorMessage(Dfhcommarea dfhcommarea, ErrorMsg errorMsg) {
+    // Implement the logic to write error message
+}
+
+public void mainlineUpdatePolicyDb2Info(CaPolicyRequest caPolicyRequest, Db2InIntegers db2InIntegers, ErrorMsg errorMsg) {
+    // Implement the logic to update policy DB2 info
+}
+```

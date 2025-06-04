@@ -1,0 +1,41 @@
+public void sendTerminationMsgStm010(Dfhcommarea dfhcommarea) {
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+    String wsAbendPgm = "ABNDPROC";
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    WsFailInfo wsFailInfo = new WsFailInfo();
+
+    String endOfSessionMessage = "Session Ended";
+    try {
+        Task.getTask().getChannel("CHANNEL-NAME0001").delete();
+    } catch (CicsConditionException e) {
+
+        wsTimeNowGrp = new WsTimeNowGrp();
+        wsAbendPgm = "ABNDPROC";
+        abndinfoRec = new AbndinfoRec();
+        wsFailInfo = new WsFailInfo();
+        abndinfoRec.setAbndRespcode(0);
+        abndinfoRec.setAbndResp2Code(0);
+        abndinfoRec.setAbndTasknoKey(Task.getTask().getTaskNumber());
+        abndinfoRec.setAbndTranid(Task.getTask().getTransactionName());
+        this.populateTimeDate(wsTimeNowGrp);
+        abndinfoRec.setAbndDate(this.getWsOrigDate());
+        String jdeclVar1 = wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":"
+                + wsTimeNowGrp.getWsTimeNowGrpMm();
+        abndinfoRec.setAbndTime(jdeclVar1);
+        abndinfoRec.setAbndUtimeKey(this.getWsUTime());
+        abndinfoRec.setAbndCode("HBNK");
+        Object jdeclTask = Task.getTask();
+        abndinfoRec.setAbndProgram(jdeclTask.getProgramName());
+        abndinfoRec.setAbndSqlcode(0);
+        jdeclVar1 = "STM010 - SEND TEXT FAIL" + "EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2="
+                + abndinfoRec.getAbndResp2Code();
+        abndinfoRec.setAbndFreeform(jdeclVar1);
+        Task.getTask().link(wsAbendPgm, abndinfoRec);
+        wsFailInfo.setWsCicsFailMsg("BNK1DCS - STM010 - SEND TEXT FAIL");
+        wsFailInfo.setWsCicsRespDisp(this.getWsCicsResp());
+        wsFailInfo.setWsCicsResp2Disp(this.getWsCicsResp2());
+
+        return;
+    }
+
+}

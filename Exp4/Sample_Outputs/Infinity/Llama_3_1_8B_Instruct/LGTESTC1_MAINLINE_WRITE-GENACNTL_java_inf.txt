@@ -1,0 +1,289 @@
+public void mainlineWriteGenacntl(CommArea commArea){
+    int f24 = 24;
+    ReadMsg readMsg = new ReadMsg();
+    String stsqName = "GENACNTL";
+    String writeMsgE = "**** GENAPP CNTL";
+    String writeMsgH = "HIGH CUSTOMER=";
+    long writeMsgHigh;
+    String writeMsgL = "LOW CUSTOMER=";
+    long writeMsgLow;
+    char wsFlagTsqh = ' ';
+    int wsItemCount;
+    int wsResp;
+    try {
+        CicsConnection cicsConnection = CicsConnection.getConnection();
+        cicsConnection.enq(stsqName, f24);
+        wsFlagTsqh = 'Y';
+        wsItemCount = 1;
+        while (cicsConnection.readQ(stsqName, readMsg, wsItemCount) == CicsResponse.NORMAL) {
+            if (readMsg.getReadMsgMsg().startsWith("HIGH CUSTOMER")) {
+                writeMsgHigh = commArea.getCaCustomerNum();
+                wsFlagTsqh = ' ';
+                cicsConnection.writeQ(stsqName, writeMsgH + writeMsgHigh, wsItemCount);
+                wsResp = 99;
+            }
+        }
+        if (wsFlagTsqh == 'Y') {
+            cicsConnection.writeQ(stsqName, writeMsgE, wsItemCount);
+            writeMsgLow = commArea.getCaCustomerNum();
+            writeMsgHigh = commArea.getCaCustomerNum();
+            cicsConnection.writeQ(stsqName, writeMsgL + writeMsgLow, wsItemCount);
+            cicsConnection.writeQ(stsqName, writeMsgH + writeMsgHigh, wsItemCount);
+        }
+        cicsConnection.deq(stsqName);
+    } catch (CicsException e) {
+        System.out.println(e.getMessage());
+    }
+} 
+
+```java
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class Main {
+    public static void main(String[] args) {
+        // demoTaskA
+        demoTaskA(1);
+
+        // buzzVal
+        buzzVal("12345");
+
+        // mainlineWriteGenacntl
+        CommArea commArea = new CommArea();
+        mainlineWriteGenacntl(commArea);
+    }
+
+    public static void demoTaskA(int sanNum) {
+        bookShop markDanson = new bookShop();
+        /* This is prompt example 1 */
+        recordBook.getRetailName().setTabValue("HELLO WORLD");
+        this.setCaPayment(Integer.parseInt("45"));
+        if (markDanson.getPost().getManBooker() == 24) {
+            try {
+                String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+                PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+                ps.setInt(1, sanNum);
+                ps.setString(2, this.retail.getShapValue());
+                ps.executeUpdate();
+                ps.close();
+            } catch (SQLException exception) {
+                markDanson.tranInterval(reportVal);
+                return;
+            }
+        }
+        try {
+            ResultSet rs = JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+            rs.next();
+            sanNum = rs.getInt(1);
+        } catch (SQLException exception) {
+            System.out.println(exception);
+            return;
+        }
+        this.setPyResInt(sanNum);
+        markDanson.getPost().setManBooker(25);
+        spa.setInt("age", 20);
+        System.out.println(spa.getInt("age"));
+    }
+
+    public static void buzzVal(String caRhNum) {
+        int poll = 0;
+        /* This is prompt example 2 */
+        if (bankVar.getCanBankVal() == 87) {
+            try {
+                String sql = "INSERT INTO BANK(LOCATION)values(?)";
+                PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+                ps.setString(1, sysGerm);
+                ps.executeUpdate();
+                ps.close();
+            } catch (SQLException exception) {
+                this.setCaSumAssured(Integer.parseInt("10"));
+                this.printFunction(errReport);
+                return;
+            }
+        }
+    }
+
+    public static void mainlineWriteGenacntl(CommArea commArea) {
+        int f24 = 24;
+        ReadMsg readMsg = new ReadMsg();
+        String stsqName = "GENACNTL";
+        String writeMsgE = "**** GENAPP CNTL";
+        String writeMsgH = "HIGH CUSTOMER=";
+        long writeMsgHigh;
+        String writeMsgL = "LOW CUSTOMER=";
+        long writeMsgLow;
+        char wsFlagTsqh = ' ';
+        int wsItemCount;
+        int wsResp;
+        try {
+            CicsConnection cicsConnection = CicsConnection.getConnection();
+            cicsConnection.enq(stsqName, f24);
+            wsFlagTsqh = 'Y';
+            wsItemCount = 1;
+            while (cicsConnection.readQ(stsqName, readMsg, wsItemCount) == CicsResponse.NORMAL) {
+                if (readMsg.getReadMsgMsg().startsWith("HIGH CUSTOMER")) {
+                    writeMsgHigh = commArea.getCaCustomerNum();
+                    wsFlagTsqh = ' ';
+                    cicsConnection.writeQ(stsqName, writeMsgH + writeMsgHigh, wsItemCount);
+                    wsResp = 99;
+                }
+            }
+            if (wsFlagTsqh == 'Y') {
+                cicsConnection.writeQ(stsqName, writeMsgE, wsItemCount);
+                writeMsgLow = commArea.getCaCustomerNum();
+                writeMsgHigh = commArea.getCaCustomerNum();
+                cicsConnection.writeQ(stsqName, writeMsgL + writeMsgLow, wsItemCount);
+                cicsConnection.writeQ(stsqName, writeMsgH + writeMsgHigh, wsItemCount);
+            }
+            cicsConnection.deq(stsqName);
+        } catch (CicsException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}
+
+class bookShop {
+    public Post getPost() {
+        return post;
+    }
+
+    public void setPost(Post post) {
+        this.post = post;
+    }
+
+    private Post post;
+}
+
+class Post {
+    public int getManBooker() {
+        return manBooker;
+    }
+
+    public void setManBooker(int manBooker) {
+        this.manBooker = manBooker;
+    }
+
+    private int manBooker;
+}
+
+class recordBook {
+    public RetailName getRetailName() {
+        return retailName;
+    }
+
+    public void setRetailName(RetailName retailName) {
+        this.retailName = retailName;
+    }
+
+    private RetailName retailName;
+}
+
+class RetailName {
+    public String getTabValue() {
+        return tabValue;
+    }
+
+    public void setTabValue(String tabValue) {
+        this.tabValue = tabValue;
+    }
+
+    private String tabValue;
+}
+
+class CommArea {
+    public long getCaCustomerNum() {
+        return caCustomerNum;
+    }
+
+    public void setCaCustomerNum(long caCustomerNum) {
+        this.caCustomerNum = caCustomerNum;
+    }
+
+    private long caCustomerNum;
+}
+
+class ReadMsg {
+    public String getReadMsgMsg() {
+        return readMsgMsg;
+    }
+
+    public void setReadMsgMsg(String readMsgMsg) {
+        this.readMsgMsg = readMsgMsg;
+    }
+
+    private String readMsgMsg;
+}
+
+class CicsConnection {
+    public static CicsConnection getConnection() {
+        // implementation of CICS connection
+        return null;
+    }
+
+    public void enq(String stsqName, int f24) {
+        // implementation of CICS enq
+    }
+
+    public int readQ(String stsqName, ReadMsg readMsg, int wsItemCount) {
+        // implementation of CICS readQ
+        return CicsResponse.NORMAL;
+    }
+
+    public void writeQ(String stsqName, String writeMsg, int wsItemCount) {
+        // implementation of CICS writeQ
+    }
+
+    public void deq(String stsqName) {
+        // implementation of CICS deq
+    }
+}
+
+class CicsResponse {
+    public static int NORMAL = 0;
+}
+
+class JdbcConnection {
+    public static Connection getConnection() {
+        // implementation of JDBC connection
+        return null;
+    }
+}
+
+class bankVar {
+    public int getCanBankVal() {
+        return canBankVal;
+    }
+
+    public void setCanBankVal(int canBankVal) {
+        this.canBankVal = canBankVal;
+    }
+
+    private int canBankVal;
+}
+
+class sysGerm {
+    public String getSysGerm() {
+        return sysGerm;
+    }
+
+    public void setSysGerm(String sysGerm) {
+        this.sysGerm = sysGerm;
+    }
+
+    private String sysGerm;
+}
+
+class spa {
+    public int getInt(String key) {
+        // implementation of getting integer value from spa
+        return 0;
+    }
+
+    public void setInt(String key, int value) {
+        // implementation of setting integer value in spa
+    }
+}
+``` 

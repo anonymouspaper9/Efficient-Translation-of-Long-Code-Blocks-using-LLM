@@ -1,0 +1,47 @@
+```java
+public void receiveMapRm010() {
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    String wsAbendPgm = "ABNDPROC";
+    WsFailInfo wsFailInfo = new WsFailInfo();
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+
+    try {
+        CicsResponse cicsResponse = cicsReceive("BNK1CA", wsFailInfo);
+        if (cicsResponse.getResponseCode() != CicsResponse.NORMAL) {
+            wsFailInfo.setWsCicsResp(cicsResponse.getResponseCode());
+            wsFailInfo.setWsCicsResp2(cicsResponse.getResponse2Code());
+            populateTimeDatePtd010(wsTimeNowGrp);
+            abndinfoRec.setAbndUtimeKey(wsTimeNowGrp.getWsUTime());
+            abndinfoRec.setAbndTranid("HBNK");
+            abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm());
+            abndinfoRec.setAbndTasknoKey(EIBTASKN);
+            abndinfoRec.setAbndSqlcode(0);
+            abndinfoRec.setAbndRespcode(cicsResponse.getResponseCode());
+            abndinfoRec.setAbndResp2Code(cicsResponse.getResponse2Code());
+            abndinfoRec.setAbndProgram(wsAbendPgm);
+            abndinfoRec.setAbndFreeform("RM010 - RECEIVE MAP FAIL " + " EIBRESP=" + cicsResponse.getResponseCode() + " RESP2=" + cicsResponse.getResponse2Code());
+            cicsLink(abndinfoRec, wsAbendPgm);
+            abendThisTaskAtt010(wsFailInfo);
+        }
+    } catch (Exception e) {
+        System.out.println(e);
+    }
+}
+
+public CicsResponse cicsReceive(String mapName, WsFailInfo wsFailInfo) throws SQLException {
+    // Implement the CICS RECEIVE operation here
+}
+
+public void cicsLink(AbndinfoRec abndinfoRec, String wsAbendPgm) throws SQLException {
+    // Implement the CICS LINK operation here
+}
+
+public void populateTimeDatePtd010(WsTimeNowGrp wsTimeNowGrp) {
+    // Implement the POPULATE-TIME-DATE operation here
+}
+
+public void abendThisTaskAtt010(WsFailInfo wsFailInfo) {
+    // Implement the ABEND-THIS-TASK operation here
+}
+```
+

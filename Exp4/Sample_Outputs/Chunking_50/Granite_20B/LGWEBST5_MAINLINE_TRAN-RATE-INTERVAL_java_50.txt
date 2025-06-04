@@ -1,0 +1,83 @@
+public void mainlineTranRateInterval(String tsQpre, String wsTime) {
+    String wsTsQname = "";
+    WsHhmmss wsHhmmss = new WsHhmmss();
+    WsOldv wsOldv = new WsOldv();
+    String wsNewv = "";
+
+    wsTsQname = tsQpre + "000V";
+    TSQ jdeclTsq = new TSQ();
+    ItemHolder jdeclRecord = new ItemHolder();
+    jdeclTsq.setName(wsTsQname);
+    try {
+        jdeclTsq.readItem(1, jdeclRecord);
+    } catch (InvalidQueueIdException e) {
+        throw e;
+    } catch (InvalidSystemIdException e) {
+        throw e;
+    } catch (ItemErrorException e) {
+        throw e;
+    } catch (LengthErrorException e) {
+        throw e;
+    } catch (NoSpaceException e) {
+        throw e;
+    } catch (NotAuthorisedException e) {
+        throw e;
+    } catch (NotOpenException e) {
+        throw e;
+    }
+    if (wsResp != 0) {
+        wsOldv.setWsOldv("120000");
+    }
+    jdeclTsq = new TSQ();
+    jdeclTsq.setName(wsTsQname);
+    try {
+        jdeclTsq.delete();
+    } catch (InvalidSystemIdException e) {
+        throw e;
+    } catch (ItemErrorException e) {
+        throw e;
+    } catch (NotAuthorisedException e) {
+        throw e;
+    } catch (TSQNotFoundException e) {
+        throw e;
+    }
+    wsHhmmss.setBytes(wsTime.getBytes());
+    wsHhmmss.setWsHh(wsTime.substring(0, 2));
+    wsHhmmss.setWsMm(wsTime.substring(2, 4));
+    wsHhmmss.setWsSs(wsTime.substring(4, 6));
+    hHval = Integer.parseInt(wsHhmmss.getWsHh());
+    mMval = Integer.parseInt(wsHhmmss.getWsMm());
+    sSval = Integer.parseInt(wsHhmmss.getWsSs());
+    nCountVal = (hHval * 3600) + (mMval * 60) + sSval;
+    wsOldv.setWsOldvhh(wsTime.substring(0, 2));
+    wsOldv.setWsOldvmm(wsTime.substring(2, 4));
+    wsOldv.setWsOldvss(wsTime.substring(4, 6));
+    oCountVal = (Integer.parseInt(wsOldv.getWsOldvhh()) * 3600) + (Integer.parseInt(wsOldv.getWsOldvmm()) * 60)
+            + Integer.parseInt(wsOldv.getWsOldvss());
+    iCountVal = nCountVal - oCountVal;
+     wsNewv=Integer.toString(iCountVal);
+     
+    wsTsQname = tsQpre + "000V";
+    jdeclTsq = new TSQ();
+    jdeclTsq.setName(wsTsQname);
+    try {
+        jdeclTsq.writeString(wsNewv);
+    } catch (InvalidSystemIdException e) {
+        throw e;
+    } catch (IOErrorException e) {
+        throw e;
+    } catch (ItemErrorException e) {
+        throw e;
+    } catch (LengthErrorException e) {
+        throw e;
+    } catch (NotAuthorisedException e) {
+        throw e;
+    } catch (NotOpenException e) {
+        throw e;
+    }
+    StartRequest jdeclStartRequest = new StartRequest();
+    jdeclStartRequest.setTransId("SSST");
+    jdeclStartRequest.setTime(StartRequestUtils.intervalFromNow(0, 1, 0));
+    jdeclStartRequest.issue();
+
+}

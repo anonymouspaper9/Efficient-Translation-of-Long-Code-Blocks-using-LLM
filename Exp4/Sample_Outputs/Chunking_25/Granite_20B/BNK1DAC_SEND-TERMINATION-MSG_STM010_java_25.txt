@@ -1,0 +1,50 @@
+public void sendTerminationMsgStm010() {
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+
+    String endOfSessionMessage = "Session Ended";
+    try {
+        Task jdeclTask = Task.getTask();
+        HttpResponse jdeclResp = new HttpResponse();
+        jdeclResp.setErase();
+        jdeclResp.sendFrom(endOfSessionMessage);
+    } catch (Exception e) {
+
+        abndinfoRec = new AbndinfoRec();
+        String wsAbendPgm = "ABNDPROC";
+        WsFailInfo wsFailInfo = new WsFailInfo();
+
+        abndinfoRec = new AbndinfoRec();
+        wsTimeNowGrp = new WsTimeNowGrp();
+        abndinfoRec.setAbndRespcode(Task.getTask().getApplicationContext().getPlatform().getReturnCode());
+        abndinfoRec.setAbndResp2Code(Task.getTask().getTask().getApplicationContext().getVersion().getMicroVersion());
+        abndinfoRec.setAbndApplid(Region.getSYSID());
+        abndinfoRec.setAbndTasknoKey(Task.getTask().getTaskNumber());
+        abndinfoRec.setAbndTranid(Task.getTask().getTransactionName());
+        this.populateTimeDate();
+        abndinfoRec.setAbndDate(this.getWsOrigDate());
+        String jdeclVar1 = String.valueOf(wsTimeNowGrp.getWsTimeNowGrpHh()) + ":"
+                + String.valueOf(wsTimeNowGrp.getWsTimeNowGrpMm()) + ":"
+                + String.valueOf(wsTimeNowGrp.getWsTimeNowGrpSs());
+        abndinfoRec.setAbndTime(jdeclVar1);
+        abndinfoRec.setAbndUtimeKey(this.getWsUTime());
+        abndinfoRec.setAbndCode("HBNK");
+
+        Task jdeclCurrent_Program = Task.getTask();
+        abndinfoRec.setAbndProgram(jdeclCurrent_Program.getProgramName());
+        jdeclVar1 = "STM010 - SEND TEXT FAIL.EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2="
+                + abndinfoRec.getAbndResp2Code();
+        abndinfoRec.setAbndFreeform(jdeclVar1);
+        Task jdeclTask = Task.getTask();
+        Channel jdeclChannelObj = jdeclTask.getCurrentChannel();
+        Program jdeclProgObj = new Program();
+        jdeclProgObj.setName(wsAbendPgm);
+        jdeclProgObj.link(jdeclChannelObj, abndinfoRec);
+        wsFailInfo.setWsCicsFailMsg("BNK1DAC - STM010 - SEND TEXT FAIL");
+        wsFailInfo.setWsCicsRespDisp(this.getWsCicsResp());
+        wsFailInfo.setWsCicsResp2Disp(this.getWsCicsResp2());
+        throw new RuntimeException(wsFailInfo.getWsCicsFailMsg());
+
+    }
+
+}

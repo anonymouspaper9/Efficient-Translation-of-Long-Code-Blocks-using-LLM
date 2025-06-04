@@ -1,0 +1,543 @@
+public void invokeMainline(){
+    int frstCustNum = 1;
+    String genAcount = "GENACUSTNUM";
+    String genApool = "GENA";
+    String genacnt100 = "GENA01ICUS00";
+    String genacnt199 = "GENA01ICUS99";
+    String genacnt200 = "GENA01ACUS00";
+    String genacnt299 = "GENA01ACUS99";
+    String genacnt300 = "GENA01IMOT00";
+    String genacnt399 = "GENA01IMOT99";
+    String genacnt400 = "GENA01AMOT00";
+    String genacnt499 = "GENA01AMOT99";
+    String genacnt500 = "GENA01DMOT00";
+    String genacnt599 = "GENA01DMOT99";
+    String genacnt600 = "GENA01UMOT00";
+    String genacnt699 = "GENA01UMOT99";
+    String genacnt700 = "GENA01IEND00";
+    String genacnt799 = "GENA01IEND99";
+    String genacnt800 = "GENA01AEND00";
+    String genacnt899 = "GENA01AEND99";
+    String genacnt900 = "GENA01DEND00";
+    String genacnt999 = "GENA01DEND99";
+    String genacnta00 = "GENA01UEND00";
+    String genacnta99 = "GENA01UEND99";
+    String genacntb00 = "GENA01IHOU00";
+    String genacntb99 = "GENA01IHOU99";
+    String genacntc00 = "GENA01AHOU00";
+    String genacntc99 = "GENA01AHOU99";
+    String genacntd00 = "GENA01DHOU00";
+    String genacntd99 = "GENA01DHOU99";
+    String genacnte00 = "GENA01UHOU00";
+    String genacnte99 = "GENA01UHOU99";
+    String genacntf00 = "GENA01ICOM00";
+    String genacntf99 = "GENA01ICOM99";
+    String genacntg00 = "GENA01ACOM00";
+    String genacntg99 = "GENA01ACOM99";
+    String genacnth00 = "GENA01DCOM00";
+    String genacnth99 = "GENA01DCOM99";
+    String genacnti00 = "GENA01UCUS00";
+    String genacnti99 = "GENA01UCUS99";
+    int lastCustNum = 11;
+    Stsq stsq = new Stsq();
+    String stsqErrs = "GENAERRS";
+    String stsqStat = "GENASTAT";
+    String stsqStrt = "GENASTRT";
+    String writeMsgE = "**** GENAPP CNTL";
+    String writeMsgH = "HIGH CUSTOMER=";
+    long writeMsgHigh;
+    String writeMsgL = "LOW CUSTOMER=";
+    long writeMsgLow;
+    WsRecv wsRecv = new WsRecv();
+    int wsRecvLen = 80;
+    int wsResp;
+    wsRecv.setWsRecvData("DATA");
+    wsRecvLen = wsRecv.getWsRecvData().length();
+    if (wsRecvLen > 5) {
+        wsRecvLen = wsRecvLen - 5;
+        writeMsgLow = frstCustNum;
+        writeMsgHigh = lastCustNum;
+        wsRecv.setWsRecvData(wsRecv.getWsRecvData().substring(1, wsRecvLen));
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM STSQ-ERRS");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM STSQ-STRT");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM STSQ-STAT");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM STSQ-NAME");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    writeMsgLow = frstCustNum;
+    writeMsgHigh = lastCustNum;
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO STSQ-NAME (STSQ-NAME) VALUES ('" + writeMsgE + "')");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO STSQ-NAME (STSQ-NAME) VALUES ('" + writeMsgL + writeMsgLow + "')");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO STSQ-NAME (STSQ-NAME) VALUES ('" + writeMsgH + writeMsgHigh + "')");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM GENAcount");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO GENAcount (GENAcount) VALUES ('" + lastCustNum + "')");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM GENACNT100");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO GENACNT100 (GENACNT100) VALUES ('0')");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM GENACNT199");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO GENACNT199 (GENACNT199) VALUES ('0')");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM GENACNT200");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO GENACNT200 (GENACNT200) VALUES ('0')");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM GENACNT299");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO GENACNT299 (GENACNT299) VALUES ('0')");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM GENACNT300");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO GENACNT300 (GENACNT300) VALUES ('0')");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM GENACNT399");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO GENACNT399 (GENACNT399) VALUES ('0')");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM GENACNT400");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO GENACNT400 (GENACNT400) VALUES ('0')");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM GENACNT499");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO GENACNT499 (GENACNT499) VALUES ('0')");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM GENACNT500");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO GENACNT500 (GENACNT500) VALUES ('0')");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM GENACNT599");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO GENACNT599 (GENACNT599) VALUES ('0')");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM GENACNT600");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO GENACNT600 (GENACNT600) VALUES ('0')");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM GENACNT699");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO GENACNT699 (GENACNT699) VALUES ('0')");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM GENACNT700");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO GENACNT700 (GENACNT700) VALUES ('0')");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM GENACNT799");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO GENACNT799 (GENACNT799) VALUES ('0')");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM GENACNT800");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO GENACNT800 (GENACNT800) VALUES ('0')");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM GENACNT899");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO GENACNT899 (GENACNT899) VALUES ('0')");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM GENACNT900");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO GENACNT900 (GENACNT900) VALUES ('0')");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM GENACNT999");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO GENACNT999 (GENACNT999) VALUES ('0')");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM GENACNTA00");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO GENACNTA00 (GENACNTA00) VALUES ('0')");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM GENACNTA99");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO GENACNTA99 (GENACNTA99) VALUES ('0')");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM GENACNTB00");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO GENACNTB00 (GENACNTB00) VALUES ('0')");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM GENACNTB99");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO GENACNTB99 (GENACNTB99) VALUES ('0')");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM GENACNTC00");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO GENACNTC00 (GENACNTC00) VALUES ('0')");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM GENACNTC99");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO GENACNTC99 (GENACNTC99) VALUES ('0')");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM GENACNTD00");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO GENACNTD00 (GENACNTD00) VALUES ('0')");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM GENACNTD99");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO GENACNTD99 (GENACNTD99) VALUES ('0')");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM GENACNTE00");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO GENACNTE00 (GENACNTE00) VALUES ('0')");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM GENACNTE99");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO GENACNTE99 (GENACNTE99) VALUES ('0')");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM GENACNTF00");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO GENACNTF00 (GENACNTF00) VALUES ('0')");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("DELETE FROM GENACNTF99");
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        wsResp = JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO GENACNTF99 (GENACNTF99) VALUES ('0')");
+    }
+    catch(SQLException exception

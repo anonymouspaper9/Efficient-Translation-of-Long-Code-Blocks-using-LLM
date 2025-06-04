@@ -1,0 +1,424 @@
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+           DISPLAY "SNIPPET-1"
+           IF ( CA-REQUEST-ID NOT EQUAL TO '01DEND' AND                 
+                CA-REQUEST-ID NOT EQUAL TO '01DMOT' AND                 
+                CA-REQUEST-ID NOT EQUAL TO '01DHOU' AND                 
+                CA-REQUEST-ID NOT EQUAL TO '01DCOM' )                   
+               MOVE '99' TO CA-RETURN-CODE                              
+           ELSE                                                         
+               PERFORM DELETE-POLICY-DB2-INFO                           
+               If CA-RETURN-CODE > 0                                    
+                 EXEC CICS RETURN
+                 END-EXEC                              
+               End-if                                                   
+           END-IF                                                       
+           EXEC CICS RETURN
+           END-EXEC.                                   
+
+## Variable Map:
+CA-RETURN-CODE gettermapping dfhcommarea.getCaReturnCode()
+CA-RETURN-CODE settermapping dfhcommarea.setCaReturnCode(val)
+CA-RETURN-CODE PIC 9(2) JavaType int
+CA-REQUEST-ID gettermapping dfhcommarea.getCaRequestId()
+CA-REQUEST-ID settermapping dfhcommarea.setCaRequestId(val)
+CA-REQUEST-ID PIC X(6) JavaType String
+
+
+## Class Map:
+public void invokeMainline(Dfhcommarea dfhcommarea){
+}
+
+
+Output:
+=====================
+
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+           INITIALIZE WS-HEADER.                                        
+           MOVE EIBTRNID TO WS-TRANSID.                                 
+           MOVE EIBTRMID TO WS-TERMID.                                  
+           MOVE EIBTASKN TO WS-TASKNUM.                                 
+           IF EIBCALEN IS EQUAL TO ZERO                                 
+               MOVE ' NO COMMAREA RECEIVED' TO EM-VARIABLE              
+               PERFORM WRITE-ERROR-MESSAGE                              
+               EXEC CICS ABEND
+                    NODUMP
+                    ABCODE('LGCA')
+               END-EXEC           
+           END-IF                                                       
+           MOVE '00' TO CA-RETURN-CODE                                  
+           MOVE EIBCALEN TO WS-CALEN.                                   
+           SET WS-ADDR-DFHCOMMAREA TO ADDRESS OF DFHCOMMAREA.           
+           IF EIBCALEN IS LESS THAN WS-CA-HEADER-LEN                    
+             MOVE '98' TO CA-RETURN-CODE                                
+             EXEC CICS RETURN
+             END-EXEC                                  
+           END-IF                                                       
+           MOVE CA-CUSTOMER-NUM TO EM-CUSNUM                            
+           MOVE CA-POLICY-NUM   TO EM-POLNUM                            
+           MOVE FUNCTION UPPER-CASE(CA-REQUEST-ID) TO CA-REQUEST-ID     
+
+## Variable Map:
+WS-TRANSID gettermapping wsHeader.getWsTransid()
+WS-TRANSID settermapping wsHeader.setWsTransid(val)
+WS-TRANSID PIC X(4) JavaType String
+WS-TERMID gettermapping wsHeader.getWsTermid()
+WS-TERMID settermapping wsHeader.setWsTermid(val)
+WS-TERMID PIC X(4) JavaType String
+WS-TASKNUM gettermapping wsHeader.getWsTasknum()
+WS-TASKNUM settermapping wsHeader.setWsTasknum(val)
+WS-TASKNUM PIC 9(7) JavaType int
+WS-HEADER gettermapping wsHeader.getBytes()
+WS-HEADER settermapping wsHeader.setBytes(val)
+WS-HEADER GROUP JavaType WsHeader
+WS-CALEN gettermapping wsHeader.getWsCalen()
+WS-CALEN settermapping wsHeader.setWsCalen(val)
+WS-CALEN PIC S9(4) JavaType int
+WS-CA-HEADER-LEN gettermapping wsCaHeaderLen
+WS-CA-HEADER-LEN settermapping wsCaHeaderLen = val
+WS-CA-HEADER-LEN PIC S9(4) JavaType int
+WS-ADDR-DFHCOMMAREA gettermapping wsHeader.getWsAddrDfhcommarea()
+WS-ADDR-DFHCOMMAREA settermapping wsHeader.getWsAddrDfhcommarea()
+WS-ADDR-DFHCOMMAREA GROUP JavaType String
+EM-VARIABLE gettermapping errorMsg.getEmVariable().getBytes()
+EM-VARIABLE settermapping errorMsg.getEmVariable().setBytes(val)
+EM-VARIABLE GROUP JavaType EmVariable
+EM-POLNUM gettermapping errorMsg.getEmVariable().getEmPolnum()
+EM-POLNUM settermapping errorMsg.getEmVariable().setEmPolnum(val)
+EM-POLNUM PIC X(10) JavaType String
+EM-CUSNUM gettermapping errorMsg.getEmVariable().getEmCusnum()
+EM-CUSNUM settermapping errorMsg.getEmVariable().setEmCusnum(val)
+EM-CUSNUM PIC X(10) JavaType String
+DFHCOMMAREA gettermapping dfhcommarea.getBytes()
+DFHCOMMAREA settermapping dfhcommarea.setBytes(val)
+DFHCOMMAREA GROUP JavaType Dfhcommarea
+CA-RETURN-CODE gettermapping dfhcommarea.getCaReturnCode()
+CA-RETURN-CODE settermapping dfhcommarea.setCaReturnCode(val)
+CA-RETURN-CODE PIC 9(2) JavaType int
+CA-REQUEST-ID gettermapping dfhcommarea.getCaRequestId()
+CA-REQUEST-ID settermapping dfhcommarea.setCaRequestId(val)
+CA-REQUEST-ID PIC X(6) JavaType String
+CA-POLICY-NUM gettermapping ((CaPolicyRequest)(dfhcommarea)).getCaPolicyNum()
+CA-POLICY-NUM settermapping ((CaPolicyRequest)(dfhcommarea)).setCaPolicyNum(val)
+CA-POLICY-NUM PIC 9(10) JavaType long
+CA-CUSTOMER-NUM gettermapping dfhcommarea.getCaCustomerNum()
+CA-CUSTOMER-NUM settermapping dfhcommarea.setCaCustomerNum(val)
+CA-CUSTOMER-NUM PIC 9(10) JavaType long
+
+
+## Class Map:
+public void invokeMainline(Dfhcommarea dfhcommarea){
+    int wsCaHeaderLen = 28;
+    WsHeader wsHeader = new WsHeader();
+    ErrorMsg errorMsg = new ErrorMsg();
+}
+
+
+Output:
+=====================
+

@@ -1,0 +1,169 @@
+```java
+public void editDataEd010(Switches switches) {
+    DateReformed dateReformed = new DateReformed();
+    String dobddiChar = "";
+    String dobmmiChar = "";
+
+    if (custno2l > 0) {
+        switches.setValidDataSw('N');
+        return;
+    }
+
+    if (custTitl <= 0 || custTitl.isEmpty() || !isValidTitle(custTitl)) {
+        setErrorMessage("Valid titles are: Mr,Mrs,Miss,Ms,Dr,Professor,"
+                + ",Drs,Lord,Sir,Lady");
+        switches.setValidDataSw('N');
+        return;
+    }
+
+    if (custTitl.isEmpty()) {
+        custTitl = " ";
+    }
+
+    if (!custTitl.equalsIgnoreCase("mr") && !custTitl.equalsIgnoreCase("mr ")
+            && !custTitl.equalsIgnoreCase("MR ")
+            && !custTitl.equalsIgnoreCase("mr ")
+            && !custTitl.equalsIgnoreCase("MRS ")
+            && !custTitl.equalsIgnoreCase("MRS ")
+            && !custTitl.equalsIgnoreCase("MRS ")
+            && !custTitl.equalsIgnoreCase("mrs ")
+            && !custTitl.equalsIgnoreCase("MISS ")
+            && !custTitl.equalsIgnoreCase("Miss ")
+            && !custTitl.equalsIgnoreCase("MISS ")
+            && !custTitl.equalsIgnoreCase("miss ")
+            && !custTitl.equalsIgnoreCase("MS ")
+            && !custTitl.equalsIgnoreCase("Ms ")
+            && !custTitl.equalsIgnoreCase("ms ")
+            && !custTitl.equalsIgnoreCase("DR ")
+            && !custTitl.equalsIgnoreCase("Dr ")
+            && !custTitl.equalsIgnoreCase("DR ")
+            && !custTitl.equalsIgnoreCase("dr ")
+            && !custTitl.equalsIgnoreCase("dr ")
+            && !custTitl.equalsIgnoreCase("DRS ")
+            && !custTitl.equalsIgnoreCase("Drs ")
+            && !custTitl.equalsIgnoreCase("DRS ")
+            && !custTitl.equalsIgnoreCase("drs ")
+            && !custTitl.equalsIgnoreCase("drs ")
+            && !custTitl.equalsIgnoreCase("PROFESSOR ")
+            && !custTitl.equalsIgnoreCase("Professor ")
+            && !custTitl.equalsIgnoreCase("PROFESSOR ")
+            && !custTitl.equalsIgnoreCase("PROFESSOR ")
+            && !custTitl.equalsIgnoreCase("LORD ")
+            && !custTitl.equalsIgnoreCase("Lord ")
+            && !custTitl.equalsIgnoreCase("LORD ")
+            && !custTitl.equalsIgnoreCase("lord ")
+            && !custTitl.equalsIgnoreCase("lord ")
+            && !custTitl.equalsIgnoreCase("LADY ")
+            && !custTitl.equalsIgnoreCase("Lady ")
+            && !custTitl.equalsIgnoreCase("LADY ")
+            && !custTitl.equalsIgnoreCase("lady ")
+            && !custTitl.equalsIgnoreCase("lady ")) {
+        setErrorMessage("Valid titles are: Mr,Mrs,Miss,Ms,Dr,Drs,"
+                + ",Professor,Lord,Sir,Lady");
+        switches.setValidDataSw('N');
+        return;
+    }
+
+    custTitl = custTitl.trim().toUpperCase();
+
+    if (christnl <= 0 || christni.isEmpty() || christni.equals("____________________")
+            || christni.equals(" ")) {
+        setErrorMessage("Please supply a valid First Name");
+        switches.setValidDataSw('N');
+        return;
+    }
+
+    if (custSnl <= 0 || custSni.isEmpty() || custSni.equals("____________________")
+            || custSni.equals(" ")) {
+        setErrorMessage("Please supply a valid Surname");
+        switches.setValidDataSw('N');
+        return;
+    }
+
+    if (custAd1l <= 0 || custAd1i.equals("_") || custAd1i.isEmpty()
+            || custAd1i.equals(" ")) {
+        setErrorMessage("Please supply a valid Address Line 1");
+        switches.setValidDataSw('N');
+        return;
+    }
+
+    if (dobDdl <= 0 || dobDdi.isEmpty() || dobDdi.equals("__")
+            || dobDdi.equals(" ") || !isNumeric(dobDdi)) {
+        setErrorMessage("Please supply a valid Date of Birth DD");
+        switches.setValidDataSw('N');
+        return;
+    }
+
+    dobddiChar = dobDdi;
+    int dobddiNum = Integer.parseInt(dobddiChar);
+    if (dobddiNum < 1 || dobddiNum > 31) {
+        setErrorMessage("Please supply a valid Date of Birth (DD)");
+        switches.setValidDataSw('N');
+        return;
+    }
+
+    if (dobMml <= 0 || dobMmi.isEmpty() || dobMmi.equals("__")
+            || dobMmi.equals(" ") || !isNumeric(dobMmi)) {
+        setErrorMessage("Please supply a valid Date of Birth MM");
+        switches.setValidDataSw('N');
+        return;
+    }
+
+    dobmmiChar = dobMmi;
+    int dobmmiNum = Integer.parseInt(dobmmiChar);
+    if (dobmmiNum < 1 || dobmmiNum > 12) {
+        setErrorMessage("Please supply a valid Date of Birth (MM)");
+        switches.setValidDataSw('N');
+        return;
+    }
+
+    if (dobYyl <= 4 || dobYyi.isEmpty() || dobYyi.equals("____")
+            || dobYyi.equals(" ") || !isNumeric(dobYyi)) {
+        setErrorMessage("Please supply a valid Date of Birth YYYY");
+        switches.setValidDataSw('N');
+        return;
+    }
+
+    dobmmi = dobmmiChar;
+    dobddi = dobddiChar;
+    dobYyi = dobYyi;
+
+    if (!isNumeric(dobMmi) || !isNumeric(dobDdi) || !isNumeric(dobYyi)) {
+        setErrorMessage("Invalid numeric values for Date of Birth");
+        switches.setValidDataSw('N');
+        return;
+    }
+
+    dateReformed.setDobddiNum(dobddiNum);
+    dateReformed.setDobmmiNum(dobmmiNum);
+    dateReformed.setDobyyi(dobYyi);
+
+    if (custTitl <= 0 || custTitl.isEmpty() || christnl <= 0
+            || christni.isEmpty() || custSnl <= 0 || custSni.isEmpty()
+            || custAd1l <= 0 || dobDdl <= 0 || dobMml <= 0
+            || dobYyl <= 0) {
+        setErrorMessage("Missing expected data.");
+        switches.setValidDataSw('N');
+        return;
+    }
+
+    switches.setValidDataSw('Y');
+}
+
+private void setErrorMessage(String message) {
+    // Implement this method to set the error message
+}
+
+private boolean isNumeric(String strNum) {
+    if (strNum == null) {
+        return false;
+    }
+    try {
+        double d = Double.parseDouble(strNum);
+    } catch (NumberFormatException | NullPointerException nfe) {
+        return false;
+    }
+    return true;
+}
+
+private boolean isValidTitle(String

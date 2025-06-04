@@ -1,0 +1,23 @@
+public void premiereA010(Dfhcommarea dfhcommarea) {
+    char wsTitleValid = ' ';
+
+    String wsUnstrTitle = " ";
+    int sortcode = 987654;
+    DesiredCustKey desiredCustKey = new DesiredCustKey();
+    dfhcommarea.setCommScode(String.valueOf(sortcode));
+    dfhcommarea.setCommName(" ");
+    wsUnstrTitle = dfhcommarea.getCommName().trim();
+    wsTitleValid = ' ';
+    if (wsUnstrTitle.equals("Professor")) {
+        // TODO: Empty block may need to be addressed
+
+    }
+    if (wsTitleValid == 'N') {
+        dfhcommarea.setCommUpdSuccess('N');
+        dfhcommarea.setCommUpdFailCd('T');
+        return;
+    }
+    updateCustomerVsam();
+    getMeOutOfHere();
+
+}

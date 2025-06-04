@@ -1,0 +1,61 @@
+       MAINLINE SECTION.                                                
+                                                                        
+      *----------------------------------------------------------------*
+      * Common code                                                    *
+      *----------------------------------------------------------------*
+      * initialize working storage variables                            
+           INITIALIZE WS-HEADER.                                        
+      * set up general variable                                         
+           MOVE EIBTRNID TO WS-TRANSID.                                 
+           MOVE EIBTRMID TO WS-TERMID.                                  
+           MOVE EIBTASKN TO WS-TASKNUM.                                 
+      *----------------------------------------------------------------*
+                                                                        
+      *----------------------------------------------------------------*
+      * Check commarea and obtain required details                     *
+      *----------------------------------------------------------------*
+      * If NO commarea received issue an ABEND                          
+           IF EIBCALEN IS EQUAL TO ZERO                                 
+               MOVE ' NO COMMAREA RECEIVED' TO EM-VARIABLE              
+               PERFORM WRITE-ERROR-MESSAGE                              
+               EXEC CICS ABEND ABCODE('LGCA') NODUMP END-EXEC           
+           END-IF                                                       
+                                                                        
+      * initialize commarea return code to zero                         
+           MOVE '00' TO CA-RETURN-CODE                                  
+           MOVE EIBCALEN TO WS-CALEN.                                   
+           SET WS-ADDR-DFHCOMMAREA TO ADDRESS OF DFHCOMMAREA.           
+                                                                        
+      * Check commarea is large enough                                  
+           IF EIBCALEN IS LESS THAN WS-CA-HEADER-LEN                    
+             MOVE '98' TO CA-RETURN-CODE                                
+             EXEC CICS RETURN END-EXEC                                  
+           END-IF                                                       
+                                                                        
+      * and save in error msg field incase required                     
+           MOVE CA-CUSTOMER-NUM TO EM-CUSNUM                            
+           MOVE CA-POLICY-NUM   TO EM-POLNUM                            
+                                                                        
+      *----------------------------------------------------------------*
+      * Check request-id in commarea and if recognised ...             *
+      * Call routine to delete row from policy table                   *
+      *----------------------------------------------------------------*
+      * Upper case value passed in Request Id field                    *
+           MOVE FUNCTION UPPER-CASE(CA-REQUEST-ID) TO CA-REQUEST-ID     
+                                                                        
+           IF ( CA-REQUEST-ID NOT EQUAL TO '01DEND' AND                 
+                CA-REQUEST-ID NOT EQUAL TO '01DMOT' AND                 
+                CA-REQUEST-ID NOT EQUAL TO '01DHOU' AND                 
+                CA-REQUEST-ID NOT EQUAL TO '01DCOM' )                   
+      *        Request is not recognised or supported                   
+               MOVE '99' TO CA-RETURN-CODE                              
+           ELSE                                                         
+               PERFORM DELETE-POLICY-DB2-INFO                           
+               If CA-RETURN-CODE > 0                                    
+                 EXEC CICS RETURN END-EXEC                              
+               End-if                                                   
+      *        PERFORM DELETE-POLICY-VSAM                               
+           END-IF                                                       
+                                                                        
+      * Return to caller                                                
+           EXEC CICS RETURN END-EXEC.                                   

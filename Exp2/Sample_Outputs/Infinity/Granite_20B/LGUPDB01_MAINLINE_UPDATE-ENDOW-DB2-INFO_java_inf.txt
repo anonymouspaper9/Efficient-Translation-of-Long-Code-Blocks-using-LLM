@@ -1,0 +1,32 @@
+public void mainlineUpdateEndowDb2Info(CaEndowment caEndowment, Db2InIntegers db2InIntegers, ErrorMsg errorMsg) {
+    int wsRequiredCaLen = 0;
+    String wsVaryChar = "";
+    db2InIntegers.setDb2ETermSint(caEndowment.getEndowment().getTerm());
+    db2InIntegers.setDb2ESumassuredInt(caEndowment.getEndowment().getSumassured());
+    errorMsg.getEmVariable().setEmSqlreq(" UPDATE ENDOW ");
+    int wsVaryLen = caEndowment.getEibcalen() - wsRequiredCaLen;
+    if (wsVaryLen > 0) {
+        wsVaryChar = caEndowment.getEndowment().getPaddingdata().substring(0, wsVaryLen);
+    }
+    try {
+        String sql = "UPDATE ENDOWMENT SET WITHPROFITS = ?, EQUITIES = ?, MANAGEDFUND = ?, FUNDNAME = ?, TERM = ?, SUMASSURED = ?, LIFEASSURED = ? WHERE POLICYNUMBER = ?";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setString(1, caEndowment.getEndowment().getWithprofits());
+        ps.setString(2, caEndowment.getEndowment().getEquities());
+        ps.setString(3, caEndowment.getEndowment().getManagedfund());
+        ps.setString(4, caEndowment.getEndowment().getFundname());
+        ps.setInt(5, db2InIntegers.getDb2ETermSint());
+        ps.setInt(6, db2InIntegers.getDb2ESumassuredInt());
+        ps.setString(7, caEndowment.getEndowment().getLifeassured());
+        ps.setInt(8, db2InIntegers.getDb2PolicynumInt());
+        ps.executeUpdate();
+        ps.close();
+    } catch (SQLException exception) {
+        if (exception.getErrorCode() == 100) {
+            caEndowment.setCaReturnCode(Integer.parseInt("01"));
+        } else {
+            caEndowment.setCaReturnCode(Integer.parseInt("90"));
+            mainlineWriteErrorMessage(dfhcommarea, errorMsg);
+        }
+    }
+}

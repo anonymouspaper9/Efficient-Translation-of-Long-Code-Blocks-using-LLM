@@ -1,0 +1,71 @@
+public void invokeMainline(Dfhcommarea dfhcommarea) {
+    String wsStartcode = "";
+    String wsInvokeprog = "";
+    String wsPrinsysid = "";
+    WsRecv wsRecv = new WsRecv();
+    int wsRecvLen = 80;
+    WriteMsg writeMsg = new WriteMsg();
+    Filler1372 filler1372 = new Filler1372();
+    Stsq stsq = new Stsq();
+    Filler1375 filler1375 = new Filler1375();
+    String tempo = "";
+    String stdqName = "CSMT";
+    char wsFlag = ' ';
+
+    wsRecvLen = 80;
+    writeMsg = new WriteMsg();
+    stsq = new Stsq();
+    wsFlag = ' ';
+    writeMsg.setWriteMsgMsg("");
+    writeMsg.setWriteMsgSysid("");
+    wsStartcode = Task.getTask().getSTARTCODE();
+    wsInvokeprog = Task.getTask().getInvokingProgramName();
+    ConversationPrincipalFacility conversationPrincipalFacility;
+    Object o = Task.getTask().getPrincipalFacility();
+    if (o instanceof ConversationPrincipalFacility) {
+        conversationPrincipalFacility = (ConversationPrincipalFacility) o;
+        wsPrinsysid = conversationPrincipalFacility.getPrinSysId();
+    }
+    if (wsInvokeprog.length() > 0) {
+        wsFlag = 'C';
+        writeMsg.setWriteMsgMsg(dfhcommarea.getCommaData());
+        wsRecvLen = dfhcommarea.getEIBcalen();
+    } else {
+        wsRecvLen = Task.getTask().getRECEIVE(wsRecv.getBytes(), wsRecvLen);
+        wsFlag = 'R';
+        writeMsg.setWriteMsgMsg(wsRecv.getWsRecvData());
+        wsRecvLen -= 5;
+    }
+    stsq.setStsqName("GENAERRS");
+    if (writeMsg.getWriteMsgMsg().substring(0, 2).equals("Q=")) {
+        stsq.setStsqExt(writeMsg.getWriteMsgMsg().substring(2, 6));
+        tempo = writeMsg.getWriteMsgMsg().substring(6);
+        writeMsg.setWriteMsgMsg(tempo);
+        wsRecvLen -= 7;
+    }
+    wsRecvLen += 5;
+    TDQ jdeclVarName4 = new TDQ();
+    jdeclVarName4.setName(stdqName);
+    jdeclVarName4.writeString(writeMsg.getBytes());
+
+    try {
+        TSQ jdeclTsq = new TSQ();
+        ItemHolder jdeclBuffer = new ItemHolder();
+        jdeclTsq.setName(stsq.getStsqName());
+        jdeclTsq.setNoSuspend();
+        jdeclTsq.writeString(writeMsg.getWriteMsg());
+    } catch (InvalidQueueIdException | IOErrorException | CicsConditionException e) {
+        throw Exception;
+    }
+    if (wsFlag == 'R') {
+        Object jdeclTask = Task.getTask();
+        HttpResponse jdeclResp = new HttpResponse();
+        jdeclResp.setNoServerConvert();
+        jdeclResp.setWait();
+        jdeclResp.setErase();
+        jdeclResp.sendFrom(
+                new String(" ").getBytes(jdeclTask.getTask().getApplicationContext().getPlatformDefaultCharset()));
+    }
+    Task.getTask().abend();
+
+}

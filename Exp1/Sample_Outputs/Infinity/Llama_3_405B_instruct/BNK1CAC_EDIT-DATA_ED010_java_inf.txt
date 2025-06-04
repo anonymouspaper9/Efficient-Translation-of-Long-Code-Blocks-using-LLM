@@ -1,0 +1,183 @@
+public void editDataEd010(Switches switches){
+    String intrtiComp1 = "";
+    int wsNumCountPoint;
+    int wsNumCountTotal;
+    String wsReverse = "";
+    // EXEC CICS BIF DEEDIT FIELD(CUSTNOI) END-EXEC.
+    // This line is ignored as it is a CICS command and not a Java compatible operation.
+    if (custnol < 1 || custnoi.equals("__________")){
+        messageo = "";
+        messageo = "Please enter a 10 digit Customer Number ";
+        switches.setValidDataSw('N');
+        custnol = -1;
+        return;
+    }
+    if (!custnoi.matches("[0-9]+")){
+        messageo = "";
+        messageo = "Please enter a numeric Customer number ";
+        switches.setValidDataSw('N');
+        custnol = -1;
+        return;
+    }
+    if (acctypi.equals("________") || acctypl < 1){
+        messageo = "";
+        messageo = "Account Type should be ISA,CURRENT,LOAN,SAVING or MORTGAGE";
+        switches.setValidDataSw('N');
+        acctypl = -1;
+        return;
+    }
+    messageo = "";
+    if (acctypl > 0){
+        switch(acctypi){
+            case "ISA_____":
+            case "isa_____":
+            case "ISA     ":
+            case "isa     ":
+                acctypi = "ISA     ";
+                break;
+            case "CURRENT_":
+            case "current_":
+            case "CURRENT ":
+            case "current ":
+                acctypi = "CURRENT ";
+                break;
+            case "LOAN____":
+            case "loan____":
+            case "LOAN    ":
+            case "loan    ":
+                acctypi = "LOAN    ";
+                break;
+            case "SAVING__":
+            case "saving__":
+            case "SAVING  ":
+            case "saving  ":
+                acctypi = "SAVING  ";
+                break;
+            case "MORTGAGE":
+            case "mortgage":
+                acctypi = "MORTGAGE";
+                break;
+            default:
+                messageo = "";
+                messageo = "Account Type should be ISA,CURRENT,LOAN,SAVING or MORTGAGE";
+                switches.setValidDataSw('N');
+                acctypl = -1;
+                return;
+        }
+    }
+    if (intrtl == 0){
+        messageo = "";
+        messageo = "Please supply a numeric interest rate";
+        switches.setValidDataSw('N');
+        intrtl = -1;
+        return;
+    }
+    if (!intrti.substring(0, intrtl).matches("[0-9.+-]+")){
+        wsNumCountTotal = 0;
+        for (int i = 0; i < intrtl; i++){
+            if (Character.isDigit(intrti.charAt(i)) || intrti.charAt(i) == '.' || intrti.charAt(i) == '+' || intrti.charAt(i) == '-'){
+                wsNumCountTotal++;
+            }
+        }
+        if (wsNumCountTotal < intrtl){
+            messageo = "";
+            messageo = "Please supply a numeric interest rate";
+            switches.setValidDataSw('N');
+            intrtl = -1;
+            return;
+        }
+        wsNumCountPoint = 0;
+        for (int i = 0; i < intrtl; i++){
+            if (intrti.charAt(i) == '.'){
+                wsNumCountPoint++;
+            }
+        }
+        if (wsNumCountPoint > 1){
+            messageo = "";
+            messageo = "Use one decimal point for interest rate only";
+            switches.setValidDataSw('N');
+            intrtl = -1;
+            return;
+        }
+        if (wsNumCountPoint == 1){
+            wsNumCountTotal = 0;
+            int pointIndex = intrti.indexOf('.');
+            for (int i = pointIndex + 1; i < intrtl; i++){
+                if (Character.isDigit(intrti.charAt(i)) || intrti.charAt(i) == '-' || intrti.charAt(i) == '+'){
+                    wsNumCountTotal++;
+                }
+            }
+            if (wsNumCountTotal > 2){
+                messageo = "";
+                messageo = "Only up to two decimal places are supported";
+                switches.setValidDataSw('N');
+                intrtl = -1;
+                return;
+            }
+        }
+    }
+    try{
+        intrtiComp1 = String.valueOf(Double.parseDouble(intrti));
+    } catch (NumberFormatException e){
+        messageo = "";
+        messageo = "Please supply a numeric interest rate";
+        switches.setValidDataSw('N');
+        intrtl = -1;
+        return;
+    }
+    if (Double.parseDouble(intrtiComp1) < 0){
+        messageo = "";
+        messageo = "Please supply a zero or positive interest rate";
+        switches.setValidDataSw('N');
+        intrtl = -1;
+        return;
+    }
+    if (Double.parseDouble(intrtiComp1) > 9999.99){
+        messageo = "";
+        messageo = "Please supply an interest rate less than 9999.99%";
+        switches.setValidDataSw('N');
+        intrtl = -1;
+        return;
+    }
+    wsReverse = new StringBuilder(overdri).reverse().toString();
+    wsNumCountTotal = 0;
+    for (int i = 0; i < wsReverse.length(); i++){
+        if (wsReverse.charAt(i) == ' '){
+            wsNumCountTotal++;
+        } else {
+            break;
+        }
+    }
+    overdrl = overdri.length() - wsNumCountTotal;
+    wsNumCountTotal = 0;
+    for (int i = 0; i < overdrl; i++){
+        if (Character.isDigit(overdri.charAt(i))){
+            wsNumCountTotal++;
+        }
+    }
+    if (wsNumCountTotal < overdrl){
+        messageo = "";
+        messageo = "Overdraft Limit must be numeric positive int";
+        switches.setValidDataSw('N');
+        overdrl = -1;
+        return;
+    }
+    // EXEC CICS BIF DEEDIT FIELD(OVERDRI) END-EXEC.
+    // This line is ignored as it is a CICS command and not a Java compatible operation.
+    if (overdrl < 1 || overdri.equals("________") || overdri.trim().isEmpty()){
+        overdri = "0";
+    }
+    if (!overdri.matches("[0-9]+")){
+        messageo = "";
+        messageo = "The Overdraft Limit must be numeric ";
+        switches.setValidDataSw('N');
+        overdrl = -1;
+        return;
+    }
+    if (custnol < 1 || acctypl < 1){
+        messageo = "";
+        messageo = "Missing expected data.               ";
+        switches.setValidDataSw('N');
+        return;
+    }
+}

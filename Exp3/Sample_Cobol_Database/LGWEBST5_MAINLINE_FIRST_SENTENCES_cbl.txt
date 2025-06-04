@@ -1,0 +1,460 @@
+       MAINLINE SECTION.                                                
+      *                                                                 
+           INITIALIZE WS-HEADER.                                        
+                                                                        
+           MOVE EIBTRNID TO WS-TRANSID.                                 
+           MOVE EIBTRMID TO WS-TERMID.                                  
+           MOVE EIBTASKN TO WS-TASKNUM.                                 
+           MOVE EIBCALEN TO WS-CALEN.                                   
+      ****************************************************************  
+           MOVE 'GENA'  To TSQpre                                       
+           EXEC CICS ASKTIME ABSTIME(WS-ABSTIME)                        
+           END-EXEC                                                     
+           EXEC CICS FORMATTIME ABSTIME(WS-ABSTIME)                     
+                     MMDDYYYY(WS-DATE)                                  
+                     TIME(WS-TIME)                                      
+           END-EXEC                                                     
+           Perform Tran-Rate-Interval                                   
+                                                                        
+           Exec CICS Query Counter(GENAcount)                           
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Move CountVal  To GENAcount-V                                
+           Move GENAcount-V  To S3                                      
+           String TSQpre,                                               
+                  'X05V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S3           To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+      *                                                                 
+           Exec CICS Query Counter(GENACNT100)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Move CountVal  To CountSuccess                               
+           Move CountVal  To CountInq                                   
+           Move CountVal  To GENACNT100-V                               
+           Move GENACNT100-V To S3                                      
+           String TSQpre,                                               
+                  '100V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S3           To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+                                                                        
+           Exec CICS Query Counter(GENACNT199)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Move CountVal  To CountErrors                                
+           Move CountVal  To GENACNT199-V                               
+           Move GENACNT199-V To S4                                      
+           Exec CICS Query Counter(GENACNT200)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Compute CountSuccess = CountSuccess + CountVal               
+           Move CountVal  To CountAdd                                   
+           Move CountVal  To GENACNT200-V                               
+           Move GENACNT200-V To S5                                      
+           String TSQpre,                                               
+                  '200V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S5           To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           Exec CICS Query Counter(GENACNT299)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Compute CountErrors  = CountErrors + CountVal                
+           Move CountVal  To GENACNT299-V                               
+           Move GENACNT299-V To S6                                      
+      *                                                                 
+           Exec CICS Query Counter(GENACNT300)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Compute CountSuccess = CountSuccess + CountVal               
+           Move CountVal  To GENACNT300-V                               
+           Compute CountInq = CountInq + CountVal                       
+           Move GENACNT300-V To S7                                      
+           String TSQpre,                                               
+                  '300V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S7           To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           Exec CICS Query Counter(GENACNT399)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Compute CountErrors  = CountErrors + CountVal                
+           Move CountVal  To GENACNT399-V                               
+           Move GENACNT399-V To S8                                      
+           Exec CICS Query Counter(GENACNT400)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Compute CountSuccess = CountSuccess + CountVal               
+           Move CountVal  To GENACNT400-V                               
+           Compute CountAdd = CountAdd + CountVal                       
+           Move GENACNT400-V To S9                                      
+           String TSQpre,                                               
+                  '400V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S9           To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           Exec CICS Query Counter(GENACNT499)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Compute CountErrors  = CountErrors + CountVal                
+           Move CountVal  To GENACNT499-V                               
+           Move GENACNT499-V To S10                                     
+           Exec CICS Query Counter(GENACNT500)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Compute CountSuccess = CountSuccess + CountVal               
+           Move CountVal  To GENACNT500-V                               
+           Move CountVal  To CountDel                                   
+           Move GENACNT500-V To S11                                     
+           String TSQpre,                                               
+                  '500V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S11          To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           Exec CICS Query Counter(GENACNT599)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Compute CountErrors  = CountErrors + CountVal                
+           Move CountVal  To GENACNT599-V                               
+           Move GENACNT599-V To S12                                     
+           Exec CICS Query Counter(GENACNT600)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Compute CountSuccess = CountSuccess + CountVal               
+           Move CountVal  To GENACNT600-V                               
+           Move CountVal  To CountUpd                                   
+           Move GENACNT600-V To S13                                     
+           String TSQpre,                                               
+                  '600V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S13          To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           Exec CICS Query Counter(GENACNT699)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Compute CountErrors  = CountErrors + CountVal                
+           Move CountVal  To GENACNT699-V                               
+           Move GENACNT699-V To S14                                     
+      *                                                                 
+           Exec CICS Query Counter(GENACNT700)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Compute CountSuccess = CountSuccess + CountVal               
+           Move CountVal  To GENACNT700-V                               
+           Compute CountInq = CountInq + CountVal                       
+           Move GENACNT700-V To S15                                     
+           String TSQpre,                                               
+                  '700V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S15          To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           Exec CICS Query Counter(GENACNT799)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Compute CountErrors  = CountErrors + CountVal                
+           Move CountVal  To GENACNT799-V                               
+           Move GENACNT799-V To S16                                     
+           Exec CICS Query Counter(GENACNT800)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Compute CountSuccess = CountSuccess + CountVal               
+           Move CountVal  To GENACNT800-V                               
+           Compute CountAdd = CountAdd + CountVal                       
+           Move GENACNT800-V To S17                                     
+           String TSQpre,                                               
+                  '800V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S17          To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           Exec CICS Query Counter(GENACNT899)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Compute CountErrors  = CountErrors + CountVal                
+           Move CountVal  To GENACNT899-V                               
+           Move GENACNT899-V To S18                                     
+           Exec CICS Query Counter(GENACNT900)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Compute CountSuccess = CountSuccess + CountVal               
+           Move CountVal  To GENACNT900-V                               
+           Compute CountDel = CountDel + CountVal                       
+           Move GENACNT900-V To S19                                     
+           String TSQpre,                                               
+                  '900V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S19          To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           Exec CICS Query Counter(GENACNT999)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Compute CountErrors  = CountErrors + CountVal                
+           Move CountVal  To GENACNT999-V                               
+           Move GENACNT999-V To S20                                     
+           Exec CICS Query Counter(GENACNTA00)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Compute CountSuccess = CountSuccess + CountVal               
+           Move CountVal  To GENACNTA00-V                               
+           Compute CountUpd = CountUpd + CountVal                       
+           Move GENACNTA00-V To S21                                     
+           String TSQpre,                                               
+                  'A00V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S21          To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           Exec CICS Query Counter(GENACNTA99)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Compute CountErrors  = CountErrors + CountVal                
+           Move CountVal  To GENACNTA99-V                               
+           Move GENACNTA99-V To S22                                     
+      *                                                                 
+           Exec CICS Query Counter(GENACNTB00)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Compute CountSuccess = CountSuccess + CountVal               
+           Move CountVal  To GENACNTB00-V                               
+           Compute CountInq = CountInq + CountVal                       
+           Move GENACNTB00-V To S23                                     
+           String TSQpre,                                               
+                  'B00V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S23          To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           Exec CICS Query Counter(GENACNTB99)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Compute CountErrors  = CountErrors + CountVal                
+           Move CountVal  To GENACNTB99-V                               
+           Move GENACNTB99-V To S24                                     
+           Exec CICS Query Counter(GENACNTC00)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Compute CountSuccess = CountSuccess + CountVal               
+           Move CountVal  To GENACNTC00-V                               
+           Compute CountAdd = CountAdd + CountVal                       
+           Move GENACNTC00-V To S25                                     
+           String TSQpre,                                               
+                  'C00V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S25          To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           Exec CICS Query Counter(GENACNTC99)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Compute CountErrors  = CountErrors + CountVal                
+           Move CountVal  To GENACNTC99-V                               
+           Move GENACNTC99-V To S26                                     
+           Exec CICS Query Counter(GENACNTD00)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Compute CountSuccess = CountSuccess + CountVal               
+           Move CountVal  To GENACNTD00-V                               
+           Compute CountDel = CountDel + CountVal                       
+           Move GENACNTD00-V To S27                                     
+           String TSQpre,                                               
+                  'D00V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S27          To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           Exec CICS Query Counter(GENACNTD99)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Compute CountErrors  = CountErrors + CountVal                
+           Move CountVal  To GENACNTD99-V                               
+           Move GENACNTD99-V To S28                                     
+           Exec CICS Query Counter(GENACNTE00)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Compute CountSuccess = CountSuccess + CountVal               
+           Move CountVal  To GENACNTE00-V                               
+           Compute CountUpd = CountUpd + CountVal                       
+           Move GENACNTE00-V To S29                                     
+           String TSQpre,                                               
+                  'E00V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S29          To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           Exec CICS Query Counter(GENACNTE99)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Compute CountErrors  = CountErrors + CountVal                
+           Move CountVal  To GENACNTE99-V                               
+           Move GENACNTE99-V To S30                                     
+      *                                                                 
+           Exec CICS Query Counter(GENACNTF00)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Compute CountSuccess = CountSuccess + CountVal               
+           Move CountVal  To GENACNTF00-V                               
+           Compute CountInq = CountInq + CountVal                       
+           Move GENACNTF00-V To S31                                     
+           String TSQpre,                                               
+                  'F00V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S31          To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           Exec CICS Query Counter(GENACNTF99)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Compute CountErrors  = CountErrors + CountVal                
+           Move CountVal  To GENACNTF99-V                               
+           Move GENACNTF99-V To S32                                     
+           Exec CICS Query Counter(GENACNTG00)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Compute CountSuccess = CountSuccess + CountVal               
+           Move CountVal  To GENACNTG00-V                               
+           Compute CountAdd = CountAdd + CountVal                       
+           Move GENACNTG00-V To S33                                     
+           String TSQpre,                                               
+                  'G00V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S33          To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           Exec CICS Query Counter(GENACNTG99)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Compute CountErrors  = CountErrors + CountVal                
+           Move CountVal  To GENACNTG99-V                               
+           Move GENACNTG99-V To S34                                     
+           Exec CICS Query Counter(GENACNTH00)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Compute CountSuccess = CountSuccess + CountVal               
+           Move CountVal  To GENACNTH00-V                               
+           Compute CountDel = CountDel + CountVal                       
+           Move GENACNTH00-V To S35                                     
+           String TSQpre,                                               
+                  'H00V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S35          To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           Exec CICS Query Counter(GENACNTH99)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Compute CountErrors  = CountErrors + CountVal                
+           Move CountVal  To GENACNTH99-V                               
+           Move GENACNTH99-V To S36                                     
+                                                                        
+      *                                                                 
+           Exec CICS Query Counter(GENACNTI99)                          
+                            Pool(GENApool)                              
+                            Value(CountVal)                             
+                            Resp(WS-RESP)                               
+           End-Exec.                                                    
+           Move CountVal  To GENACNTI99-V                               
+           Move GENACNTI99-V To S37                                     
+      *                                                                 
+           Move CountSuccess To GENAsucces-V                            
+           Move Counterrors  To GENAerrors-V                            
+           Move GENAsucces-V To S38                                     
+           Move GENAerrors-V To S39                                     
+           String TSQpre,                                               
+                  'X00V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S38          To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+      *                                                                 
+           String TSQpre,                                               
+                  'X01V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move CountInq     To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           String TSQpre,                                               
+                  'X02V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move CountAdd     To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           String TSQpre,                                               
+                  'X03V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move CountUpd     To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           String TSQpre,                                               
+                  'X04V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move CountDel     To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+                                                                        
+      ****************************************************************  
+                                                                        
+           EXEC CICS ASSIGN APPLID(WS-APPLID)                           
+           END-EXEC.                                                    
+           Move WS-APPLID To S1.                                        
+                                                                        
+                                                                        
+           EXEC CICS RETURN                                             
+           END-EXEC.                                                    

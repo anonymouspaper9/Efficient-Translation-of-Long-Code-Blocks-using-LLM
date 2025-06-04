@@ -1,0 +1,57 @@
+```java
+public void invokeMainline(CaPolicyRequest caPolicyRequest) {
+    String wfPolicyData = "";
+    WfPolicyInfo wfPolicyInfo = new WfPolicyInfo();
+    int wsCommareaLen;
+    int wsResp;
+    int wsResp2;
+
+    wsCommareaLen = caPolicyRequest.getWsCommareaLen();
+    wfPolicyInfo.setWfPolicyKey(caPolicyRequest.getWfPolicyKey());
+
+    switch (caPolicyRequest.getWfPolicyKey().getWfRequestId().charAt(0)) {
+        case 'C':
+            // Code for 'C' request
+            break;
+        case 'E':
+            // Code for 'E' request
+            break;
+        case 'H':
+            // Code for 'H' request
+            break;
+        case 'M':
+            // Code for 'M' request
+            break;
+        default:
+            wfPolicyData = new String(new char[wsCommareaLen]).replace("\0", " ");
+    }
+
+    wfPolicyInfo.setWfPolicyData(wfPolicyData);
+    wfPolicyInfo.setWfPolicyNum(caPolicyRequest.getWfPolicyKey().getWfPolicyNum());
+
+    try {
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement("WRITE (KSDSPOLY) OF POLICY-INFO RECORD USING WF-Policy-Info");
+        ps.executeUpdate();
+        ps.close();
+    } catch (SQLException e) {
+        wsResp2 = 80;
+        mainlineWriteErrorMessage(dfhcommarea, wsResp, wsResp2);
+        return;
+    }
+
+    try {
+        ResultSet rs = JdbcConnection.connection.createStatement().executeQuery("SELECT RESP FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        wsResp = rs.getInt(1);
+    } catch (SQLException e) {
+        System.out.println(e);
+        return;
+    }
+
+    if (wsResp != DFHRESP.NORMAL) {
+        wsResp2 = caPolicyRequest.getCaReturnCode();
+        mainlineWriteErrorMessage(dfhcommarea, wsResp, wsResp2);
+    }
+}
+```
+

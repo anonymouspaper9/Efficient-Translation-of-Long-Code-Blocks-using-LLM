@@ -1,0 +1,472 @@
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+           DISPLAY "SNIPPET-1"
+           IF WS-CICS-RESP = DFHRESP(SYSIDERR)
+              PERFORM VARYING SYSIDERR-RETRY FROM 1 BY 1
+              UNTIL SYSIDERR-RETRY > 100
+              OR WS-CICS-RESP = DFHRESP(NORMAL)
+              OR WS-CICS-RESP IS NOT EQUAL TO DFHRESP(SYSIDERR)
+                 EXEC CICS DELAY
+                      FOR
+                      SECONDS(3)
+                 END-EXEC
+                 EXEC CICS REWRITE
+                      FILE('CUSTOMER')
+                      FROM(CUSTOMER-CONTROL)
+                      RESP(WS-CICS-RESP)
+                      RESP2(WS-CICS-RESP2)
+                 END-EXEC
+              END-PERFORM
+           ELSE
+              IF WS-CICS-RESP IS NOT EQUAL TO DFHRESP(NORMAL)
+                 MOVE 'N' TO COMM-SUCCESS
+                 MOVE '4' TO COMM-FAIL-CODE
+                 PERFORM DEQ-NAMED-COUNTER
+                 PERFORM GET-ME-OUT-OF-HERE
+              END-IF
+           END-IF
+           MOVE LAST-CUSTOMER-NUMBER OF CUSTOMER-CONTROL  TO
+              COMM-NUMBER CUSTOMER-NUMBER REQUIRED-CUST-NUMBER2
+              NCS-CUST-NO-VALUE.
+
+## Variable Map:
+WS-CICS-RESP2 gettermapping this.getWsCicsResp2()
+WS-CICS-RESP2 settermapping this.setWsCicsResp2(val)
+WS-CICS-RESP2 PIC S9(8) JavaType int
+WS-CICS-RESP gettermapping this.getWsCicsResp()
+WS-CICS-RESP settermapping this.setWsCicsResp(val)
+WS-CICS-RESP PIC S9(8) JavaType int
+SYSIDERR-RETRY gettermapping this.getSysiderrRetry()
+SYSIDERR-RETRY settermapping this.setSysiderrRetry(val)
+SYSIDERR-RETRY PIC 999 JavaType int
+REQUIRED-CUST-NUMBER2 gettermapping customerKy2.getRequiredCustNumber2()
+REQUIRED-CUST-NUMBER2 settermapping customerKy2.setRequiredCustNumber2(val)
+REQUIRED-CUST-NUMBER2 PIC 9(10) JavaType long
+NCS-CUST-NO-VALUE gettermapping this.getNcsCustNoValue()
+NCS-CUST-NO-VALUE settermapping this.setNcsCustNoValue(val)
+NCS-CUST-NO-VALUE PIC 9(16) JavaType long
+LAST-CUSTOMER-NUMBER gettermapping customerControlRecord.getLastCustomerNumber()
+LAST-CUSTOMER-NUMBER settermapping customerControlRecord.setLastCustomerNumber(val)
+LAST-CUSTOMER-NUMBER PIC 9(10) JavaType long
+CUSTOMER-NUMBER gettermapping customerRecord.getCustomerKey().getCustomerNumber()
+CUSTOMER-NUMBER settermapping customerRecord.getCustomerKey().setCustomerNumber(val)
+CUSTOMER-NUMBER PIC 9(10) JavaType long
+CUSTOMER-CONTROL gettermapping customerControlRecord.getBytes()
+CUSTOMER-CONTROL settermapping customerControlRecord.setBytes(val)
+CUSTOMER-CONTROL GROUP JavaType CustomerControlRecord
+COMM-SUCCESS gettermapping dfhcommarea.getCommSuccess()
+COMM-SUCCESS settermapping dfhcommarea.setCommSuccess(val)
+COMM-SUCCESS PIC X JavaType char
+COMM-NUMBER gettermapping dfhcommarea.getCommNumber()
+COMM-NUMBER settermapping dfhcommarea.setCommNumber(val)
+COMM-NUMBER PIC 9(10) JavaType long
+COMM-FAIL-CODE gettermapping dfhcommarea.getCommFailCode()
+COMM-FAIL-CODE settermapping dfhcommarea.setCommFailCode(val)
+COMM-FAIL-CODE PIC X JavaType char
+
+
+## Class Map:
+public void getLastCustomerVsamGlcv010(Dfhcommarea dfhcommarea){
+    CustomerControlRecord customerControlRecord = new CustomerControlRecord();
+    CustomerKy2 customerKy2 = new CustomerKy2();
+    CustomerRecord customerRecord = new CustomerRecord();
+}
+
+
+Output:
+=====================
+
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+           INITIALIZE CUSTOMER-CONTROL
+           MOVE ZERO TO CUSTOMER-CONTROL-SORTCODE
+           MOVE ALL '9' TO CUSTOMER-CONTROL-NUMBER
+           EXEC CICS READ
+                UPDATE
+                FILE('CUSTOMER')
+                INTO(CUSTOMER-CONTROL)
+                RESP(WS-CICS-RESP)
+                RESP2(WS-CICS-RESP2)
+                RIDFLD(CUSTOMER-CONTROL-KEY)
+           END-EXEC
+           IF WS-CICS-RESP = DFHRESP(SYSIDERR)
+             PERFORM VARYING SYSIDERR-RETRY FROM 1 BY 1
+             UNTIL SYSIDERR-RETRY > 100
+             OR WS-CICS-RESP = DFHRESP(NORMAL)
+             OR WS-CICS-RESP IS NOT EQUAL TO DFHRESP(SYSIDERR)
+               EXEC CICS DELAY
+                    FOR
+                    SECONDS(3)
+               END-EXEC
+               EXEC CICS READ
+                    UPDATE
+                    FILE('CUSTOMER')
+                    INTO(CUSTOMER-CONTROL)
+                    RESP(WS-CICS-RESP)
+                    RESP2(WS-CICS-RESP2)
+                    RIDFLD(CUSTOMER-CONTROL-KEY)
+               END-EXEC
+             END-PERFORM
+           ELSE
+             IF WS-CICS-RESP IS NOT = DFHRESP(NORMAL)
+               MOVE 'N' TO COMM-SUCCESS
+               MOVE '4' TO COMM-FAIL-CODE
+               PERFORM DEQ-NAMED-COUNTER
+               PERFORM GET-ME-OUT-OF-HERE
+             END-IF
+           END-IF.
+           ADD 1 TO LAST-CUSTOMER-NUMBER IN CUSTOMER-CONTROL
+           GIVING LAST-CUSTOMER-NUMBER IN CUSTOMER-CONTROL
+           EXEC CICS REWRITE
+                FILE('CUSTOMER')
+                FROM(CUSTOMER-CONTROL)
+                RESP(WS-CICS-RESP)
+                RESP2(WS-CICS-RESP2)
+           END-EXEC
+
+## Variable Map:
+WS-CICS-RESP2 gettermapping this.getWsCicsResp2()
+WS-CICS-RESP2 settermapping this.setWsCicsResp2(val)
+WS-CICS-RESP2 PIC S9(8) JavaType int
+WS-CICS-RESP gettermapping this.getWsCicsResp()
+WS-CICS-RESP settermapping this.setWsCicsResp(val)
+WS-CICS-RESP PIC S9(8) JavaType int
+SYSIDERR-RETRY gettermapping this.getSysiderrRetry()
+SYSIDERR-RETRY settermapping this.setSysiderrRetry(val)
+SYSIDERR-RETRY PIC 999 JavaType int
+LAST-CUSTOMER-NUMBER gettermapping customerControlRecord.getLastCustomerNumber()
+LAST-CUSTOMER-NUMBER settermapping customerControlRecord.setLastCustomerNumber(val)
+LAST-CUSTOMER-NUMBER PIC 9(10) JavaType long
+CUSTOMER-CONTROL-SORTCODE gettermapping customerControlRecord.getCustomerControlKey().getCustomerControlSortcode()
+CUSTOMER-CONTROL-SORTCODE settermapping customerControlRecord.getCustomerControlKey().setCustomerControlSortcode(val)
+CUSTOMER-CONTROL-SORTCODE PIC 9(6) JavaType int
+CUSTOMER-CONTROL-NUMBER gettermapping customerControlRecord.getCustomerControlKey().getCustomerControlNumber()
+CUSTOMER-CONTROL-NUMBER settermapping customerControlRecord.getCustomerControlKey().setCustomerControlNumber(val)
+CUSTOMER-CONTROL-NUMBER PIC 9(10) JavaType long
+CUSTOMER-CONTROL-KEY gettermapping customerControlRecord.getCustomerControlKey().getBytes()
+CUSTOMER-CONTROL-KEY settermapping customerControlRecord.getCustomerControlKey().setBytes(val)
+CUSTOMER-CONTROL-KEY GROUP JavaType CustomerControlKey
+CUSTOMER-CONTROL gettermapping customerControlRecord.getBytes()
+CUSTOMER-CONTROL settermapping customerControlRecord.setBytes(val)
+CUSTOMER-CONTROL GROUP JavaType CustomerControlRecord
+COMM-SUCCESS gettermapping dfhcommarea.getCommSuccess()
+COMM-SUCCESS settermapping dfhcommarea.setCommSuccess(val)
+COMM-SUCCESS PIC X JavaType char
+COMM-FAIL-CODE gettermapping dfhcommarea.getCommFailCode()
+COMM-FAIL-CODE settermapping dfhcommarea.setCommFailCode(val)
+COMM-FAIL-CODE PIC X JavaType char
+
+
+## Class Map:
+public void getLastCustomerVsamGlcv010(Dfhcommarea dfhcommarea){
+    CustomerControlRecord customerControlRecord = new CustomerControlRecord();
+}
+
+
+Output:
+=====================
+

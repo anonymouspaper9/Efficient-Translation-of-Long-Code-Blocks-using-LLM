@@ -1,0 +1,43 @@
+```java
+public void sendTerminationMsgStm010() {
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    String endOfSessionMessage = "Session Ended";
+    String wsAbendPgm = "ABNDPROC";
+    int wsCicsResp = 0;
+    int wsCicsResp2 = 0;
+    WsFailInfo wsFailInfo = new WsFailInfo();
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+
+    /* This is prompt example 2 */
+    if (CICS.send(endOfSessionMessage, CICS.erase(), CICS.freekb(), null, wsCicsResp, wsCicsResp2)) {
+        if (wsCicsResp != CICS.NORMAL) {
+            abndinfoRec.setAbndUtimeKey(System.currentTimeMillis());
+            abndinfoRec.setAbndTranid("ABND");
+            populateTimeDatePtd010(wsTimeNowGrp, abndinfoRec);
+            abndinfoRec.setAbndDate(wsTimeNowGrp.getWsOrigDate());
+            abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm());
+            abndinfoRec.setAbndUtimeKey(System.currentTimeMillis());
+            abndinfoRec.setAbndSqlcode(0);
+            abndinfoRec.setAbndRespcode(wsCicsResp);
+            abndinfoRec.setAbndResp2Code(wsCicsResp2);
+            abndinfoRec.setAbndProgram(wsAbendPgm);
+            abndinfoRec.setAbndFreeform("STM010 - SEND TEXT FAIL."
+                    + " EIBRESP=" + wsCicsResp
+                    + " RESP2=" + wsCicsResp2);
+
+            try {
+                CICS.assign(CICS.APPLID(abndinfoRec.getAbndApplid()));
+                CICS.link(abndinfoRec);
+            } catch (Exception e) {
+                System.out.println(e);
+                return;
+            }
+
+            wsFailInfo.setWsCicsResp(wsCicsResp);
+            wsFailInfo.setWsCicsResp2(wsCicsResp2);
+            wsFailInfo.setWsCicsFailMsg("BNKMENU - STM010 - SEND TEXT FAIL");
+            abendThisTaskAtt010(wsFailInfo);
+        }
+    }
+}
+```

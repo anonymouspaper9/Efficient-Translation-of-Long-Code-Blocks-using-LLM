@@ -1,0 +1,142 @@
+public void editDataEd010(Switches switches){
+    DateReformed dateReformed = new DateReformed();
+    String dobddiChar = "";
+    String dobmmiChar = "";
+    if (custno2l > 0) {
+        messageo = "Please clear screen before creating new user";
+        custtitl = -1;
+        switches.setValidDataSw('N');
+        return;
+    }
+    if (custtitl < 1 || custtiti.trim().equals("") || custtiti.trim().equals(" ")) {
+        messageo = "Valid titles are: Mr,Mrs,Miss,Ms,Dr,Professor,Drs,Lord,Sir,Lady";
+        custtitl = -1;
+        switches.setValidDataSw('N');
+        return;
+    }
+    messageo = "";
+    if (custtitl > 0) {
+        if (custtiti.trim().toUpperCase().equals("MR")) {
+            custtiti = "Mr";
+        } else if (custtiti.trim().toUpperCase().equals("MRS")) {
+            custtiti = "Mrs";
+        } else if (custtiti.trim().toUpperCase().equals("MISS")) {
+            custtiti = "Miss";
+        } else if (custtiti.trim().toUpperCase().equals("MS")) {
+            custtiti = "Ms";
+        } else if (custtiti.trim().toUpperCase().equals("DR")) {
+            custtiti = "Dr";
+        } else if (custtiti.trim().toUpperCase().equals("DRS")) {
+            custtiti = "Drs";
+        } else if (custtiti.trim().toUpperCase().equals("PROFESSOR")) {
+            custtiti = "Professor";
+        } else if (custtiti.trim().toUpperCase().equals("LORD")) {
+            custtiti = "Lord";
+        } else if (custtiti.trim().toUpperCase().equals("LADY")) {
+            custtiti = "Lady";
+        } else if (custtiti.trim().toUpperCase().equals("SIR")) {
+            custtiti = "Sir";
+        } else {
+            messageo = "Valid titles are: Mr,Mrs,Miss,Ms,Dr,Drs,Professor,Lord,Sir,Lady";
+            custtitl = -1;
+            switches.setValidDataSw('N');
+            return;
+        }
+    }
+    if (christnl < 1 || christni.trim().equals("") || christni.trim().equals(" ")) {
+        messageo = "Please supply a valid First Name";
+        christnl = -1;
+        switches.setValidDataSw('N');
+        return;
+    }
+    if (custsnl < 1 || custsni.trim().equals("") || custsni.trim().equals(" ")) {
+        messageo = "Please supply a valid Surname";
+        custsnl = -1;
+        switches.setValidDataSw('N');
+        return;
+    }
+    if (custad1i.trim().substring(0, 1).equals("_") || custad1l < 1 || custad1i.trim().equals("")) {
+        messageo = "Please supply a valid Address Line 1";
+        custad1l = -1;
+        switches.setValidDataSw('N');
+        return;
+    }
+    if (dobddl < 1 || dobddi.trim().equals("")) {
+        messageo = "Please supply a valid Date of Birth DD";
+        dobddl = -1;
+        switches.setValidDataSw('N');
+        return;
+    }
+    if (dobmml < 1 || dobmmi.trim().equals("")) {
+        messageo = "Please supply a valid Date of Birth MM";
+        dobmml = -1;
+        switches.setValidDataSw('N');
+        return;
+    }
+    if (dobyyL < 4 || dobYYi.trim().equals("")) {
+        messageo = "Please supply a valid Date of Birth YYYY";
+        dobyyL = -1;
+        switches.setValidDataSw('N');
+        return;
+    }
+    if (!dobddi.trim().matches("\\d+")) {
+        messageo = "Non numeric Date of Birth DD entered";
+        dobddl = -1;
+        switches.setValidDataSw('N');
+        return;
+    }
+    if (!dobmmi.trim().matches("\\d+")) {
+        messageo = "Non numeric Date of Birth MM entered";
+        dobmml = -1;
+        switches.setValidDataSw('N');
+        return;
+    }
+    if (!dobyyi.trim().matches("\\d+")) {
+        messageo = "Non numeric Date of Birth YYYY entered";
+        dobyyL = -1;
+        switches.setValidDataSw('N');
+        return;
+    }
+    dobddiChar = dobddi.trim();
+    ((DobddiReform) (dateReformed)).setDobddiNum(Integer.parseInt(dobddiChar));
+    if (((DobddiReform) (dateReformed)).getDobddiNum() < 1 || ((DobddiReform) (dateReformed)).getDobddiNum() > 31) {
+        messageo = "Please supply a valid Date of Birth (DD)";
+        dobddl = -1;
+        switches.setValidDataSw('N');
+        return;
+    }
+    dobmmiChar = dobmmi.trim();
+    ((DobmmiReform) (dateReformed)).setDobmmiNum(Integer.parseInt(dobmmiChar));
+    if (((DobmmiReform) (dateReformed)).getDobmmiNum() < 1 || ((DobmmiReform) (dateReformed)).getDobmmiNum() > 12) {
+        messageo = "Please supply a valid Date of Birth (MM)";
+        dobmml = -1;
+        switches.setValidDataSw('N');
+        return;
+    }
+    if (custtitl < 1 || christnl < 1 || custsnl < 1 || custad1l < 1 || dobddl < 1 || dobmml < 1 || dobyyL < 1) {
+        messageo = "Missing expected data.";
+        if (custtitl < 1) {
+            custtitl = -1;
+        }
+        if (christnl < 1) {
+            christnl = -1;
+        }
+        if (custsnl < 1) {
+            custsnl = -1;
+        }
+        if (custad1l < 1) {
+            custad1l = -1;
+        }
+        if (dobddl < 1) {
+            dobddl = -1;
+        }
+        if (dobmml < 1) {
+            dobmml = -1;
+        }
+        if (dobyyL < 1) {
+            dobyyL = -1;
+        }
+        switches.setValidDataSw('N');
+        return;
+    }
+}

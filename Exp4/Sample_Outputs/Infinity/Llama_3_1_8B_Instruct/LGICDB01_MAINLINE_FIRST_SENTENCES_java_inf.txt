@@ -1,0 +1,367 @@
+public void invokeMainline(Dfhcommarea dfhcommarea){
+    int db2CustomernumberInt;
+    ErrorMsg errorMsg = new ErrorMsg();
+    int wsCaHeadertrailerLen = 18;
+    int wsCustomerLen = 72;
+    WsHeader wsHeader = new WsHeader();
+    int wsRequiredCaLen = 0;
+    if (dfhcommarea.getEibCaleN() == 0){
+        errorMsg.setEmVariable(" NO COMMAREA RECEIVED");
+        mainlineWriteErrorMessage(dfhcommarea, errorMsg);
+        System.exit(0);
+    }
+    dfhcommarea.setCaReturnCode(0);
+    wsHeader.setWsCalen(dfhcommarea.getEibCaleN());
+    wsHeader.setWsAddrDfhcommarea(dfhcommarea.getBytes());
+    wsRequiredCaLen = wsCustomerLen + wsCaHeadertrailerLen;
+    if (dfhcommarea.getEibCaleN() < wsRequiredCaLen){
+        dfhcommarea.setCaReturnCode(98);
+        System.exit(0);
+    }
+    db2CustomernumberInt = dfhcommarea.getCaCustomerNum();
+    mainlineGetCustomerInfo(caCustomerRequest, db2CustomernumberInt, errorMsg);
+} 
+
+Input:
+       GET-CUSTOMER-INFO SECTION.                                      
+           MOVE WS-CUSTOMER-LEN        TO WS-REQUIRED-CA-LEN            
+           ADD WS-CA-HEADERTRAILER-LEN TO WS-REQUIRED-CA-LEN            
+           IF EIBCALEN IS LESS THAN WS-REQUIRED-CA-LEN                  
+             MOVE '98' TO CA-RETURN-CODE                                
+             EXEC CICS RETURN
+             END-EXEC                                  
+           END-IF                                                       
+           MOVE CA-CUSTOMER-NUM TO DB2-CUSTOMERNUMBER-INT               
+           MOVE CA-CUSTOMER-NUM TO EM-CUSNUM                            
+           PERFORM CALL-DB2-STORED-PROCEDURE.                            
+
+## Variable Map:
+WS-REQUIRED-CA-LEN gettermapping wsRequiredCaLen
+WS-REQUIRED-CA-LEN settermapping wsRequiredCaLen = val
+WS-REQUIRED-CA-LEN PIC S9(4) JavaType int
+WS-CA-HEADERTRAILER-LEN gettermapping wsCaHeadertrailerLen
+WS-CA-HEADERTRAILER-LEN settermapping wsCaHeadertrailerLen = val
+WS-CA-HEADERTRAILER-LEN PIC S9(4) JavaType int
+WS-CUSTOMER-LEN gettermapping wsCustomerLen
+WS-CUSTOMER-LEN settermapping wsCustomerLen = val
+WS-CUSTOMER-LEN PIC S9(4) JavaType int
+CA-RETURN-CODE gettermapping dfhcommarea.getCaReturnCode()
+CA-RETURN-CODE settermapping dfhcommarea.setCaReturnCode(val)
+CA-RETURN-CODE PIC 9(2) JavaType int
+CA-CUSTOMER-NUM gettermapping dfhcommarea.getCaCustomerNum()
+CA-CUSTOMER-NUM settermapping dfhcommarea.setCaCustomerNum(val)
+CA-CUSTOMER-NUM PIC 9(10) JavaType long
+EM-CUSNUM gettermapping errorMsg.getEmVariable().getEmCusnum()
+EM-CUSNUM settermapping errorMsg.getEmVariable().setEmCusnum(val)
+EM-CUSNUM PIC X(10) JavaType String
+DB2-CUSTOMERNUMBER-INT gettermapping db2CustomernumberInt
+DB2-CUSTOMERNUMBER-INT settermapping db2CustomernumberInt = val
+DB2-CUSTOMERNUMBER-INT PIC S9(9) JavaType int
+CALL-DB2-STORED-PROCEDURE, mainlineCallDb2StoredProcedure(caCustomerRequest, db2CustomernumberInt, errorMsg)
+
+## Class Map:
+public void mainlineGetCustomerInfo(caCustomerRequest caCustomerRequest, int db2CustomernumberInt, ErrorMsg errorMsg){
+    int wsCaHeadertrailerLen = 18;
+    int wsCustomerLen = 72;
+    WsHeader wsHeader = new WsHeader();
+    int wsRequiredCaLen = 0;
+}
+
+Output:
+public void mainlineGetCustomerInfo(caCustomerRequest caCustomerRequest, int db2CustomernumberInt, ErrorMsg errorMsg){
+    int wsCaHeadertrailerLen = 18;
+    int wsCustomerLen = 72;
+    WsHeader wsHeader = new WsHeader();
+    int wsRequiredCaLen = 0;
+    if (caCustomerRequest.getEibCaleN() < wsRequiredCaLen){
+        dfhcommarea.setCaReturnCode(98);
+        System.exit(0);
+    }
+    db2CustomernumberInt = caCustomerRequest.getCaCustomerNum();
+    mainlineCallDb2StoredProcedure(caCustomerRequest, db2CustomernumberInt, errorMsg);
+}
+
+Input:
+       CALL-DB2-STORED-PROCEDURE SECTION.                                 
+           EXEC SQL
+             CALL DB2STOREDPROCEDURE
+               ( CUSTOMERNUMBER = :DB2-CUSTOMERNUMBER-INT)
+           END-EXEC
+           IF SQLCODE NOT EQUAL 0
+             MOVE '98' TO CA-RETURN-CODE
+             EXEC CICS RETURN
+             END-EXEC
+           END-IF
+
+## Variable Map:
+DB2-CUSTOMERNUMBER-INT gettermapping db2CustomernumberInt
+DB2-CUSTOMERNUMBER-INT settermapping db2CustomernumberInt = val
+DB2-CUSTOMERNUMBER-INT PIC S9(9) JavaType int
+
+## Class Map:
+public void mainlineCallDb2StoredProcedure(caCustomerRequest caCustomerRequest, int db2CustomernumberInt, ErrorMsg errorMsg){
+    // 
+}
+
+Output:
+public void mainlineCallDb2StoredProcedure(caCustomerRequest caCustomerRequest, int db2CustomernumberInt, ErrorMsg errorMsg){
+    try {
+        String sql = "CALL DB2STOREDPROCEDURE(CUSTOMERNUMBER = ?)";
+        CallableStatement cs = JdbcConnection.connection.prepareCall(sql);
+        cs.setInt(1, db2CustomernumberInt);
+        cs.execute();
+        cs.close();
+    }
+    catch(SQLException exception) {
+        dfhcommarea.setCaReturnCode(98);
+        System.exit(0);
+    }
+} 
+
+Input:
+       WRITE-ERROR-MESSAGE SECTION.                                      
+           MOVE 'ERROR MESSAGE' TO EM-VARIABLE.                            
+           PERFORM DISPLAY-ERROR-MESSAGE.                                   
+           EXEC CICS RETURN
+           END-EXEC
+
+## Variable Map:
+EM-VARIABLE gettermapping errorMsg.getEmVariable().getBytes()
+EM-VARIABLE settermapping errorMsg.getEmVariable().setBytes(val)
+EM-VARIABLE GROUP JavaType EmVariable
+DISPLAY-ERROR-MESSAGE, mainlineDisplayErrorMessage(dfhcommarea, errorMsg)
+
+## Class Map:
+public void mainlineWriteErrorMessage(Dfhcommarea dfhcommarea, ErrorMsg errorMsg){
+    // 
+}
+
+Output:
+public void mainlineWriteErrorMessage(Dfhcommarea dfhcommarea, ErrorMsg errorMsg){
+    errorMsg.setEmVariable("ERROR MESSAGE");
+    mainlineDisplayErrorMessage(dfhcommarea, errorMsg);
+}
+
+Input:
+       DISPLAY-ERROR-MESSAGE SECTION.                                      
+           DISPLAY EM-VARIABLE.                                             
+           EXEC CICS RETURN
+           END-EXEC
+
+## Variable Map:
+EM-VARIABLE gettermapping errorMsg.getEmVariable().getBytes()
+EM-VARIABLE settermapping errorMsg.getEmVariable().setBytes(val)
+EM-VARIABLE GROUP JavaType EmVariable
+
+## Class Map:
+public void mainlineDisplayErrorMessage(Dfhcommarea dfhcommarea, ErrorMsg errorMsg){
+    // 
+}
+
+Output:
+public void mainlineDisplayErrorMessage(Dfhcommarea dfhcommarea, ErrorMsg errorMsg){
+    System.out.println(errorMsg.getEmVariable());
+} 
+
+Input:
+       INITIALIZE WS-HEADER.                                        
+           MOVE EIBTRNID TO WS-TRANSID.                                 
+           MOVE EIBTRMID TO WS-TERMID.                                  
+           MOVE EIBTASKN TO WS-TASKNUM.                                 
+           IF EIBCALEN IS EQUAL TO ZERO                                 
+               MOVE ' NO COMMAREA RECEIVED' TO EM-VARIABLE              
+               PERFORM WRITE-ERROR-MESSAGE                              
+               EXEC CICS ABEND
+                    NODUMP
+                    ABCODE('LGCA')
+               END-EXEC           
+           END-IF                                                       
+           MOVE '00' TO CA-RETURN-CODE                                  
+           MOVE EIBCALEN TO WS-CALEN.                                   
+           SET WS-ADDR-DFHCOMMAREA TO ADDRESS OF DFHCOMMAREA.           
+           INITIALIZE DB2-IN-INTEGERS.                                  
+           MOVE WS-CUSTOMER-LEN        TO WS-REQUIRED-CA-LEN            
+           ADD WS-CA-HEADERTRAILER-LEN TO WS-REQUIRED-CA-LEN            
+           IF EIBCALEN IS LESS THAN WS-REQUIRED-CA-LEN                  
+             MOVE '98' TO CA-RETURN-CODE                                
+             EXEC CICS RETURN
+             END-EXEC                                  
+           END-IF                                                       
+           MOVE CA-CUSTOMER-NUM TO DB2-CUSTOMERNUMBER-INT               
+           MOVE CA-CUSTOMER-NUM TO EM-CUSNUM                            
+           PERFORM GET-CUSTOMER-INFO.                                   
+
+## Variable Map:
+WS-TRANSID gettermapping wsHeader.getWsTransid()
+WS-TRANSID settermapping wsHeader.setWsTransid(val)
+WS-TRANSID PIC X(4) JavaType String
+WS-TERMID gettermapping wsHeader.getWsTermid()
+WS-TERMID settermapping wsHeader.setWsTermid(val)
+WS-TERMID PIC X(4) JavaType String
+WS-TASKNUM gettermapping wsHeader.getWsTasknum()
+WS-TASKNUM settermapping wsHeader.setWsTasknum(val)
+WS-TASKNUM PIC 9(7) JavaType int
+WS-REQUIRED-CA-LEN gettermapping wsRequiredCaLen
+WS-REQUIRED-CA-LEN settermapping wsRequiredCaLen = val
+WS-REQUIRED-CA-LEN PIC S9(4) JavaType int
+WS-HEADER gettermapping wsHeader.getBytes()
+WS-HEADER settermapping wsHeader.setBytes(val)
+WS-HEADER GROUP JavaType WsHeader
+WS-CUSTOMER-LEN gettermapping wsCustomerLen
+WS-CUSTOMER-LEN settermapping wsCustomerLen = val
+WS-CUSTOMER-LEN PIC S9(4) JavaType int
+WS-CALEN gettermapping wsHeader.getWsCalen()
+WS-CALEN settermapping wsHeader.setWsCalen(val)
+WS-CALEN PIC S9(4) JavaType int
+WS-CA-HEADERTRAILER-LEN gettermapping wsCaHeadertrailerLen
+WS-CA-HEADERTRAILER-LEN settermapping wsCaHeadertrailerLen = val
+WS-CA-HEADERTRAILER-LEN PIC S9(4) JavaType int
+WS-ADDR-DFHCOMMAREA gettermapping wsHeader.getWsAddrDfhcommarea()
+WS-ADDR-DFHCOMMAREA settermapping wsHeader.getWsAddrDfhcommarea()
+WS-ADDR-DFHCOMMAREA GROUP JavaType String
+EM-VARIABLE gettermapping errorMsg.getEmVariable().getBytes()
+EM-VARIABLE settermapping errorMsg.getEmVariable().setBytes(val)
+EM-VARIABLE GROUP JavaType EmVariable
+EM-CUSNUM gettermapping errorMsg.getEmVariable().getEmCusnum()
+EM-CUSNUM settermapping errorMsg.getEmVariable().setEmCusnum(val)
+EM-CUSNUM PIC X(10) JavaType String
+DB2-IN-INTEGERS gettermapping db2CustomernumberInt
+DB2-IN-INTEGERS settermapping db2CustomernumberInt
+DB2-IN-INTEGERS GROUP JavaType int
+DB2-CUSTOMERNUMBER-INT gettermapping db2CustomernumberInt
+DB2-CUSTOMERNUMBER-INT settermapping db2CustomernumberInt = val
+DB2-CUSTOMERNUMBER-INT PIC S9(9) JavaType int
+CA-RETURN-CODE gettermapping dfhcommarea.getCaReturnCode()
+CA-RETURN-CODE settermapping dfhcommarea.setCaReturnCode(val)
+CA-RETURN-CODE PIC 9(2) JavaType int
+CA-CUSTOMER-NUM gettermapping dfhcommarea.getCaCustomerNum()
+CA-CUSTOMER-NUM settermapping dfhcommarea.setCaCustomerNum(val)
+CA-CUSTOMER-NUM PIC 9(10) JavaType long
+MAINLINE_GET-CUSTOMER-INFO, mainlineGetCustomerInfo(caCustomerRequest, db2CustomernumberInt, errorMsg)
+
+## Class Map:
+public void invokeMainline(Dfhcommarea dfhcommarea){
+    int db2CustomernumberInt;
+    ErrorMsg errorMsg = new ErrorMsg();
+    int wsCaHeadertrailerLen = 18;
+    int wsCustomerLen = 72;
+    WsHeader wsHeader = new WsHeader();
+    int wsRequiredCaLen = 0;
+}
+
+Output:
+public void invokeMainline(Dfhcommarea dfhcommarea){
+    int db2CustomernumberInt;
+    ErrorMsg errorMsg = new ErrorMsg();
+    int wsCaHeadertrailerLen = 18;
+    int wsCustomerLen = 72;
+    WsHeader wsHeader = new WsHeader();
+    int wsRequiredCaLen = 0;
+    if (dfhcommarea.getEibCaleN() == 0){
+        errorMsg.setEmVariable(" NO COMMAREA RECEIVED");
+        mainlineWriteErrorMessage(dfhcommarea, errorMsg);
+        System.exit(0);
+    }
+    dfhcommarea.setCaReturnCode(0);
+    wsHeader.setWsCalen(dfhcommarea.getEibCaleN());
+    wsHeader.setWsAddrDfhcommarea(dfhcommarea.getBytes());
+    wsRequiredCaLen = wsCustomerLen + wsCaHeadertrailerLen;
+    if (dfhcommarea.getEibCaleN() < wsRequiredCaLen){
+        dfhcommarea.setCaReturnCode(98);
+        System.exit(0);
+    }
+    db2CustomernumberInt = dfhcommarea.getCaCustomerNum();
+    mainlineGetCustomerInfo(caCustomerRequest, db2CustomernumberInt, errorMsg);
+} 
+
+Input:
+       GET-CUSTOMER-INFO SECTION.                                      
+           MOVE WS-CUSTOMER-LEN        TO WS-REQUIRED-CA-LEN            
+           ADD WS-CA-HEADERTRAILER-LEN TO WS-REQUIRED-CA-LEN            
+           IF EIBCALEN IS LESS THAN WS-REQUIRED-CA-LEN                  
+             MOVE '98' TO CA-RETURN-CODE                                
+             EXEC CICS RETURN
+             END-EXEC                                  
+           END-IF                                                       
+           MOVE CA-CUSTOMER-NUM TO DB2-CUSTOMERNUMBER-INT               
+           MOVE CA-CUSTOMER-NUM TO EM-CUSNUM                            
+           PERFORM CALL-DB2-STORED-PROCEDURE.                            
+
+## Variable Map:
+WS-REQUIRED-CA-LEN gettermapping wsRequiredCaLen
+WS-REQUIRED-CA-LEN settermapping wsRequiredCaLen = val
+WS-REQUIRED-CA-LEN PIC S9(4) JavaType int
+WS-CA-HEADERTRAILER-LEN gettermapping wsCaHeadertrailerLen
+WS-CA-HEADERTRAILER-LEN settermapping wsCaHeadertrailerLen = val
+WS-CA-HEADERTRAILER-LEN PIC S9(4) JavaType int
+WS-CUSTOMER-LEN gettermapping wsCustomerLen
+WS-CUSTOMER-LEN settermapping wsCustomerLen = val
+WS-CUSTOMER-LEN PIC S9(4) JavaType int
+CA-RETURN-CODE gettermapping dfhcommarea.getCaReturnCode()
+CA-RETURN-CODE settermapping dfhcommarea.setCaReturnCode(val)
+CA-RETURN-CODE PIC 9(2) JavaType int
+CA-CUSTOMER-NUM gettermapping dfhcommarea.getCaCustomerNum()
+CA-CUSTOMER-NUM settermapping dfhcommarea.setCaCustomerNum(val)
+CA-CUSTOMER-NUM PIC 9(10) JavaType long
+EM-CUSNUM gettermapping errorMsg.getEmVariable().getEmCusnum()
+EM-CUSNUM settermapping errorMsg.getEmVariable().setEmCusnum(val)
+EM-CUSNUM PIC X(10) JavaType String
+DB2-CUSTOMERNUMBER-INT gettermapping db2CustomernumberInt
+DB2-CUSTOMERNUMBER-INT settermapping db2CustomernumberInt = val
+DB2-CUSTOMERNUMBER-INT PIC S9(9) JavaType int
+CALL-DB2-STORED-PROCEDURE, mainlineCallDb2StoredProcedure(caCustomerRequest, db2CustomernumberInt, errorMsg)
+
+## Class Map:
+public void mainlineGetCustomerInfo(caCustomerRequest caCustomerRequest, int db2CustomernumberInt, ErrorMsg errorMsg){
+    int wsCaHeadertrailerLen = 18;
+    int wsCustomerLen = 72;
+    WsHeader wsHeader = new WsHeader();
+    int wsRequiredCaLen = 0;
+}
+
+Output:
+public void mainlineGetCustomerInfo(caCustomerRequest caCustomerRequest, int db2CustomernumberInt, ErrorMsg errorMsg){
+    int wsCaHeadertrailerLen = 18;
+    int wsCustomerLen = 72;
+    WsHeader wsHeader = new WsHeader();
+    int wsRequiredCaLen = 0;
+    if (caCustomerRequest.getEibCaleN() < wsRequiredCaLen){
+        dfhcommarea.setCaReturnCode(98);
+        System.exit(0);
+    }
+    db2CustomernumberInt = caCustomerRequest.getCaCustomerNum();
+    mainlineCallDb2StoredProcedure(caCustomerRequest, db2CustomernumberInt, errorMsg);
+}
+
+Input:
+       CALL-DB2-STORED-PROCEDURE SECTION.                                 
+           EXEC SQL
+             CALL DB2STOREDPROCEDURE
+               ( CUSTOMERNUMBER = :DB2-CUSTOMERNUMBER-INT)
+           END-EXEC
+           IF SQLCODE NOT EQUAL 0
+             MOVE '98' TO CA-RETURN-CODE
+             EXEC CICS RETURN
+             END-EXEC
+           END-IF
+
+## Variable Map:
+DB2-CUSTOMERNUMBER-INT gettermapping db2CustomernumberInt
+DB2-CUSTOMERNUMBER-INT settermapping db2CustomernumberInt = val
+DB2-CUSTOMERNUMBER-INT PIC S9(9) JavaType int
+
+## Class Map:
+public void mainlineCallDb2StoredProcedure(caCustomerRequest caCustomerRequest, int db2CustomernumberInt, ErrorMsg errorMsg){
+    // 
+}
+
+Output:
+public void mainlineCallDb2StoredProcedure(caCustomerRequest caCustomerRequest, int db2CustomernumberInt, ErrorMsg errorMsg){
+    try {
+        String sql = "CALL DB2STOREDPROCEDURE(CUSTOMERNUMBER = ?)";
+        CallableStatement cs = JdbcConnection.connection.prepareCall(sql);
+        cs.setInt(1, db2CustomernumberInt);
+        cs.execute();
+        cs.close();
+    }
+    catch(SQLException exception)

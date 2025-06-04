@@ -1,0 +1,164 @@
+
+```java
+public void premiereA010(int sanNum) {
+    String timestampFunction = "Starting BANKDATA";
+    System.out.println(timestampFunction);
+
+    performInitialiseArrays(sanNum);
+    System.out.println("INPUT PARMS ARE: START-KEY=" + startKey +
+                       ", END-KEY=" + endKey + ", STEP-KEY=" + stepKey +
+                       ", RANDOM-SEED=" + randomSeed);
+
+    if (endKey < startKey) {
+        returnCode = "12";
+        System.out.println("Final customer number cannot be smaller than " +
+                           "first customer number");
+        return;
+    }
+
+    if (stepKey == 0) {
+        returnCode = "12";
+        System.out.println("Gap between customers cannot be zero");
+        return;
+    }
+
+    getTodaysDate();
+    System.out.println("About to delete DB2 rows");
+    deleteDb2Rows();
+    System.out.println("Back from delete DB2 rows");
+
+    randomSeedNumeric = random();
+    System.out.println("RANDOM SEED IS " + randomSeedNumeric);
+
+    forenamesPtr = (forenamesCnt - 1) * random() + 1;
+    initialsPtr = (initialsCnt - 1) * random() + 1;
+    surnamesPtr = (surnamesCnt - 1) * random() + 1;
+    streetNameTPtr = (streetNameTCnt - 1) * random() + 1;
+    streetNameRPtr = (streetNameRCnt - 1) * random() + 1;
+    accountTypesPtr = (accountTypesCount - 1) * random() + 1;
+
+    openCustomerFile();
+    if (customerVsamStatus != "00") {
+        System.out.println("Error opening CUSTOMER file, status=" +
+                           customerVsamStatus);
+        returnCode = "12";
+        programDonePd010();
+    }
+
+    timestampFunction = "Populating Customer + Account files";
+    System.out.println(timestampFunction);
+    commitCount = 0;
+    lastCustomerNumber = 0;
+    lastAccountNumber = 0;
+
+    for (nextKey = startKey; nextKey <= endKey; nextKey += stepKey) {
+        System.out.println("Generating data for customer " + nextKey);
+
+        titleNumber = ((36 - 1) * random()) + 1;
+        titleWords.getTitleWord().set(titleNumber - 1, titleWord(titleNumber));
+
+        forename.set(forenamesPtr - 1, forename(forenamesPtr));
+        initials.getInitialCharacter().set(initialsPtr - 1, initialCharacter(initialsPtr));
+        surname.set(surnamesPtr - 1, surname(surnamesPtr));
+
+        houseNumber = (99 * random()) + 1;
+        streetNameTree.set(streetNameTPtr - 1, streetNameTree(streetNameTPtr));
+        streetNameRoad.set(streetNameRPtr - 1, streetNameRoad(streetNameRPtr));
+        town.set(townPtr, town(townPtr));
+
+        customerName = "";
+        customerName += titleWords.getTitleWord().get(titleNumber - 1);
+        customerName += " ";
+        customerName += forename.get(forenamesPtr - 1);
+        customerName += " ";
+        customerName += initials.getInitialCharacter().get(initialsPtr - 1);
+        customerName += " ";
+        customerName += surname.get(surnamesPtr - 1);
+
+        customerAddress = "";
+        customerAddress += houseNumber + " ";
+        customerAddress += streetNameTree.get(streetNameTPtr - 1) + " ";
+        customerAddress += streetNameRoad.get(streetNameRPtr - 1) + ", ";
+        customerAddress += town.get(townPtr);
+
+        customerBirthDay = ((28 - 1) * random()) + 1;
+        customerBirthMonth = ((12 - 1) * random()) + 1;
+        customerBirthYear = ((2000 - 1900) * random()) + 1900;
+        customerSortcode = SORTCODE;
+        customerCreditScore = ((999 - 1) * random()) + 1;
+        wsReviewDateAdd = ((21 - 1) * random()) + 1;
+        wsNewReviewDateInt = wsTodayInt + wsReviewDateAdd;
+        wsNewReviewYyyymmdd = dateOfInteger(wsNewReviewDateInt);
+        customerCsReviewYear = wsNewReviewYyyymmdd.substring(0, 4);
+        customerCsReviewMonth = wsNewReviewYyyymmdd.substring(5, 7);
+        customerCsReviewDay = wsNewReviewYyyymmdd.substring(8, 10);
+
+        customerRecordStructure.writeTo(customerFile);
+
+        if (customerVsamStatus != "00") {
+            System.out.println("Error writing to VSAM file, status=" +
+                               customerVsamStatus);
+            returnCode = "12";
+            programDonePd010();
+        }
+
+        defineAcc(customerRecordStructure);
+        commitCount++;
+        if (commitCount > 1000) {
+            System.out.println("Commit every 1,000 records or so");
+            commit();
+            commitCount = 0;
+        }
+    }
+
+    customerControlRecord.setNumberOfCustomers(lastCustomerNumber);
+    customerControlRecord.setLastCustomerNumber(lastCustomerNumber);
+    customerControlRecord.setNumberOfAccounts(lastAccountNumber);
+
+    customerControlRecord.setControlName("CUSTOMER-CONTROL");
+    customerControlRecord.setControlValueNum(lastCustomerNumber);
+    customerControlRecord.setControlValueStr("000000");
+
+    sttesterControl.setControlName("ACCOUNT-LAST");
+    sttesterControl.setControlValueNum(lastAccountNumber);
+    sttesterControl.setControlValueStr("9999999999");
+
+    try {
+        connection.prepareStatement("INSERT INTO CONTROL " +
+                                     "(CONTROL_NAME, CONTROL_VALUE_NUM, " +
+                                     "CONTROL_VALUE_STR) VALUES (?, ?, ?)")
+                .executeUpdate(sttesterControl.getControlName(),
+                                sttesterControl.getControlValueNum(),
+                                sttesterControl.getControlValueStr());
+    } catch (SQLException e) {
+        wsSqlcodeDisplay = e.getErrorCode();
+        System.out.println("Error inserting last account control record " +
+                           wsSqlcodeDisplay + "." +
+                           sttesterControl.getControlName() + ", " +
+                           sttesterControl.getControlValueNum());
+    }
+
+    sttesterControl.setControlName("ACCOUNT-COUNT");
+    sttesterControl.setControlValueNum(lastAccountNumber);
+    sttesterControl.setControlValueStr("000000");
+
+    try {
+        connection.prepareStatement("INSERT INTO CONTROL " +
+                                     "(CONTROL_NAME, CONTROL_VALUE_NUM, " +
+                                     "CONTROL_VALUE_STR) VALUES (?, ?, ?)")
+                .executeUpdate(sttesterControl.getControlName(),
+                                sttesterControl.getControlValueNum(),
+                                sttesterControl.getControlValueStr());
+    } catch (SQLException e) {
+        wsSqlcodeDisplay = e.getErrorCode();
+        System.out.println("Error inserting account count control record " +
+                           wsSqlcodeDisplay + "." +
+                           sttesterControl.getControlName() + ", " +
+                           sttesterControl.getControlValueNum());
+    }
+
+    closeCustomerFile();
+    timestampFunction = "Finishing BANKDATA";
+    System.out.println(timestampFunction);
+}
+```

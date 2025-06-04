@@ -1,0 +1,75 @@
+public void receiveMapRm010() {
+	// TODO: Empty block may need to be addressed
+	// TODO: Empty block may need to be addressed
+	// TODO: Empty block may need to be addressed
+	// TODO: Empty block may need to be addressed
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    String wsAbendPgm = "ABNDPROC";
+    WsFailInfo wsFailInfo = new WsFailInfo();
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+    try {
+        caBPostcode.setBnk1cai(caBPostcode.getJMSContext().createConsumer(caBPostcode.getJmsQueue()).receiveNoWait());
+        if (caBPostcode.getJMSContext().getProviderException() != null) {
+            wsFailInfo.setWsCicsFailMsg("BNK1CAC - RM010 - RECEIVE MAP FAIL ");
+            wsFailInfo.setWsCicsRespDisp(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            wsFailInfo.setWsCicsResp2Disp(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndRespcode(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndResp2Code(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndApplid(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndTasknoKey(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndTranid(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndDate(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndTime(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndUtimeKey(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndCode(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndProgram(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndSqlcode(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndFreeform(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndDate(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndTime(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndUtimeKey(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndCode(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndProgram(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndSqlcode(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndFreeform(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndDate(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndTime(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndUtimeKey(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndCode(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndProgram(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndSqlcode(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndFreeform(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndDate(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndTime(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndUtimeKey(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndCode(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndProgram(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndSqlcode(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndFreeform(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndDate(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndTime(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndUtimeKey(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndCode(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndProgram(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndSqlcode(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndFreeform(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndDate(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndTime(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndUtimeKey(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndCode(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndProgram(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndSqlcode(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndFreeform(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndDate(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndTime(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndUtimeKey(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndCode(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndProgram(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndSqlcode(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndFreeform(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndDate(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndTime(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndUtimeKey(caBPostcode.getJMSContext().getProviderException().getCause().getErrorCode());
+            abndinfoRec.setAbndCode(caBPost);
+}}
+	// TODO: Empty block may need to be addressed}}

@@ -1,0 +1,311 @@
+public void premiereP010(Dfhcommarea dfhcommarea){
+    int requiredSortCode = 0;
+    int sortcode = 987654;
+    WsOrigDateGrp wsOrigDateGrp = new WsOrigDateGrp();
+    /* P010 */
+    requiredSortCode = sortcode;
+    populateTimeDatePtd010();
+    creditCheckCc010(dfhcommarea);
+    if (this.getWsCreditCheckError() == 'Y'){
+        dfhcommarea.setCommCreditScore(0);
+        String commCsReviewDate = wsOrigDateGrp.getWsOrigDateYyyy() + wsOrigDateGrp.getWsOrigDateMm() + wsOrigDateGrp.getWsOrigDateDd();
+        dfhcommarea.setCommCsReviewDate(Integer.parseInt(commCsReviewDate));
+        dfhcommarea.setCommSuccess('N');
+        dfhcommarea.setCommFailCode('G');
+        System.out.println("WS-CREDIT-CHECK-ERROR = Y, RESP=" + this.getWsCicsResp() + " RESP2=" + this.getWsCicsResp2());
+        System.out.println("   Exiting CRECUST. COMMAREA=" + dfhcommarea.getBytes());
+        getMeOutOfHereGmofh010();
+    }
+    dateOfBirthCheckDobc010(new CommDobGroup());
+    enqNamedCounterEnc010(dfhcommarea);
+    updNcsUn010();
+    writeCustomerVsamWcv010(dfhcommarea);
+    getMeOutOfHereGmofh010();
+} 
+
+Input:
+       P020.
+           PERFORM CREDIT-CHECK.
+           IF WS-CREDIT-CHECK-ERROR = 'Y'
+              MOVE 0 TO COMM-CREDIT-SCORE
+              STRING WS-ORIG-DATE-DD DELIMITED BY SIZE,
+                     WS-ORIG-DATE-MM DELIMITED BY SIZE,
+                     WS-ORIG-DATE-YYYY DELIMITED BY SIZE
+                     INTO COMM-CS-REVIEW-DATE
+              END-STRING
+              MOVE 'N' TO COMM-SUCCESS
+              MOVE 'G' TO COMM-FAIL-CODE
+              DISPLAY 'WS-CREDIT-CHECK-ERROR = Y, '
+                       ' RESP='
+                       WS-CICS-RESP ' RESP2=' WS-CICS-RESP2
+              DISPLAY '   Exiting CRECUST. COMMAREA='
+                       DFHCOMMAREA
+              PERFORM GET-ME-OUT-OF-HERE
+           END-IF.
+           PERFORM DATE-OF-BIRTH-CHECK.
+           IF WS-DATE-OF-BIRTH-ERROR = 'Y'
+              MOVE 'N' TO COMM-SUCCESS
+              PERFORM GET-ME-OUT-OF-HERE
+           END-IF.
+           PERFORM ENQ-NAMED-COUNTER.
+           PERFORM UPD-NCS.
+           PERFORM WRITE-CUSTOMER-VSAM.
+           PERFORM GET-ME-OUT-OF-HERE.
+
+## Variable Map:
+WS-ORIG-DATE-YYYY gettermapping wsOrigDateGrp.getWsOrigDateYyyy()
+WS-ORIG-DATE-YYYY settermapping wsOrigDateGrp.setWsOrigDateYyyy(val)
+WS-ORIG-DATE-YYYY PIC 9999 JavaType int
+WS-ORIG-DATE-MM gettermmapping wsOrigDateGrp.getWsOrigDateMm()
+WS-ORIG-DATE-MM settermapping wsOrigDateGrp.setWsOrigDateMm(val)
+WS-ORIG-DATE-MM PIC 99 JavaType int
+WS-ORIG-DATE-DD gettermmapping wsOrigDateGrp.getWsOrigDateDd()
+WS-ORIG-DATE-DD settermmapping wsOrigDateGrp.setWsOrigDateDd(val)
+WS-ORIG-DATE-DD PIC 99 JavaType int
+WS-DATE-OF-BIRTH-ERROR gettermmapping this.getWsDateOfBirthError()
+WS-DATE-OF-BIRTH-ERROR settermapping this.setWsDateOfBirthError(val)
+WS-DATE-OF-BIRTH-ERROR PIC X JavaType char
+WS-CREDIT-CHECK-ERROR gettermmapping this.getWsCreditCheckError()
+WS-CREDIT-CHECK-ERROR settermmapping this.setWsCreditCheckError(val)
+WS-CREDIT-CHECK-ERROR PIC X JavaType char
+WS-CICS-RESP2 gettermmapping this.getWsCicsResp2()
+WS-CICS-RESP2 settermmapping this.setWsCicsResp2(val)
+WS-CICS-RESP2 PIC S9(8) JavaType int
+WS-CICS-RESP gettermmapping this.getWsCicsResp()
+WS-CICS-RES gettermmapping this.getWsCicsResp()
+WS-CICS-RESP PIC S9(8) JavaType int
+SORTCODE gettermmapping sortcode
+SORTCODE settermmapping sortcode = val
+SORTCODE PIC 9(6) JavaType int
+REQUIRED-SORT-CODE gettermmapping requiredSortCode
+REQUIRED-SORT-CODE settermmapping requiredSortCode = val
+REQUIRED-SORT-CODE PIC 9(6) JavaType int
+DFHCOMMAREA gettermmapping dfhcommarea.getBytes()
+DFHCOMMAREA settermmapping dfhcommarea.setBytes(val)
+DFHCOMMAREA GROUP JavaType Dfhcommarea
+COMM-SUCCESS gettermmapping dfhcommarea.getCommSuccess()
+COMM-SUCCESS settermmapping dfhcommarea.setCommSuccess(val)
+COMM-SUCCESS PIC X JavaType char
+COMM-FAIL-CODE gettermmapping dfhcommarea.getCommFailCode()
+COMM-FAIL-CODE settermmapping dfhcommarea.setCommFailCode(val)
+COMM-FAIL-CODE PIC X JavaType char
+COMM-CS-REVIEW-DATE gettermmapping this.getCommCsReviewDate()
+COMM-CS-REVIEW-DATE settermmapping this.setCommCsReviewDate(val)
+COMM-CS-REVIEW-DATE PIC 9(8) JavaType int
+COMM-CREDIT-SCORE gettermmapping dfhcommarea.getCommCreditScore()
+COMM-CREDIT-SCORE settermmapping dfhcommarea.setCommCreditScore(val)
+COMM-CREDIT-SCORE PIC 999 JavaType int
+WRITE-CUSTOMER-VSAM_WCV020, writeCustomerVsamWcv020(dfhcommarea)
+UPD-NCS_UN020, updNcsUn020()
+POPULATE-TIME-DATE_PTD020, populateTimeDatePtd020()
+GET-ME-OUT-OF-HERE_GMOFH020, getMeOutOfHereGmofh020()
+ENQ-NAMED-COUNTER_ENC020, enqNamedCounterEnc020(dfhcommarea)
+DATE-OF-BIRTH-CHECK_DOBC020, dateOfBirthCheckDobc020(commDobGroup)
+CREDIT-CHECK_CC020, creditCheckCc020(dfhcommarea)
+
+## Class Map:
+public void premiereP020(Dfhcommarea dfhcommarea){
+    int requiredSortCode = 0;
+    int sortcode = 987654;
+    WsOrigDateGrp wsOrigDateGrp = new WsOrigDateGrp();
+}
+
+Output:
+public void premiereP020(Dfhcommarea dfhcommarea){
+    int requiredSortCode = 0;
+    int sortcode = 987654;
+    WsOrigDateGrp wsOrigDateGrp = new WsOrigDateGrp();
+    /* P020 */
+    creditCheckCc020(dfhcommarea);
+    if (this.getWsCreditCheckError() == 'Y'){
+        dfhcommarea.setCommCreditScore(0);
+        String commCsReviewDate = wsOrigDateGrp.getWsOrigDateYyyy() + wsOrigDateGrp.getWsOrigDateMm() + wsOrigDateGrp.getWsOrigDateDd();
+        dfhcommarea.setCommCsReviewDate(Integer.parseInt(commCsReviewDate));
+        dfhcommarea.setCommSuccess('N');
+        dfhcommarea.setCommFailCode('G');
+        System.out.println("WS-CREDIT-CHECK-ERROR = Y, RESP=" + this.getWsCicsResp() + " RESP2=" + this.getWsCicsResp2());
+        System.out.println("   Exiting CRECUST. COMMAREA=" + dfhcommarea.getBytes());
+        getMeOutOfHereGmofh020();
+    }
+    dateOfBirthCheckDobc020(new CommDobGroup());
+    enqNamedCounterEnc020(dfhcommarea);
+    updNcsUn020();
+    writeCustomerVsamWcv020(dfhcommarea);
+    getMeOutOfHereGmofh020();
+} 
+
+Input:
+       P030.
+           PERFORM CREDIT-CHECK.
+           IF WS-CREDIT-CHECK-ERROR = 'Y'
+              MOVE 0 TO COMM-CREDIT-SCORE
+              STRING WS-ORIG-DATE-DD DELIMITED BY SIZE,
+                     WS-ORIG-DATE-MM DELIMITED BY SIZE,
+                     WS-ORIG-DATE-YYYY DELIMITED BY SIZE
+                     INTO COMM-CS-REVIEW-DATE
+              END-STRING
+              MOVE 'N' TO COMM-SUCCESS
+              MOVE 'G' TO COMM-FAIL-CODE
+              DISPLAY 'WS-CREDIT-CHECK-ERROR = Y, '
+                       ' RESP='
+                       WS-CICS-RESP ' RESP2=' WS-CICS-RESP2
+              DISPLAY '   Exiting CRECUST. COMMAREA='
+                       DFHCOMMAREA
+              PERFORM GET-ME-OUT-OF-HERE
+           END-IF.
+           PERFORM DATE-OF-BIRTH-CHECK.
+           IF WS-DATE-OF-BIRTH-ERROR = 'Y'
+              MOVE 'N' TO COMM-SUCCESS
+              PERFORM GET-ME-OUT-OF-HERE
+           END-IF.
+           PERFORM ENQ-NAMED-COUNTER.
+           PERFORM UPD-NCS.
+           PERFORM WRITE-CUSTOMER-VSAM.
+           PERFORM GET-ME-OUT-OF-HERE.
+
+## Variable Map:
+WS-ORIG-DATE-YYYY gettermmapping wsOrigDateGrp.getWsOrigDateYyyy()
+WS-ORIG-DATE-YYYY settermmapping wsOrigDateGrp.setWsOrigDateYyyy(val)
+WS-ORIG-DATE-YYYY PIC 9999 JavaType int
+WS-ORIG-DATE-MM gettermmapping wsOrigDateGrp.getWsOrigDateMm()
+WS-ORIG-DATE-MM settermmapping wsOrigDateGrp.setWsOrigDateMm(val)
+WS-ORIG-DATE-MM PIC 99 JavaType int
+WS-ORIG-DATE-DD gettermmapping wsOrigDateGrp.getWsOrigDateDd()
+WS-ORIG-DATE-DD settermmapping wsOrigDateGrp.setWsOrigDateDd(val)
+WS-ORIG-DATE-DD PIC 99 JavaType int
+WS-DATE-OF-BIRTH-ERROR gettermmapping this.getWsDateOfBirthError()
+WS-DATE-OF-BIRTH-ERROR settermapping this.setWsDateOfBirthError(val)
+WS-DATE-OF-BIRTH-ERROR PIC X JavaType char
+WS-CREDIT-CHECK-ERROR gettermmapping this.getWsCreditCheckError()
+WS-CREDIT-CHECK-ERROR settermmapping this.setWsCreditCheckError(val)
+WS-CREDIT-CHECK-ERROR PIC X JavaType char
+WS-CICS-RESP2 gettermmapping this.getWsCicsResp2()
+WS-CICS-RESP2 settermmapping this.setWsCicsResp2(val)
+WS-CICS-RESP2 PIC S9(8) JavaType int
+WS-CICS-RESP gettermmapping this.getWsCicsResp()
+WS-CICS-RESP settermmapping this.setWsCicsResp(val)
+WS-CICS-RESP PIC S9(8) JavaType int
+SORTCODE gettermmapping sortcode
+SORTCODE settermmapping sortcode = val
+SORTCODE PIC 9(6) JavaType int
+REQUIRED-SORT-CODE gettermmapping requiredSortCode
+REQUIRED-SORT-CODE settermmapping requiredSortCode = val
+REQUIRED-SORT-CODE PIC 9(6) JavaType int
+DFHCOMMAREA gettermmapping dfhcommarea.getBytes()
+DFHCOMMAREA settermmapping dfhcommarea.setBytes(val)
+DFHCOMMAREA GROUP JavaType Dfhcommarea
+COMM-SUCCESS gettermmapping dfhcommarea.getCommSuccess()
+COMM-SUCCESS settermmapping dfhcommarea.setCommSuccess(val)
+COMM-SUCCESS PIC X JavaType char
+COMM-FAIL-CODE gettermmapping dfhcommarea.getCommFailCode()
+COMM-FAIL-CODE settermmapping dfhcommarea.setCommFailCode(val)
+COMM-FAIL-CODE PIC X JavaType char
+COMM-CS-REVIEW-DATE gettermmapping this.getCommCsReviewDate()
+COMM-CS-REVIEW-DATE settermmapping this.setCommCsReviewDate(val)
+COMM-CS-REVIEW-DATE PIC 9(8) JavaType int
+COMM-CREDIT-SCORE gettermmapping dfhcommarea.getCommCreditScore()
+COMM-CREDIT-SCORE settermmapping dfhcommarea.setCommCreditScore(val)
+COMM-CREDIT-SCORE PIC 999 JavaType int
+WRITE-CUSTOMER-VSAM_WCV030, writeCustomerVsamWcv030(dfhcommarea)
+UPD-NCS_UN030, updNcsUn030()
+POPULATE-TIME-DATE_PTD030, populateTimeDatePtd030()
+GET-ME-OUT-OF-HERE_GMOFH030, getMeOutOfHereGmofh030()
+ENQ-NAMED-COUNTER_ENC030, enqNamedCounterEnc030(dfhcommarea)
+DATE-OF-BIRTH-CHECK_DOBC030, dateOfBirthCheckDobc030(commDobGroup)
+CREDIT-CHECK_CC030, creditCheckCc030(dfhcommarea)
+
+## Class Map:
+public void premiereP030(Dfhcommarea dfhcommarea){
+    int requiredSortCode = 0;
+    int sortcode = 987654;
+    WsOrigDateGrp wsOrigDateGrp = new WsOrigDateGrp();
+}
+
+Output:
+public void premiereP030(Dfhcommarea dfhcommarea){
+    int requiredSortCode = 0;
+    int sortcode = 987654;
+    WsOrigDateGrp wsOrigDateGrp = new WsOrigDateGrp();
+    /* P030 */
+    creditCheckCc030(dfhcommarea);
+    if (this.getWsCreditCheckError() == 'Y'){
+        dfhcommarea.setCommCreditScore(0);
+        String commCsReviewDate = wsOrigDateGrp.getWsOrigDateYyyy() + wsOrigDateGrp.getWsOrigDateMm() + wsOrigDateGrp.getWsOrigDateDd();
+        dfhcommarea.setCommCsReviewDate(Integer.parseInt(commCsReviewDate));
+        dfhcommarea.setCommSuccess('N');
+        dfhcommarea.setCommFailCode('G');
+        System.out.println("WS-CREDIT-CHECK-ERROR = Y, RESP=" + this.getWsCicsResp() + " RESP2=" + this.getWsCicsResp2());
+        System.out.println("   Exiting CRECUST. COMMAREA=" + dfhcommarea.getBytes());
+        getMeOutOfHereGmofh030();
+    }
+    dateOfBirthCheckDobc030(new CommDobGroup());
+    enqNamedCounterEnc030(dfhcommarea);
+    updNcsUn030();
+    writeCustomerVsamWcv030(dfhcommarea);
+    getMeOutOfHereGmofh030();
+} 
+
+Input:
+       P040.
+           PERFORM CREDIT-CHECK.
+           IF WS-CREDIT-CHECK-ERROR = 'Y'
+              MOVE 0 TO COMM-CREDIT-SCORE
+              STRING WS-ORIG-DATE-DD DELIMITED BY SIZE,
+                     WS-ORIG-DATE-MM DELIMITED BY SIZE,
+                     WS-ORIG-DATE-YYYY DELIMITED BY SIZE
+                     INTO COMM-CS-REVIEW-DATE
+              END-STRING
+              MOVE 'N' TO COMM-SUCCESS
+              MOVE 'G' TO COMM-FAIL-CODE
+              DISPLAY 'WS-CREDIT-CHECK-ERROR = Y, '
+                       ' RESP='
+                       WS-CICS-RESP ' RESP2=' WS-CICS-RESP2
+              DISPLAY '   Exiting CRECUST. COMMAREA='
+                       DFHCOMMAREA
+              PERFORM GET-ME-OUT-OF-HERE
+           END-IF.
+           PERFORM DATE-OF-BIRTH-CHECK.
+           IF WS-DATE-OF-BIRTH-ERROR = 'Y'
+              MOVE 'N' TO COMM-SUCCESS
+              PERFORM GET-ME-OUT-OF-HERE
+           END-IF.
+           PERFORM ENQ-NAMED-COUNTER.
+           PERFORM UPD-NCS.
+           PERFORM WRITE-CUSTOMER-VSAM.
+           PERFORM GET-ME-OUT-OF-HERE.
+
+## Variable Map:
+WS-ORIG-DATE-YYYY gettermmapping wsOrigDateGrp.getWsOrigDateYyyy()
+WS-ORIG-DATE-YYYY settermmapping wsOrigDateGrp.setWsOrigDateYyyy(val)
+WS-ORIG-DATE-YYYY PIC 9999 JavaType int
+WS-ORIG-DATE-MM gettermmapping wsOrigDateGrp.getWsOrigDateMm()
+WS-ORIG-DATE-MM settermmapping wsOrigDateGrp.setWsOrigDateMm(val)
+WS-ORIG-DATE-MM PIC 99 JavaType int
+WS-ORIG-DATE-DD gettermmapping wsOrigDateGrp.getWsOrigDateDd()
+WS-ORIG-DATE-DD settermmapping wsOrigDateGrp.setWsOrigDateDd(val)
+WS-ORIG-DATE-DD PIC 99 JavaType int
+WS-DATE-OF-BIRTH-ERROR gettermmapping this.getWsDateOfBirthError()
+WS-DATE-OF-BIRTH-ERROR settermmapping this.setWsDateOfBirthError(val)
+WS-DATE-OF-BIRTH-ERROR PIC X JavaType char
+WS-CREDIT-CHECK-ERROR gettermmapping this.getWsCreditCheckError()
+WS-CREDIT-CHECK-ERROR settermapping this.setWsCreditCheckError(val)
+WS-CREDIT-CHECK-ERROR PIC X JavaType char
+WS-CICS-RESP2 gettermmapping this.getWsCicsResp2()
+WS-CICS-RESP2 settermmapping this.setWsCicsResp2(val)
+WS-CICS-RESP2 PIC S9(8) JavaType int
+WS-CICS-RESP gettermmapping this.getWsCicsResp()
+WS-CICS-RESP settermmapping this.setWsCicsResp(val)
+WS-CICS-RESP PIC S9(8) JavaType int
+SORTCODE gettermmapping sortcode
+SORTCODE settermmapping sortcode = val
+SORTCODE PIC 9(6) JavaType int
+REQUIRED-SORT-CODE gettermmapping requiredSortCode
+REQUIRED-SORT-CODE settermmapping requiredSortCode = val
+REQUIRED-SORT-CODE PIC 9(6) JavaType int
+DFHCOMMAREA gettermmapping dfhcommarea.getBytes()
+DFHCOMMAREA settermmapping dfhcommarea.setBytes(val)
+DFHCOMMAREA GROUP JavaType Dfhcommarea
+COMM-SUCCESS gettermmapping dfhcommarea.getCommSuccess()
+COMM-SUCCESS settermmapping dfhcommarea.setCommSuccess(val)
+COMM-SUCCESS PIC X JavaType char
+COMM-FAIL-CODE gettermmapping

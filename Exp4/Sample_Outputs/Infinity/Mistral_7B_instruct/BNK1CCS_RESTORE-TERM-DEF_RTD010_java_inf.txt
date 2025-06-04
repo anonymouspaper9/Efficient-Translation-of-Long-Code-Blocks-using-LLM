@@ -1,0 +1,97 @@
+```java
+public void restoreTermDefRtd010(Dfhcommarea dfhcommarea, WsFailInfo wsFailInfo) {
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    String wsAbendPgm = "ABNDPROC";
+    WsCommArea wsCommArea = new WsCommArea();
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+    int wsUctrans = 0;
+
+    /* Move DFHCOMMAREA to WS-COMM-AREA */
+    wsCommArea.setBytes(dfhcommarea.getBytes());
+    wsUctrans = wsCommArea.getWsCommTerm();
+
+    /* EXEC CICS SET */
+    try {
+        Cics.set(wsCommArea.getBytes(), wsUctrans, "EIBTRMID");
+    } catch (CicsException e) {
+        System.out.println("Error in CICS SET: " + e.getMessage());
+        return;
+    }
+
+    /* If WS-CICS-RESP NOT = DFHRESP(NORMAL) */
+    if (!Cics.getResponse().equals("NORMAL")) {
+        /* INITIALIZE ABNDINFO-REC */
+        abndinfoRec.initialize();
+
+        /* MOVE EIBRESP to ABND-RESPCODE */
+        abndinfoRec.setAbndRespcode(Cics.getResponseCode());
+        /* MOVE EIBRESP2 to ABND-RESP2CODE */
+        abndinfoRec.setAbndResp2Code(Cics.getResponse2Code());
+
+        /* EXEC CICS ASSIGN APPLID(ABND-APPLID) */
+        try {
+            Cics.assign(abndinfoRec.getBytes(), "ABND-APPLID");
+        } catch (CicsException e) {
+            System.out.println("Error in CICS ASSIGN APPLID: " + e.getMessage());
+            return;
+        }
+
+        /* MOVE EIBTASKN to ABND-TASKNO-KEY */
+        abndinfoRec.setAbndTasknoKey(Cics.getTaskNumber());
+        /* MOVE EIBTRNID to ABND-TRANID */
+        abndinfoRec.setAbndTranid(Cics.getTransactionId());
+
+        /* PERFORM POPULATE-TIME-DATE */
+        populateTimeDatePtd10(wsTimeNowGrp);
+
+        /* MOVE WS-ORIG-DATE to ABND-DATE */
+        abndinfoRec.setAbndDate(wsTimeNowGrp.getWsOrigDate());
+        /* STRING WS-TIME-NOW-GRP-HH DELIMITED BY SIZE, ':' DELIMITED BY SIZE, WS-TIME-NOW-GRP-MM DELIMITED BY SIZE, ':' DELIMITED BY SIZE, WS-TIME-NOW-GRP-SS INTO ABND-TIME */
+        String time = wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":" + wsTimeNowGrp.getWsTimeNowGrpSs();
+        abndinfoRec.setAbndTime(time);
+
+        /* MOVE WS-U-TIME to ABND-UTIME-KEY */
+        abndinfoRec.setAbndUtimeKey(wsCommArea.getWsUTime());
+        /* MOVE 'HBNK' to ABND-CODE */
+        abndinfoRec.setAbndCode("HBNK");
+
+        /* EXEC CICS ASSIGN PROGRAM(ABND-PROGRAM) */
+        try {
+            Cics.assign(abndinfoRec.getBytes(), "ABND-PROGRAM");
+        } catch (CicsException e) {
+            System.out.println("Error in CICS ASSIGN PROGRAM: " + e.getMessage());
+            return;
+        }
+
+        /* MOVE ZEROS to ABND-SQLCODE */
+        abndinfoRec.setAbndSqlcode(0);
+
+        /* STRING 'RTD010 - SET TERMINAL UC FAIL ' DELIMITED BY SIZE, 'EIBRESP=' DELIMITED BY SIZE, ABND-RESPCODE DELIMITED BY SIZE, ' RESP2=' DELIMITED BY SIZE, ABND-RESP2CODE DELIMITED BY SIZE INTO ABND-FREEFORM */
+        String freeform = "RTD010 - SET TERMINAL UC FAIL " +
+                "EIBRESP=" + abndinfoRec.getAbndRespcode() +
+                " RESP2=" + abndinfoRec.getAbndResp2Code();
+        abndinfoRec.setAbndFreeform(freeform);
+
+        /* EXEC CICS LINK COMMAREA(ABNDINFO-REC) PROGRAM(WS-ABEND-PGM) */
+        try {
+            Cics.link(abndinfoRec.getBytes(), wsAbendPgm);
+        } catch (CicsException e) {
+            System.out.println("Error in CICS LINK: " + e.getMessage());
+            return;
+        }
+
+        /* INITIALIZE WS-FAIL-INFO */
+        wsFailInfo.initialize();
+
+        /* MOVE 'BNK1CCS - RTD010 - SET TERMINAL UC FAIL ' TO WS-CICS-FAIL-MSG */
+        wsFailInfo.setWsCicsFailMsg("BNK1CCS - RTD010 - SET TERMINAL UC FAIL ");
+        /* MOVE WS-CICS-RESP to WS-CICS-RESP-DISP */
+        wsFailInfo.setWsCicsRespDisp(Cics.getResponse());
+        /* MOVE WS-CICS-RESP2 to WS-CICS-RESP2-DISP */
+        wsFailInfo.setWsCicsResp2Disp(Cics.getResponse2());
+
+        /* PERFORM ABEND-THIS-TASK */
+        abendThisTaskAtt010(dfhcommarea, wsFailInfo);
+    }
+}
+```

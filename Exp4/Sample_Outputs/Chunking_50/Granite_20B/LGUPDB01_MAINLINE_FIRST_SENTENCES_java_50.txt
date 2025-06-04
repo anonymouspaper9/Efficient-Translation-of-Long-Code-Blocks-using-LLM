@@ -1,0 +1,39 @@
+public void invokeMainline(Dfhcommarea dfhcommarea) {
+    WsHeader wsHeader = new WsHeader();
+    Db2InIntegers db2InIntegers = new Db2InIntegers();
+    Db2Policy db2Policy = new Db2Policy();
+    String lgupvs01 = "LGUPVS01";
+    ErrorMsg errorMsg = new ErrorMsg();
+
+    wsHeader.setWsTransid(Task.getTask().getTransactionName());
+    wsHeader.setWsTermid(Task.getTask().getSTARTCODE());
+    wsHeader.setWsTasknum(Task.getTask().getTaskNumber());
+    wsHeader.setWsRetry(' ');
+    db2Policy.setBytes(new byte[225]);
+    db2InIntegers.setBytes(new byte[225]);
+    if (dfhcommarea.getEIBcalen() == 0) {
+        errorMsg.getEmVariable().setEmVariable(" NO COMMAREA RECEIVED");
+        this.writeErrorMessage(errorMsg);
+        Task.getTask().abend("LGCA");
+    }
+    dfhcommarea.setCaReturnCode(0);
+    wsHeader.setWsCalen(dfhcommarea.getEIBcalen());
+    wsHeader.setWsAddrDfhcommarea(dfhcommarea.getEIBtrmid());
+    db2InIntegers.setDb2CustomernumInt(dfhcommarea.getCaCustomerNum());
+    db2InIntegers.setDb2PolicynumInt(((CaPolicyRequest) (dfhcommarea)).getPolicy().getPolicynumber());
+    db2InIntegers.setDb2PolicynumInt(db2InIntegers.getDb2PolicynumInt());
+    db2InIntegers.setDb2CustomernumInt(db2InIntegers.getDb2CustomernumInt());
+    errorMsg.getEmVariable().setEmPolnum(String.valueOf(db2InIntegers.getDb2PolicynumInt()));
+    errorMsg.getEmVariable().setEmCusnum(String.valueOf(db2InIntegers.getDb2CustomernumInt()));
+    this.updatePolicyDb2Info(db2Policy, db2InIntegers);
+    byte[] jdeclCommareaByteArray = new byte[90];
+    Program jdeclProgram = new Program();
+    Charset jdeclCharSet = Charset.forName(System.getProperty("com.ibm.cics.jvmserver.local.ccsid"));
+     byte[] jdeclInqBytes=lgupvs01.getBytes(jdeclCharSet);
+     
+    System.arraycopy(jdeclInqBytes, 0, jdeclCommareaByteArray, 0, jdeclInqBytes.length);
+    jdeclProgram.setName(lgupvs01);
+    jdeclProgram.link(jdeclCommareaByteArray);
+    lgupvs01 = new String(jdeclCommareaByteArray, jdeclCharSet);
+
+}

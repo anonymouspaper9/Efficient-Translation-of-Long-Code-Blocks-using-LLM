@@ -1,0 +1,161 @@
+```java
+public void updateAccountDb2Uad010(Dfhcommarea dfhcommarea, int sqlcodeDisplay) {
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    int desiredAccNo;
+    int desiredSortCode;
+    String wsAbendPgm = "ABNDPROC";
+    int wsCicsResp;
+    int wsCicsResp2;
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+
+    // Check if the account numbers are the same and the transaction codes are the same
+    if (dfhcommarea.getCommTaccno() == dfhcommarea.getCommFaccno()
+            && dfhcommarea.getCommTscode() == dfhcommarea.getCommFscode()) {
+        // Initialize the AbndinfoRec object
+        abndinfoRec.clear();
+
+        // Set the response codes and other fields
+        abndinfoRec.setAbndRespcode(0);
+        abndinfoRec.setAbndResp2Code(0);
+        abndinfoRec.setAbndApplid(wsAbendPgm);
+        abndinfoRec.setAbndTasknoKey(1);
+        abndinfoRec.setAbndTranid("UAD010");
+
+        // Get the current time and date
+        wsTimeNowGrp.getWsTimeNowGrpHh();
+        wsTimeNowGrp.getWsTimeNowGrpMm();
+        String hour = String.valueOf(wsTimeNowGrp.getWsTimeNowGrpHh());
+        String minute = String.valueOf(wsTimeNowGrp.getWsTimeNowGrpMm());
+        String time = hour + ":" + minute + ":" + minute;
+        abndinfoRec.setAbndTime(time);
+        abndinfoRec.setAbndUtimeKey(System.currentTimeMillis());
+
+        // Set the program and other fields
+        abndinfoRec.setAbndProgram(wsAbendPgm);
+        abndinfoRec.setAbndSqlcode(0);
+        abndinfoRec.setAbndFreeform("UAD010 - Cannot transfer to the same account EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2=" + abndinfoRec.getAbndResp2Code());
+
+        // Link the AbndinfoRec object to the CICS link
+        try {
+            JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO ABNDINFO_REC VALUES (" + abndinfoRec.getBytes() + ")");
+        } catch (SQLException e) {
+            System.out.println(e);
+            return;
+        }
+
+        // Abend the program with the appropriate code
+        try {
+            JdbcConnection.connection.createStatement().executeUpdate("ABEND NODUMP CANCEL ABCODE('SAME')");
+        } catch (SQLException e) {
+            System.out.println(e);
+            return;
+        }
+    }
+
+    // Check if the from account number is less than the to account number
+    if (dfhcommarea.getCommFaccno() < dfhcommarea.getCommTaccno()) {
+        desiredAccNo = dfhcommarea.getCommFaccno();
+        desiredSortCode = dfhcommarea.getCommFScode();
+
+        // Update the from account in the database
+        updateAccountDb2FromUadf010(dfhcommarea, sqlcodeDisplay);
+
+        // Check if the update was successful
+        if (dfhcommarea.getCommSuccess().equals("Y")) {
+            desiredAccNo = dfhcommarea.getCommTaccno();
+            desiredSortCode = dfhcommarea.getCommTScode();
+
+            // Update the to account in the database
+            updateAccountDb2ToUadt010(dfhcommarea);
+
+            // Check if the update was successful
+            if (dfhcommarea.getCommSuccess().equals("Y")) {
+                // Do nothing
+            } else if (dfhcommarea.getCommFailCode().equals("1")) {
+                // Rollback the transaction and display an error message
+                try {
+                    JdbcConnection.connection.createStatement().executeUpdate("ROLLBACK");
+                } catch (SQLException e) {
+                    System.out.println(e);
+                    return;
+                }
+
+                // Display an error message
+                System.out.println("Error updating FROM account");
+                try {
+                    JdbcConnection.connection.createStatement().executeUpdate("ABEND NODUMP ABCODE('FROM')");
+                } catch (SQLException e) {
+                    System.out.println(e);
+                    return;
+                }
+            } else {
+                // Initialize the AbndinfoRec object
+                abndinfoRec.clear();
+
+                // Set the response codes and other fields
+                abndinfoRec.setAbndRespcode(0);
+                abndinfoRec.setAbndResp2Code(0);
+                abndinfoRec.setAbndApplid(wsAbendPgm);
+                abndinfoRec.setAbndTasknoKey(1);
+                abndinfoRec.setAbndTranid("UAD010");
+
+                // Get the current time and date
+                wsTimeNowGrp.getWsTimeNowGrpHh();
+                wsTimeNowGrp.getWsTimeNowGrpMm();
+                hour = String.valueOf(wsTimeNowGrp.getWsTimeNowGrpHh());
+                minute = String.valueOf(wsTimeNowGrp.getWsTimeNowGrpMm());
+                time = hour + ":" + minute + ":" + minute;
+                abndinfoRec.setAbndTime(time);
+                abndinfoRec.setAbndUtimeKey(System.currentTimeMillis());
+
+                // Set the program and other fields
+                abndinfoRec.setAbndProgram(wsAbendPgm);
+                abndinfoRec.setAbndSqlcode(0);
+                abndinfoRec.setAbndFreeform("UAD010(4) - Error updating FROM account EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2=" + abndinfoRec.getAbndResp2Code());
+
+                // Link the AbndinfoRec object to the CICS link
+                try {
+                    JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO ABNDINFO_REC VALUES (" + abndinfoRec.getBytes() + ")");
+                } catch (SQLException e) {
+                    System.out.println(e);
+                    return;
+                }
+
+                // Abend the program with the appropriate code
+                try {
+                    JdbcConnection.connection.createStatement().executeUpdate("ABEND NODUMP CANCEL ABCODE('FROM')");
+                } catch (SQLException e) {
+                    System.out.println(e);
+                    return;
+                }
+            }
+        } else if (dfhcommarea.getCommFailCode().equals("2")) {
+            // Rollback the transaction and display an error message
+            try {
+                JdbcConnection.connection.createStatement().executeUpdate("ROLLBACK");
+            } catch (SQLException e) {
+                System.out.println(e);
+                return;
+            }
+
+            // Display an error message
+            System.out.println("Error updating TO account");
+            try {
+                JdbcConnection.connection.createStatement().executeUpdate("ABEND NODUMP ABCODE('TO  ')");
+            } catch (SQLException e) {
+                System.out.println(e);
+                return;
+            }
+        } else {
+            // Initialize the AbndinfoRec object
+            abndinfoRec.clear();
+
+            // Set the response codes and other fields
+            abndinfoRec.setAbndRespcode(0);
+            abndinfoRec.setAbndResp2Code(0);
+            abndinfoRec.setAbndApplid(wsAbendPgm);
+            abndinfoRec.setAbndTasknoKey(1);
+            abndinfoRec.setAbndTranid("UAD010");
+
+            // Get the current time and date
+            wsTimeNowGrp.getWsTime

@@ -1,0 +1,50 @@
+public void receiveMapRm010() {
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    String wsAbendPgm = "ABNDPROC";
+    WsFailInfo wsFailInfo = new WsFailInfo();
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+    try {
+        bnk1acci = (Bnk1acci) Task.getTask().getPrincipalFacility().getTerminal().receive(Bnk1acci.class, "BNK1ACC");
+    }
+    catch(CicsConditionException e) {
+        abndinfoRec.setAbndRespcode(e.getRespCode());
+        abndinfoRec.setAbndResp2Code(e.getResp2Code());
+        abndinfoRec.setAbndApplid(Region.getAPPLID());
+        abndinfoRec.setAbndTasknoKey(Task.getTask().getTaskNumber());
+        abndinfoRec.setAbndTranid(Task.getTask().getTransactionName());
+        populateTimeDatePtd010();
+        abndinfoRec.setAbndDate(this.getWsOrigDate());
+        abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":" + wsTimeNowGrp.getWsTimeNowGrpSs());
+        abndinfoRec.setAbndUtimeKey(this.getWsUTime());
+        abndinfoRec.setAbndCode("HBNK");
+        abndinfoRec.setAbndProgram(Task.getTask().getProgramName());
+        abndinfoRec.setAbndSqlcode(0);
+        abndinfoRec.setAbndFreeform("RM010 - RECEIVE MAP FAIL.EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2=" + abndinfoRec.getAbndResp2Code());
+        abndinfoRec.setAbndFreeform(abndinfoRec.getAbndFreeform() + " " + abndinfoRec.getAbndApplid() + " " + abndinfoRec.getAbndTasknoKey() + " " + abndinfoRec.getAbndTranid() + " " + abndinfoRec.getAbndDate() + " " + abndinfoRec.getAbndTime() + " " + abndinfoRec.getAbndUtimeKey() + " " + abndinfoRec.getAbndCode() + " " + abndinfoRec.getAbndProgram() + " " + abndinfoRec.getAbndSqlcode() + " " + abndinfoRec.getAbndFreeform());
+        abndinfoRec.setAbndFreeform(abndinfoRec.getAbndFreeform() + " " + abndinfoRec.getAbndRespcode() + " " + abndinfoRec.getAbndResp2Code());
+        abndinfoRec.setAbndFreeform(abndinfoRec.getAbndFreeform() + " " + abndinfoRec.getAbndRespcode() + " " + abndinfoRec.getAbndResp2Code());
+        abndinfoRec.setAbndFreeform(abndinfoRec.getAbndFreeform() + " " + abndinfoRec.getAbndRespcode() + " " + abndinfoRec.getAbndResp2Code());
+        abndinfoRec.setAbndFreeform(abndinfoRec.getAbndFreeform() + " " + abndinfoRec.getAbndRespcode() + " " + abndinfoRec.getAbndResp2Code());
+        abndinfoRec.setAbndFreeform(abndinfoRec.getAbndFreeform() + " " + abndinfoRec.getAbndRespcode() + " " + abndinfoRec.getAbndResp2Code());
+        abndinfoRec.setAbndFreeform(abndinfoRec.getAbndFreeform() + " " + abndinfoRec.getAbndRespcode() + " " + abndinfoRec.getAbndResp2Code());
+        abndinfoRec.setAbndFreeform(abndinfoRec.getAbndFreeform() + " " + abndinfoRec.getAbndRespcode() + " " + abndinfoRec.getAbndResp2Code());
+        abndinfoRec.setAbndFreeform(abndinfoRec.getAbndFreeform() + " " + abndinfoRec.getAbndRespcode() + " " + abndinfoRec.getAbndResp2Code());
+        abndinfoRec.setAbndFreeform(abndinfoRec.getAbndFreeform() + " " + abndinfoRec.getAbndRespcode() + " " + abndinfoRec.getAbndResp2Code());
+        abndinfoRec.setAbndFreeform(abndinfoRec.getAbndFreeform() + " " + abndinfoRec.getAbndRespcode() + " " + abndinfoRec.getAbndResp2Code());
+        abndinfoRec.setAbndFreeform(abndinfoRec.getAbndFreeform() + " " + abndinfoRec.getAbndRespcode() + " " + abndinfoRec.getAbndResp2Code());
+        abndinfoRec.setAbndFreeform(abndinfoRec.getAbndFreeform() + " " + abndinfoRec.getAbndRespcode() + " " + abndinfoRec.getAbndResp2Code());
+        abndinfoRec.setAbndFreeform(abndinfoRec.getAbndFreeform() + " " + abndinfoRec.getAbndRespcode() + " " + abndinfoRec.getAbndResp2Code());
+        abndinfoRec.setAbndFreeform(abndinfoRec.getAbndFreeform() + " " + abndinfoRec.getAbndRespcode() + " " + abndinfoRec.getAbndResp2Code());
+        abndinfoRec.setAbndFreeform(abndinfoRec.getAbndFreeform() + " " + abndinfoRec.getAbndRespcode() + " " + abndinfoRec.getAbndResp2Code());
+        abndinfoRec.setAbndFreeform(abndinfoRec.getAbndFreeform() + " " + abndinfoRec.getAbndRespcode() + " " + abndinfoRec.getAbndResp2Code());
+        abndinfoRec.setAbndFreeform(abndinfoRec.getAbndFreeform() + " " + abndinfoRec.getAbndRespcode() + " " + abndinfoRec.getAbndResp2Code());
+        abndinfoRec.setAbndFreeform(abndinfoRec.getAbndFreeform() + " " + abndinfoRec.getAbndRespcode() + " " + abndinfoRec.getAbndResp2Code());
+        abndinfoRec.setAbndFreeform(abndinfoRec.getAbndFreeform() + " " + abndinfoRec.getAbndRespcode() + " " + abndinfoRec.getAbndResp2Code());
+        abndinfoRec.setAbndFreeform(abndinfoRec.getAbndFreeform() + " " + abndinfoRec.getAbndRespcode() + " " + abndinfoRec.getAbndResp2Code());
+        abndinfoRec.setAbndFreeform(abndinfoRec.getAbndFreeform() + " " + abndinfoRec.getAbndRespcode() + " " + abndinfoRec.getAbndResp2Code());
+        abndinfoRec.setAbndFreeform(abndinfoRec.getAbndFreeform() + " " + abndinfoRec.getAbndRespcode() + " " + abndinfoRec.getAbndResp2Code());
+        abndinfoRec.setAbndFreeform(abndinfoRec.getAbndFreeform() + " " + abndinfoRec.getAbndRespcode() + " " + abndinfoRec.getAbndResp2Code());
+        abndinfoRec.setAbndFreeform(abndinfoRec.getAbndFreeform() + " " + abndinfoRec.getAbndRespcode() + " " + abndinfoRec.getAbndResp2Code());
+        abndinfoRec.setAbndFreeform(abndinfoRec.getAbndFreeform() + " " + abndinfoRec.getAbndRespcode() + " " + abndinfoRec.getAbndResp2Code());
+        abndinfoRec.setAbndFreeform(abndinfoRec.getAbndFreeform() + " " + abndinfoRec.getAbndRespcode() + " " + abndinfoRec.getAbndResp2Code());
+        abndinfoRec.setAbndFreeform(abndinfoRec.getAbndFreeform() + " " + abndinfoRec.getAbndRespcode());}}

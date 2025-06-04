@@ -1,0 +1,257 @@
+public void invokeOtherTxnsIot010(){
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    String wsAbendPgm = "ABNDPROC";
+    int wsCicsResp = 0;
+    int wsCicsResp2 = 0;
+    WsFailInfo wsFailInfo = new WsFailInfo();
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+    if (ACTIONI.equals("1")) {
+        try {
+            CICSCommand cicsCommand = new CICSCommand();
+            cicsCommand.setTransid("ODCS");
+            cicsCommand.setImmediate(true);
+            cicsCommand.execute();
+        } catch (CICSException cicsException) {
+            wsCicsResp = cicsException.getResp();
+            wsCicsResp2 = cicsException.getResp2();
+            abndinfoRec.setAbndRespcode(wsCicsResp);
+            abndinfoRec.setAbndResp2Code(wsCicsResp2);
+            abndinfoRec.setAbndApplid(getAbndApplid());
+            abndinfoRec.setAbndTasknoKey(getAbndTasknoKey());
+            abndinfoRec.setAbndTranid(getAbndTranid());
+            populateTimeDatePtd010();
+            abndinfoRec.setAbndDate(getWsOrigDate());
+            abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm());
+            abndinfoRec.setAbndUtimeKey(getWsUTime());
+            abndinfoRec.setAbndCode("HBNK");
+            abndinfoRec.setAbndProgram(getAbndProgram());
+            abndinfoRec.setAbndSqlcode(0);
+            abndinfoRec.setAbndFreeform("IOT010 - RETURN TRANSID(ODCS) FAIL. EIBRESP=" + wsCicsResp + " RESP2=" + wsCicsResp2);
+            CICSCommand cicsCommand = new CICSCommand();
+            cicsCommand.setCommarea(abndinfoRec.getBytes());
+            cicsCommand.setProgram(wsAbendPgm);
+            cicsCommand.execute();
+            wsFailInfo.setWsCicsFailMsg("BNKMENU - IOT010 - RETURN TRANSID(ODCS) FAIL");
+            wsFailInfo.setWsCicsRespDisp(wsCicsResp);
+            wsFailInfo.setWsCicsResp2Disp(wsCicsResp2);
+            abendThisTaskAtt010(wsFailInfo);
+        }
+    } else if (ACTIONI.equals("2")) {
+        try {
+            CICSCommand cicsCommand = new CICSCommand();
+            cicsCommand.setTransid("ODAC");
+            cicsCommand.setImmediate(true);
+            cicsCommand.execute();
+        } catch (CICSException cicsException) {
+            wsCicsResp = cicsException.getResp();
+            wsCicsResp2 = cicsException.getResp2();
+            abndinfoRec.setAbndRespcode(wsCicsResp);
+            abndinfoRec.setAbndResp2Code(wsCicsResp2);
+            abndinfoRec.setAbndApplid(getAbndApplid());
+            abndinfoRec.setAbndTasknoKey(getAbndTasknoKey());
+            abndinfoRec.setAbndTranid(getAbndTranid());
+            populateTimeDatePtd010();
+            abndinfoRec.setAbndDate(getWsOrigDate());
+            abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm());
+            abndinfoRec.setAbndUtimeKey(getWsUTime());
+            abndinfoRec.setAbndCode("HBNK");
+            abndinfoRec.setAbndProgram(getAbndProgram());
+            abndinfoRec.setAbndSqlcode(0);
+            abndinfoRec.setAbndFreeform("IOT010 - RETURN TRANSID(ODAC) FAIL. EIBRESP=" + wsCicsResp + " RESP2=" + wsCicsResp2);
+            CICSCommand cicsCommand = new CICSCommand();
+            cicsCommand.setCommarea(abndinfoRec.getBytes());
+            cicsCommand.setProgram(wsAbendPgm);
+            cicsCommand.execute();
+            wsFailInfo.setWsCicsFailMsg("BNKMENU - IOT010 - RETURN TRANSID(ODAC) FAIL");
+            wsFailInfo.setWsCicsRespDisp(wsCicsResp);
+            wsFailInfo.setWsCicsResp2Disp(wsCicsResp2);
+            abendThisTaskAtt010(wsFailInfo);
+        }
+    } else if (ACTIONI.equals("3")) {
+        try {
+            CICSCommand cicsCommand = new CICSCommand();
+            cicsCommand.setTransid("OCCS");
+            cicsCommand.setImmediate(true);
+            cicsCommand.execute();
+        } catch (CICSException cicsException) {
+            wsCicsResp = cicsException.getResp();
+            wsCicsResp2 = cicsException.getResp2();
+            abndinfoRec.setAbndRespcode(wsCicsResp);
+            abndinfoRec.setAbndResp2Code(wsCicsResp2);
+            abndinfoRec.setAbndApplid(getAbndApplid());
+            abndinfoRec.setAbndTasknoKey(getAbndTasknoKey());
+            abndinfoRec.setAbndTranid(getAbndTranid());
+            populateTimeDatePtd010();
+            abndinfoRec.setAbndDate(getWsOrigDate());
+            abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm());
+            abndinfoRec.setAbndUtimeKey(getWsUTime());
+            abndinfoRec.setAbndCode("HBNK");
+            abndinfoRec.setAbndProgram(getAbndProgram());
+            abndinfoRec.setAbndSqlcode(0);
+            abndinfoRec.setAbndFreeform("IOT010 - RETURN TRANSID(OCCS) FAIL. EIBRESP=" + wsCicsResp + " RESP2=" + wsCicsResp2);
+            CICSCommand cicsCommand = new CICSCommand();
+            cicsCommand.setCommarea(abndinfoRec.getBytes());
+            cicsCommand.setProgram(wsAbendPgm);
+            cicsCommand.execute();
+            wsFailInfo.setWsCicsFailMsg("BNKMENU - IOT010 - RETURN TRANSID(OCCS) FAIL");
+            wsFailInfo.setWsCicsRespDisp(wsCicsResp);
+            wsFailInfo.setWsCicsResp2Disp(wsCicsResp2);
+            abendThisTaskAtt010(wsFailInfo);
+        }
+    } else if (ACTIONI.equals("4")) {
+        try {
+            CICSCommand cicsCommand = new CICSCommand();
+            cicsCommand.setTransid("OCAC");
+            cicsCommand.setImmediate(true);
+            cicsCommand.execute();
+        } catch (CICSException cicsException) {
+            wsCicsResp = cicsException.getResp();
+            wsCicsResp2 = cicsException.getResp2();
+            abndinfoRec.setAbndRespcode(wsCicsResp);
+            abndinfoRec.setAbndResp2Code(wsCicsResp2);
+            abndinfoRec.setAbndApplid(getAbndApplid());
+            abndinfoRec.setAbndTasknoKey(getAbndTasknoKey());
+            abndinfoRec.setAbndTranid(getAbndTranid());
+            populateTimeDatePtd010();
+            abndinfoRec.setAbndDate(getWsOrigDate());
+            abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm());
+            abndinfoRec.setAbndUtimeKey(getWsUTime());
+            abndinfoRec.setAbndCode("HBNK");
+            abndinfoRec.setAbndProgram(getAbndProgram());
+            abndinfoRec.setAbndSqlcode(0);
+            abndinfoRec.setAbndFreeform("IOT010 - RETURN TRANSID(OCAC) FAIL. EIBRESP=" + wsCicsResp + " RESP2=" + wsCicsResp2);
+            CICSCommand cicsCommand = new CICSCommand();
+            cicsCommand.setCommarea(abndinfoRec.getBytes());
+            cicsCommand.setProgram(wsAbendPgm);
+            cicsCommand.execute();
+            wsFailInfo.setWsCicsFailMsg("BNKMENU - IOT010 - RETURN TRANSID(OCAC) FAIL");
+            wsFailInfo.setWsCicsRespDisp(wsCicsResp);
+            wsFailInfo.setWsCicsResp2Disp(wsCicsResp2);
+            abendThisTaskAtt010(wsFailInfo);
+        }
+    } else if (ACTIONI.equals("5")) {
+        try {
+            CICSCommand cicsCommand = new CICSCommand();
+            cicsCommand.setTransid("OUAC");
+            cicsCommand.setImmediate(true);
+            cicsCommand.execute();
+        } catch (CICSException cicsException) {
+            wsCicsResp = cicsException.getResp();
+            wsCicsResp2 = cicsException.getResp2();
+            abndinfoRec.setAbndRespcode(wsCicsResp);
+            abndinfoRec.setAbndResp2Code(wsCicsResp2);
+            abndinfoRec.setAbndApplid(getAbndApplid());
+            abndinfoRec.setAbndTasknoKey(getAbndTasknoKey());
+            abndinfoRec.setAbndTranid(getAbndTranid());
+            populateTimeDatePtd010();
+            abndinfoRec.setAbndDate(getWsOrigDate());
+            abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm());
+            abndinfoRec.setAbndUtimeKey(getWsUTime());
+            abndinfoRec.setAbndCode("HBNK");
+            abndinfoRec.setAbndProgram(getAbndProgram());
+            abndinfoRec.setAbndSqlcode(0);
+            abndinfoRec.setAbndFreeform("IOT010 - RETURN TRANSID(OUAC) FAIL. EIBRESP=" + wsCicsResp + " RESP2=" + wsCicsResp2);
+            CICSCommand cicsCommand = new CICSCommand();
+            cicsCommand.setCommarea(abndinfoRec.getBytes());
+            cicsCommand.setProgram(wsAbendPgm);
+            cicsCommand.execute();
+            wsFailInfo.setWsCicsFailMsg("BNKMENU - IOT010 - RETURN TRANSID(OUAC) FAIL");
+            wsFailInfo.setWsCicsRespDisp(wsCicsResp);
+            wsFailInfo.setWsCicsResp2Disp(wsCicsResp2);
+            abendThisTaskAtt010(wsFailInfo);
+        }
+    } else if (ACTIONI.equals("6")) {
+        try {
+            CICSCommand cicsCommand = new CICSCommand();
+            cicsCommand.setTransid("OCRA");
+            cicsCommand.setImmediate(true);
+            cicsCommand.execute();
+        } catch (CICSException cicsException) {
+            wsCicsResp = cicsException.getResp();
+            wsCicsResp2 = cicsException.getResp2();
+            abndinfoRec.setAbndRespcode(wsCicsResp);
+            abndinfoRec.setAbndResp2Code(wsCicsResp2);
+            abndinfoRec.setAbndApplid(getAbndApplid());
+            abndinfoRec.setAbndTasknoKey(getAbndTasknoKey());
+            abndinfoRec.setAbndTranid(getAbndTranid());
+            populateTimeDatePtd010();
+            abndinfoRec.setAbndDate(getWsOrigDate());
+            abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm());
+            abndinfoRec.setAbndUtimeKey(getWsUTime());
+            abndinfoRec.setAbndCode("HBNK");
+            abndinfoRec.setAbndProgram(getAbndProgram());
+            abndinfoRec.setAbndSqlcode(0);
+            abndinfoRec.setAbndFreeform("IOT010 - RETURN TRANSID(OCRA) FAIL. EIBRESP=" + wsCicsResp + " RESP2=" + wsCicsResp2);
+            CICSCommand cicsCommand = new CICSCommand();
+            cicsCommand.setCommarea(abndinfoRec.getBytes());
+            cicsCommand.setProgram(wsAbendPgm);
+            cicsCommand.execute();
+            wsFailInfo.setWsCicsFailMsg("BNKMENU - IOT010 - RETURN TRANSID(OCRA) FAIL");
+            wsFailInfo.setWsCicsRespDisp(wsCicsResp);
+            wsFailInfo.setWsCicsResp2Disp(wsCicsResp2);
+            abendThisTaskAtt010(wsFailInfo);
+        }
+    } else if (ACTIONI.equals("7")) {
+        try {
+            CICSCommand cicsCommand = new CICSCommand();
+            cicsCommand.setTransid("OTFN");
+            cicsCommand.setImmediate(true);
+            cicsCommand.execute();
+        } catch (CICSException cicsException) {
+            wsCicsResp = cicsException.getResp();
+            wsCicsResp2 = cicsException.getResp2();
+            abndinfoRec.setAbndRespcode(wsCicsResp);
+            abndinfoRec.setAbndResp2Code(wsCicsResp2);
+            abndinfoRec.setAbndApplid(getAbndApplid());
+            abndinfoRec.setAbndTasknoKey(getAbndTasknoKey());
+            abndinfoRec.setAbndTranid(getAbndTranid());
+            populateTimeDatePtd010();
+            abndinfoRec.setAbndDate(getWsOrigDate());
+            abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm());
+            abndinfoRec.setAbndUtimeKey(getWsUTime());
+            abndinfoRec.setAbndCode("HBNK");
+            abndinfoRec.setAbndProgram(getAbndProgram());
+            abndinfoRec.setAbndSqlcode(0);
+            abndinfoRec.setAbndFreeform("IOT010 - RETURN TRANSID(OTFN) FAIL. EIBRESP=" + wsCicsResp + " RESP2=" + wsCicsResp2);
+            CICSCommand cicsCommand = new CICSCommand();
+            cicsCommand.setCommarea(abndinfoRec.getBytes());
+            cicsCommand.setProgram(wsAbendPgm);
+            cicsCommand.execute();
+            wsFailInfo.setWsCicsFailMsg("BNKMENU - IOT010 - RETURN TRANSID(OTFN) FAIL");
+            wsFailInfo.setWsCicsRespDisp(wsCicsResp);
+            wsFailInfo.setWsCicsResp2Disp(wsCicsResp2);
+            abendThisTaskAtt010(wsFailInfo);
+        }
+    } else if (ACTIONI.equals("A")) {
+        try {
+            CICSCommand cicsCommand = new CICSCommand();
+            cicsCommand.setTransid("OCCA");
+            cicsCommand.setImmediate(true);
+            cicsCommand.execute();
+        } catch (CICSException cicsException) {
+            wsCicsResp = cicsException.getResp();
+            wsCicsResp2 = cicsException.getResp2();
+            abndinfoRec.setAbndRespcode(wsCicsResp);
+            abndinfoRec.setAbndResp2Code(wsCicsResp2);
+            abndinfoRec.setAbndApplid(getAbndApplid());
+            abndinfoRec.setAbndTasknoKey(getAbndTasknoKey());
+            abndinfoRec.setAbndTranid(getAbndTranid());
+            populateTimeDatePtd010();
+            abndinfoRec.setAbndDate(getWsOrigDate());
+            abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm());
+            abndinfoRec.setAbndUtimeKey(getWsUTime());
+            abndinfoRec.setAbndCode("HBNK");
+            abndinfoRec.setAbndProgram(getAbndProgram());
+            abndinfoRec.setAbndSqlcode(0);
+            abndinfoRec.setAbndFreeform("IOT010 - RETURN TRANSID(OCCA) FAIL. EIBRESP=" + wsCicsResp + " RESP2=" + wsCicsResp2);
+            CICSCommand cicsCommand = new CICSCommand();
+            cicsCommand.setCommarea(abndinfoRec.getBytes());
+            cicsCommand.setProgram(wsAbendPgm);
+            cicsCommand.execute();
+            wsFailInfo.setWsCicsFailMsg("BNKMENU - IOT010 - RETURN TRANSID(OCCA) FAIL");
+            wsFailInfo.setWsCicsRespDisp(wsCicsResp);
+            wsFailInfo.setWsCicsResp2Disp(wsCicsResp2);
+            abendThisTaskAtt010(wsFailInfo);
+        }
+    }
+}

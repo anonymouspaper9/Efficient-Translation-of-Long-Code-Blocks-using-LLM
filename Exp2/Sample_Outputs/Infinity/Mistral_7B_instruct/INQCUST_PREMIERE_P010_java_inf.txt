@@ -1,0 +1,52 @@
+
+```java
+public void premiereP010(Dfhcommarea dfhcommarea) {
+    CustomerKy customerKy = new CustomerKy();
+    CustomerRecord customerRecord = new CustomerRecord();
+    char exitDb2Read = 'N';
+    char exitVsamRead = 'N';
+    int sortcode = 987654;
+    char wsDRetried = 'N';
+    char wsVRetried = 'N';
+
+    // Check if INQCUST-CUSTNO is 0 or 9999999999
+    if (dfhcommarea.getInqcustCustno() == 0 || dfhcommarea.getInqcustCustno() == 9999999999) {
+        // Perform read customer from NCS
+        readCustomerNcsRcn010(dfhcommarea);
+        if (dfhcommarea.getInqcustInqSuccess().equals("Y")) {
+            dfhcommarea.setInqcustCustno(this.getNcsCustNoValue());
+        } else {
+            getMeOutOfHereGmofh010();
+        }
+    }
+
+    // If INQCUST-CUSTNO is 0, generate random customer
+    if (dfhcommarea.getInqcustCustno() == 0) {
+        this.setRandomCustomer(generateRandomCustomerGrc010());
+        dfhcommarea.setInqcustCustno(this.getRandomCustomer());
+    }
+
+    // Perform read customer from VSAM
+    readCustomerVsamRcv010(customerKy, customerRecord, dfhcommarea, wsVRetried);
+    while (!exitVsamRead.equals('Y')) {
+        // Check if read successful
+        if (dfhcommarea.getInqcustInqSuccess().equals("Y")) {
+            exitVsamRead = 'Y';
+            dfhcommarea.setInqcustInqFailCd('0');
+            dfhcommarea.setInqcustEye(customerRecord.getCustomerEyecatcher());
+            dfhcommarea.setInqcustScode(customerRecord.getCustomerSortcode());
+            dfhcommarea.setInqcustCustno(customerRecord.getCustomerNumber());
+            dfhcommarea.setInqcustName(customerRecord.getCustomerName());
+            dfhcommarea.setInqcustAddr(customerRecord.getCustomerAddress());
+            dfhcommarea.setInqcustDob(this.getCustomerDateOfBirth());
+            dfhcommarea.setInqcustCreditScore(customerRecord.getCustomerCreditScore());
+            dfhcommarea.setInqcustCsReviewDt(this.getCustomerCsReviewDate());
+        } else {
+            wsVRetried = 'Y';
+        }
+    }
+
+    // Perform get me out of here
+    getMeOutOfHereGmofh010();
+}
+```

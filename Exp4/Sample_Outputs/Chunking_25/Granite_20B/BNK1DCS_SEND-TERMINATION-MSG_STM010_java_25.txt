@@ -1,0 +1,49 @@
+public void sendTerminationMsgStm010(Dfhcommarea dfhcommarea) {
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    WsFailInfo wsFailInfo = new WsFailInfo();
+    String wsAbendPgm = "ABNDPROC";
+
+    String endOfSessionMessage = "Session Ended";
+    try {
+        Task.getTask().getChannel("CHANNEL-NAME0001").delete();
+    } catch (CicsConditionException e) {
+
+        WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+        abndinfoRec = new AbndinfoRec();
+        abndinfoRec.setAbndRespcode(dfhcommarea.getEIBresp());
+        abndinfoRec.setAbndResp2Code(dfhcommarea.getEIBresp2());
+        abndinfoRec.setAbndApplid(Region.getAPPLID());
+        abndinfoRec.setAbndTasknoKey(dfhcommarea.getEIBtaskn());
+        abndinfoRec.setAbndTranid(dfhcommarea.getEIBtrnid());
+        this.populateTimeDate(wsTimeNowGrp);
+        abndinfoRec.setAbndDate(this.getWsOrigDate());
+        abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":"
+                + wsTimeNowGrp.getWsTimeNowGrpMm());
+        abndinfoRec.setAbndUtimeKey(this.getWsUTime());
+        abndinfoRec.setAbndCode("HBNK");
+
+        abndinfoRec = new AbndinfoRec();
+        wsFailInfo = new WsFailInfo();
+        wsAbendPgm = "ABNDPROC";
+        Object jdeclTask = Task.getTask();
+        abndinfoRec.setAbndProgram(jdeclTask.getProgramName());
+        abndinfoRec.setAbndSqlcode(0);
+        String jdeclVar1 = "STM010 - SEND TEXT FAIL" + "EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2="
+                + abndinfoRec.getAbndResp2Code();
+        abndinfoRec.setAbndFreeform(jdeclVar1);
+        jdeclTask = Task.getTask();
+        Channel jdeclChannelObj = jdeclTask.getCurrentChannel();
+        Container jdeclCommareaContainer = jdeclChannelObj.createContainer("DFHCOMMAREA");
+        byte[] jdeclCommareaByteArray = jdeclCommareaContainer.getNoConvert(0, abndinfoRec.getAbndFreeform().length());
+         System.arraycopy(abndinfoRec.getAbndFreeform().getBytes(jdeclTask.getProgramNameEncoding()),0,jdeclCommareaByteArray,0,abndinfoRec.getAbndFreeform().length());
+         
+        jdeclCommareaContainer.putNoConvert(jdeclCommareaByteArray);
+        jdeclTask.link(wsAbendPgm, jdeclCommareaContainer);
+        wsFailInfo.setWsCicsFailMsg("BNK1DCS - STM010 - SEND TEXT FAIL");
+        wsFailInfo.setWsCicsRespDisp(this.getWsCicsResp());
+        wsFailInfo.setWsCicsResp2Disp(this.getWsCicsResp2());
+
+        return;
+    }
+
+}

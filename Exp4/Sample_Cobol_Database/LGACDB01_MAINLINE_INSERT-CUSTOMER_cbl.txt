@@ -1,0 +1,73 @@
+       INSERT-CUSTOMER.                                                 
+      *================================================================*
+      * Insert row into Customer table based on customer number        *
+      *================================================================*
+           MOVE ' INSERT CUSTOMER' TO EM-SQLREQ                         
+      *================================================================*
+           IF LGAC-NCS = 'ON'                                           
+             EXEC SQL                                                   
+               INSERT INTO CUSTOMER                                     
+                         ( CUSTOMERNUMBER,                              
+                           FIRSTNAME,                                   
+                           LASTNAME,                                    
+                           DATEOFBIRTH,                                 
+                           HOUSENAME,                                   
+                           HOUSENUMBER,                                 
+                           POSTCODE,                                    
+                           PHONEMOBILE,                                 
+                           PHONEHOME,                                   
+                           EMAILADDRESS )                               
+                  VALUES ( :DB2-CUSTOMERNUM-INT,                        
+                           :CA-FIRST-NAME,                              
+                           :CA-LAST-NAME,                               
+                           :CA-DOB,                                     
+                           :CA-HOUSE-NAME,                              
+                           :CA-HOUSE-NUM,                               
+                           :CA-POSTCODE,                                
+                           :CA-PHONE-MOBILE,                            
+                           :CA-PHONE-HOME,                              
+                           :CA-EMAIL-ADDRESS )                          
+             END-EXEC                                                   
+             IF SQLCODE NOT EQUAL 0                                     
+               MOVE '90' TO CA-RETURN-CODE                              
+               PERFORM WRITE-ERROR-MESSAGE                              
+               EXEC CICS RETURN END-EXEC                                
+             END-IF                                                     
+           ELSE                                                         
+             EXEC SQL                                                   
+               INSERT INTO CUSTOMER                                     
+                         ( CUSTOMERNUMBER,                              
+                           FIRSTNAME,                                   
+                           LASTNAME,                                    
+                           DATEOFBIRTH,                                 
+                           HOUSENAME,                                   
+                           HOUSENUMBER,                                 
+                           POSTCODE,                                    
+                           PHONEMOBILE,                                 
+                           PHONEHOME,                                   
+                           EMAILADDRESS )                               
+                  VALUES ( DEFAULT,                                     
+                           :CA-FIRST-NAME,                              
+                           :CA-LAST-NAME,                               
+                           :CA-DOB,                                     
+                           :CA-HOUSE-NAME,                              
+                           :CA-HOUSE-NUM,                               
+                           :CA-POSTCODE,                                
+                           :CA-PHONE-MOBILE,                            
+                           :CA-PHONE-HOME,                              
+                           :CA-EMAIL-ADDRESS )                          
+             END-EXEC                                                   
+             IF SQLCODE NOT EQUAL 0                                     
+               MOVE '90' TO CA-RETURN-CODE                              
+               PERFORM WRITE-ERROR-MESSAGE                              
+               EXEC CICS RETURN END-EXEC                                
+             END-IF                                                     
+      *    get value of assigned customer number                        
+               EXEC SQL                                                 
+                 SET :DB2-CUSTOMERNUM-INT = IDENTITY_VAL_LOCAL()        
+               END-EXEC                                                 
+           END-IF.                                                      
+                                                                        
+           MOVE DB2-CUSTOMERNUM-INT TO CA-CUSTOMER-NUM.                 
+                                                                        
+           EXIT.                                                        

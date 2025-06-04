@@ -1,0 +1,125 @@
+```java
+public void sendTerminationMsgStm010() {
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    String endOfSessionMessage = "Session Ended";
+    String wsAbendPgm = "ABNDPROC";
+    WsFailInfo wsFailInfo = new WsFailInfo();
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+
+    /* This is prompt example 2 */
+    if (cicsSend(endOfSessionMessage)) {
+        if (!isNormalCicsResponse()) {
+            initializeFailInfo();
+            setWsCicsFailMsg("BNK1CAC - STM010 - SEND TEXT FAIL");
+            setWsCicsResp(getWsCicsResp());
+            setWsCicsResp2(getWsCicsResp2());
+            initializeAbndinfoRec();
+            setAbndRespcode(getEibResp());
+            setAbndResp2code(getEibResp2());
+            assignApplid(getAbndApplid());
+            setAbndTasknoKey(getEibTaskno());
+            setAbndTranid(getEibTranid());
+            populateTimeDate();
+            setAbndDate(getWsOrigDate());
+            setAbndTime(getWsTimeNowGrpHh() + ":" + getWsTimeNowGrpMm() + ":" + getWsTimeNowGrpMm());
+            setAbndUtimeKey(getWsUTime());
+            setAbndCode("HBNK");
+            assignProgram(wsAbendPgm);
+            setAbndSqlcode(0);
+            setAbndFreeform("STM010 - SEND TEXT FAIL EIBRESP=" + getEibResp() + " RESP2=" + getEibResp2());
+            linkAbndinfoRec();
+            abendThisTask(wsFailInfo);
+        }
+    }
+}
+
+private boolean cicsSend(String message) {
+    // Implement CICS SEND operation here
+    return true; // Assuming successful execution
+}
+
+private boolean isNormalCicsResponse() {
+    // Implement checking CICS response here
+    return true; // Assuming normal response
+}
+
+private void initializeFailInfo() {
+    // Initialize wsFailInfo object here
+}
+
+private void setWsCicsFailMsg(String msg) {
+    // Set wsFailInfo.getWsCicsFailMsg() here
+}
+
+private void setWsCicsResp(int resp) {
+    // Set wsFailInfo.getWsCicsResp() here
+}
+
+private void setWsCicsResp2(int resp2) {
+    // Set wsFailInfo.getWsCicsResp2() here
+}
+
+private void initializeAbndinfoRec() {
+    // Initialize abndinfoRec object here
+}
+
+private void setAbndRespcode(int respcode) {
+    // Set abndinfoRec.getAbndRespcode() here
+}
+
+private void setAbndResp2code(int resp2code) {
+    // Set abndinfoRec.getAbndResp2Code() here
+}
+
+private void assignApplid(String applid) {
+    // Set abndinfoRec.getAbndApplid() here
+}
+
+private void setAbndTasknoKey(int tasknoKey) {
+    // Set abndinfoRec.getAbndTasknoKey() here
+}
+
+private void setAbndTranid(String tranid) {
+    // Set abndinfoRec.getAbndTranid() here
+}
+
+private void populateTimeDate() {
+    // Implement populating time and date here
+}
+
+private void setAbndDate(String date) {
+    // Set abndinfoRec.getAbndDate() here
+}
+
+private void setAbndTime(String time) {
+    // Set abndinfoRec.getAbndTime() here
+}
+
+private void setAbndUtimeKey(long utimeKey) {
+    // Set abndinfoRec.getAbndUtimeKey() here
+}
+
+private void setAbndCode(String code) {
+    // Set abndinfoRec.getAbndCode() here
+}
+
+private void assignProgram(String program) {
+    // Set abndinfoRec.getAbndProgram() here
+}
+
+private void setAbndSqlcode(int sqlcode) {
+    // Set abndinfoRec.getAbndSqlcode() here
+}
+
+private void setAbndFreeform(String freeform) {
+    // Set abndinfoRec.getAbndFreeform() here
+}
+
+private void linkAbndinfoRec() {
+    // Implement linking abndinfoRec here
+}
+
+private void abendThisTask(WsFailInfo wsFailInfo) {
+    // Implement abending this task here
+}
+```

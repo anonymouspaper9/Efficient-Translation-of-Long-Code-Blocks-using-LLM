@@ -1,0 +1,36 @@
+public void mainlineInsertPolicy(CaPolicyRequest caPolicyRequest, Db2InIntegers db2InIntegers, int db2PolicynumInt,
+        ErrorMsg errorMsg, Policy policy) {
+
+    db2InIntegers.setDb2BrokeridInt(caPolicyRequest.getPolicy().getBrokerid());
+    db2InIntegers.setDb2PaymentInt(caPolicyRequest.getPolicy().getPayment());
+    errorMsg.getEmVariable().setEmSqlreq(" INSERT POLICY");
+    try {
+        String sql = "INSERT INTO POLICY(CUSTOMERNUMBER, ISSUEDATE, EXPIRYDATE, POLICYTYPE, LASTCHANGED, BROKERID, BROKERSREFERENCE, PAYMENT)values(?, ?, ?, ?, ?, ?, ?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, db2InIntegers.getDb2CustomernumInt());
+        ps.setString(2, caPolicyRequest.getPolicy().getIssuedate());
+        ps.setString(3, caPolicyRequest.getPolicy().getExpirydate());
+        ps.setString(4, policy.getPolicytype());
+        ps.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
+        ps.setInt(6, db2InIntegers.getDb2BrokeridInt());
+        ps.setString(7, caPolicyRequest.getPolicy().getBrokersreference());
+        ps.setInt(8, db2InIntegers.getDb2PaymentInt());
+        ps.executeUpdate();
+        ps.close();
+    } catch (SQLException exception) {
+        System.out.println(exception);
+    }
+
+    if (caPolicyRequest.getSqlcode() == 0) {
+        caPolicyRequest.setCaReturnCode("00");
+    } else if (caPolicyRequest.getSqlcode() == -530) {
+        caPolicyRequest.setCaReturnCode("70");
+        writeErrorMessage(errorMsg);
+        System.exit(70);
+    } else {
+        caPolicyRequest.setCaReturnCode("90");
+        writeErrorMessage(errorMsg);
+        System.exit(90);
+    }
+
+}

@@ -1,0 +1,51 @@
+public void restoreTermDefRtd010(Dfhcommarea dfhcommarea, WsFailInfo wsFailInfo) {
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+    String wsAbendPgm = "ABNDPROC";
+
+    WsCommArea wsCommArea = new WsCommArea();
+    int wsUctrans = 0;
+    wsCommArea.setBytes(dfhcommarea.getBytes());
+    wsUctrans = wsCommArea.getWsCommTerm();
+    try {
+        TerminalPrincipalFacility jdeclTerm;
+        Object jdeclO = Task.getTask().getPrincipalFacility();
+        if (jdeclO instanceof TerminalPrincipalFacility) {
+            jdeclTerm = (TerminalPrincipalFacility) jdeclO;
+            jdeclTerm.setUnescapedTranslation(wsUctrans);
+        }
+    } catch (Exception jdeclE) {
+
+        abndinfoRec = new AbndinfoRec();
+        wsTimeNowGrp = new WsTimeNowGrp();
+        wsAbendPgm = "ABNDPROC";
+        abndinfoRec.setAbndRespcode(dfhcommarea.getEIBresp());
+        abndinfoRec.setAbndResp2Code(dfhcommarea.getEIBresp2());
+        abndinfoRec.setAbndApplid(Region.getAPPLID());
+        abndinfoRec.setAbndTasknoKey(Task.getTask().getTaskNumber());
+        abndinfoRec.setAbndTranid(Task.getTask().getTransactionName());
+        this.populateTimeDate(wsTimeNowGrp);
+        abndinfoRec.setAbndDate(this.getWsOrigDate());
+        String wsTimeNow = wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":"
+                + wsTimeNowGrp.getWsTimeNowGrpMm();
+        abndinfoRec.setAbndTime(wsTimeNow);
+        abndinfoRec.setAbndUtimeKey(this.getWsUTime());
+        abndinfoRec.setAbndCode("HBNK");
+        abndinfoRec.setAbndProgram(Task.getTask().getProgramName());
+        abndinfoRec.setAbndSqlcode(0);
+        String wsFailMsg = "RTD010 - SET TERMINAL UC FAIL " + "EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2="
+                + abndinfoRec.getAbndResp2Code();
+        abndinfoRec.setAbndFreeform(wsFailMsg);
+        Object jdeclTask = Task.getTask();
+        Channel jdeclChannelObj = jdeclTask.getCurrentChannel();
+        Program jdeclProgObj = new Program();
+        jdeclProgObj.setName(wsAbendPgm);
+        jdeclProgObj.link(jdeclChannelObj, abndinfoRec);
+        wsFailInfo.setWsCicsFailMsg("BNK1CCS - RTD010 - SET TERMINAL UC FAIL ");
+        wsFailInfo.setWsCicsRespDisp(this.getWsCicsResp());
+        wsFailInfo.setWsCicsResp2Disp(this.getWsCicsResp2());
+        Task.getTask().abend(wsFailInfo.getWsCicsFailMsg());
+
+    }
+
+}

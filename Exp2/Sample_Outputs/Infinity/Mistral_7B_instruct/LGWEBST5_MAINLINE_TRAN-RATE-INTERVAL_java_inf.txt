@@ -1,0 +1,195 @@
+
+```java
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class COBOLtoJava {
+    private static final String DB_URL = "jdbc:db2://localhost:50000/mydb";
+    private static final String DB_USER = "username";
+    private static final String DB_PASSWORD = "password";
+
+    public static void mainlineTranRateInterval(String tsQpre, String wsTime) {
+        int hHval;
+        int iCountVal;
+        int mMval;
+        int nCountVal;
+        int oCountVal;
+        int sSval;
+        WsHhmmss wsHhmmss = new WsHhmmss();
+        String wsNewv = "";
+        WsOldv wsOldv = new WsOldv();
+        int wsResp;
+        String wsTsQname = "";
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = sdf.parse(wsTime);
+        hHval = date.getHours();
+        mMval = date.getMinutes();
+        sSval = date.getSeconds();
+
+        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
+            // This is prompt example 2
+            if (tsQpre.equals("000V")) {
+                wsTsQname = "QUEUE_NAME"; // Replace with your queue name
+                PreparedStatement ps = connection.prepareStatement("SELECT * FROM YOUR_TABLE WHERE SOME_COLUMN = ?", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                ps.setString(1, "someValue");
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    wsOldv.setBytes(rs.getBytes("OLD_COLUMN"));
+                } else {
+                    wsOldv.setBytes(new byte[0]);
+                }
+                wsResp = DFHRESP.NORMAL;
+            } else {
+                wsOldv.setBytes(new byte[0]);
+                wsResp = DFHRESP.NOT_FOUND;
+            }
+
+            if (wsResp != DFHRESP.NORMAL) {
+                wsOldv.setBytes(new byte[6]); // Set a default value for new value
+                wsTsQname = "QUEUE_NAME"; // Replace with your queue name
+                PreparedStatement ps = connection.prepareStatement("INSERT INTO YOUR_TABLE (OLD_COLUMN) VALUES (?)");
+                ps.setBytes(1, wsOldv.getBytes());
+                ps.executeUpdate();
+                ps.close();
+            }
+
+            wsTsQname = "QUEUE_NAME"; // Replace with your queue name
+            PreparedStatement ps = connection.prepareStatement("UPDATE YOUR_TABLE SET NEW_COLUMN = ? WHERE SOME_COLUMN = ?");
+            ps.setBytes(1, wsOldv.getBytes());
+            ps.setString(2, "someValue");
+            ps.executeUpdate();
+            ps.close();
+
+            // Calculate new value
+            nCountVal = (hHval * 3600) + (mMval * 60) + sSval;
+            oCountVal = wsHhmmss.getOldvhh() * 3600 + wsHhmmss.getOldvmm() * 60 + wsHhmmss.getOldvss();
+            iCountVal = nCountVal - oCountVal;
+            wsNewv = String.valueOf(iCountVal);
+
+            // Write new value to the queue
+            wsTsQname = "QUEUE_NAME"; // Replace with your queue name
+            PreparedStatement ps2 = connection.prepareStatement("INSERT INTO YOUR_TABLE (NEW_COLUMN) VALUES (?)");
+            ps2.setBytes(1, wsNewv.getBytes());
+            ps2.executeUpdate();
+            ps2.close();
+
+            // Start a transaction after 1 minute
+            PreparedStatement ps3 = connection.prepareStatement("START TRANSACTION 'SSST' AFTER MINUTES(1)");
+            ps3.executeUpdate();
+            ps3.close();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static class WsHhmmss {
+        private byte[] wsOldvhh;
+        private byte[] wsOldvmm;
+        private byte[] wsOldvss;
+
+        public byte[] getBytes() {
+            return new byte[]{wsOldvhh, wsOldvmm, wsOldvss};
+        }
+
+        public void setBytes(byte[] bytes) {
+            wsOldvhh = bytes[0];
+            wsOldvmm = bytes[1];
+            wsOldvss = bytes[2];
+        }
+
+        public byte[] getWsOldvhh() {
+            return wsOldvhh;
+        }
+
+        public void setWsOldvhh(byte[] wsOldvhh) {
+            this.wsOldvhh = wsOldvhh;
+        }
+
+        public byte[] getWsOldvmm() {
+            return wsOldvmm;
+        }
+
+        public void setWsOldvmm(byte[] wsOldvmm) {
+            this.wsOldvmm = wsOldvmm;
+        }
+
+        public byte[] getWsOldvss() {
+            return wsOldvss;
+        }
+
+        public void setWsOldvss(byte[] wsOldvss) {
+            this.wsOldvss = wsOldvss;
+        }
+
+        public int getWsHh() {
+            return wsOldvhh[0] & 0xFF;
+        }
+
+        public void setWsHh(int wsHh) {
+            wsOldvhh[0] = (byte) wsHh;
+        }
+
+        public int getWsMm() {
+            return wsOldvmm[0] & 0xFF;
+        }
+
+        public void setWsMm(int wsMm) {
+            wsOldvmm[0] = (byte) wsMm;
+        }
+
+        public int getWsSs() {
+            return wsOldvss[0] & 0xFF;
+        }
+
+        public void setWsSs(int wsSs) {
+            wsOldvss[0] = (byte) wsSs;
+        }
+    }
+
+    public static class WsOldv {
+        private byte[] wsOldvhh;
+        private byte[] wsOldvmm;
+        private byte[] wsOldvss;
+
+        public byte[] getBytes() {
+            return new byte[]{wsOldvhh, wsOldvmm, wsOldvss};
+        }
+
+        public void setBytes(byte[] bytes) {
+            wsOldvhh = bytes[0];
+            wsOldvmm = bytes[1];
+            wsOldvss = bytes[2];
+        }
+
+        public byte[] getWsOldvhh() {
+            return wsOldvhh;
+        }
+
+        public void setWsOldvhh(byte[] wsOldvhh) {
+            this.wsOldvhh = wsOldvhh;
+        }
+
+        public byte[] getWsOldvmm() {
+            return wsOldvmm;
+        }
+
+        public void setWsOldvmm(byte[] wsOldvmm) {
+            this.wsOldvmm = wsOldvmm;
+        }
+
+        public byte[] getWsOldvss() {
+            return wsOldvss;
+        }
+
+        public void setWsOldvss(byte[] wsOldvss) {
+            this.wsOldvss = wsOldvss;
+        }
+    }
+}
+```

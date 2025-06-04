@@ -1,0 +1,71 @@
+       MAINLINE SECTION.                                                
+                                                                        
+      *----------------------------------------------------------------*
+      * Common code                                                    *
+      *----------------------------------------------------------------*
+      * initialize working storage variables                            
+           INITIALIZE WS-HEADER.                                        
+      * set up general variable                                         
+           MOVE EIBTRNID TO WS-TRANSID.                                 
+           MOVE EIBTRMID TO WS-TERMID.                                  
+           MOVE EIBTASKN TO WS-TASKNUM.                                 
+           MOVE EIBCALEN TO WS-CALEN.                                   
+      *----------------------------------------------------------------*
+                                                                        
+      *----------------------------------------------------------------*
+      * Check commarea and obtain required details                     *
+      *----------------------------------------------------------------*
+      * If NO commarea received issue an ABEND                          
+           IF EIBCALEN IS EQUAL TO ZERO                                 
+               MOVE ' NO COMMAREA RECEIVED' TO EM-VARIABLE              
+               PERFORM WRITE-ERROR-MESSAGE                              
+               EXEC CICS ABEND ABCODE('LGCA') NODUMP END-EXEC           
+           END-IF                                                       
+                                                                        
+      * initialize commarea return code to zero                         
+           MOVE '00' TO CA-RETURN-CODE                                  
+           SET WS-ADDR-DFHCOMMAREA TO ADDRESS OF DFHCOMMAREA.           
+                                                                        
+      * and save in error msg field incase required                     
+           MOVE CA-CUSTOMER-NUM TO EM-CUSNUM                            
+                                                                        
+      * Check commarea length                                           
+           ADD WS-CA-HEADER-LEN TO WS-REQUIRED-CA-LEN                   
+                                                                        
+                                                                        
+      *    if less set error return code and return to caller           
+           IF EIBCALEN IS LESS THAN WS-REQUIRED-CA-LEN                  
+             MOVE '98' TO CA-RETURN-CODE                                
+             EXEC CICS RETURN END-EXEC                                  
+           END-IF                                                       
+                                                                        
+      *----------------------------------------------------------------*
+      *    Perform Business Rule processing via ODM                    *
+      *----------------------------------------------------------------*
+      *    If an Endowment policy is being added, and if Business       
+      *    Rule processing is required, then call the Business Rule     
+      *    program.                                                     
+      *    Note: uncomment the following 'MOVE' statement to apply      
+      *          Business Rule processing (default=no)                  
+      *    MOVE 'Y' TO BUSINESS-RULES                                   
+                                                                        
+           If IN-RULES-MODE And CA-REQUEST-ID = '01AEND'                
+               EXEC CICS Link Program(LGAPBR01)                         
+                    Commarea(DFHCOMMAREA)                               
+                    LENGTH(32500)                                       
+               END-EXEC                                                 
+           End-if                                                       
+                                                                        
+      *----------------------------------------------------------------*
+      *    Perform the data Inserts                                    *
+      *----------------------------------------------------------------*
+           EXEC CICS Link Program(LGAPDB01)                             
+                Commarea(DFHCOMMAREA)                                   
+                LENGTH(32500)                                           
+           END-EXEC.                                                    
+                                                                        
+           If CA-RETURN-CODE > 0                                        
+             EXEC CICS RETURN END-EXEC                                  
+           End-if                                                       
+                                                                        
+           EXEC CICS RETURN END-EXEC.                                   

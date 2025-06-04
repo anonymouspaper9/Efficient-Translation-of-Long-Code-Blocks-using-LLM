@@ -1,0 +1,70 @@
+       MAINLINE SECTION.                                                
+      *                                                                 
+      *---------------------------------------------------------------* 
+           Move EIBCALEN To WS-Commarea-Len.                            
+      *---------------------------------------------------------------* 
+           Move CA-Request-ID(4:1) To WF-Request-ID                     
+           Move CA-Policy-Num      To WF-Policy-Num                     
+           Move CA-Customer-Num    To WF-Customer-Num                   
+                                                                        
+           Evaluate WF-Request-ID                                       
+                                                                        
+             When 'C'                                                   
+               Move CA-B-Postcode  To WF-B-Postcode                     
+               Move CA-B-Status    To WF-B-Status                       
+               Move CA-B-Customer  To WF-B-Customer                     
+                                                                        
+             When 'E'                                                   
+               Move CA-E-WITH-PROFITS To  WF-E-WITH-PROFITS             
+               Move CA-E-EQUITIES     To  WF-E-EQUITIES                 
+               Move CA-E-MANAGED-FUND To  WF-E-MANAGED-FUND             
+               Move CA-E-FUND-NAME    To  WF-E-FUND-NAME                
+               Move CA-E-LIFE-ASSURED To  WF-E-LIFE-ASSURED             
+                                                                        
+             When 'H'                                                   
+               Move CA-H-PROPERTY-TYPE To  WF-H-PROPERTY-TYPE           
+               Move CA-H-BEDROOMS      To  WF-H-BEDROOMS                
+               Move CA-H-VALUE         To  WF-H-VALUE                   
+               Move CA-H-POSTCODE      To  WF-H-POSTCODE                
+               Move CA-H-HOUSE-NAME    To  WF-H-HOUSE-NAME              
+                                                                        
+             When 'M'                                                   
+               Move CA-M-MAKE          To  WF-M-MAKE                    
+               Move CA-M-MODEL         To  WF-M-MODEL                   
+               Move CA-M-VALUE         To  WF-M-VALUE                   
+               Move CA-M-REGNUMBER     To  WF-M-REGNUMBER               
+                                                                        
+             When Other                                                 
+               Move Spaces To WF-Policy-Data                            
+           End-Evaluate                                                 
+                                                                        
+           Move CA-Policy-Num      To WF-Policy-Num                     
+      *---------------------------------------------------------------* 
+           Exec CICS Read File('KSDSPOLY')                              
+                     Into(WS-FileIn)                                    
+                     Length(WS-Commarea-Len)                            
+                     Ridfld(WF-Policy-Key)                              
+                     KeyLength(21)                                      
+                     RESP(WS-RESP)                                      
+                     Update                                             
+           End-Exec.                                                    
+           If WS-RESP Not = DFHRESP(NORMAL)                             
+             Move EIBRESP2 To WS-RESP2                                  
+             MOVE '81' TO CA-RETURN-CODE                                
+             PERFORM WRITE-ERROR-MESSAGE                                
+             EXEC CICS ABEND ABCODE('LGV3') NODUMP END-EXEC             
+             EXEC CICS RETURN END-EXEC                                  
+           End-If.                                                      
+      *---------------------------------------------------------------* 
+           Exec CICS ReWrite File('KSDSPOLY')                           
+                     From(WF-Policy-Info)                               
+                     Length(WS-Commarea-LenF)                           
+                     RESP(WS-RESP)                                      
+           End-Exec.                                                    
+           If WS-RESP Not = DFHRESP(NORMAL)                             
+             Move EIBRESP2 To WS-RESP2                                  
+             MOVE '82' TO CA-RETURN-CODE                                
+             PERFORM WRITE-ERROR-MESSAGE                                
+             EXEC CICS ABEND ABCODE('LGV4') NODUMP END-EXEC             
+             EXEC CICS RETURN END-EXEC                                  
+           End-If.                                                      

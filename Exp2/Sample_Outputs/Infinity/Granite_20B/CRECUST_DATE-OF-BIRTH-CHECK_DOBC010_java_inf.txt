@@ -1,0 +1,45 @@
+public void dateOfBirthCheckDobc010(CommDobGroup7 commDobGroup) {
+    DateOfBirthForCeedays dateOfBirthForCeedays = new DateOfBirthForCeedays();
+    DateOfBirthFormat dateOfBirthFormat = new DateOfBirthFormat();
+    Fc fc = new Fc();
+    int wsDateOfBirthLillian;
+    WsTodayGregorian wsTodayGregorian = new WsTodayGregorian();
+    int wsTodayLillian;
+    String wsTodaySeconds = "";
+    if (commDobGroup.getCommBirthYear() < 1601) {
+        this.setWsDateOfBirthError('Y');
+        commDobGroup.setCommFailCode('O');
+        return;
+    }
+    dateOfBirthForCeedays.setCeedaysYear(commDobGroup.getCommBirthYear());
+    dateOfBirthForCeedays.setCeedaysMonth(commDobGroup.getCommBirthMonth());
+    dateOfBirthForCeedays.setCeedaysDay(commDobGroup.getCommBirthDay());
+    try {
+        dateOfBirthFormat.setBytes(dateOfBirthForCeedays.getBytes());
+    } catch (Exception exception) {
+        this.setWsDateOfBirthError('Y');
+        commDobGroup.setCommFailCode('Z');
+        System.out.println("CEEDAYS failed, FORMAT LENGTH 10 with msg "
+                + ((Case1ConditionId) (fc.getConditionTokenValue())).getMsgNo() + " for date YYYYMMDD"
+                + dateOfBirthForCeedays.toString());
+        return;
+    }
+    try {
+        wsTodayLillian = DateUtils.getDayCount(new Date(0));
+        wsTodaySeconds = Integer.toString(Calendar.getInstance().get(Calendar.SECOND));
+    } catch (Exception exception) {
+        this.setWsDateOfBirthError('Y');
+        System.out.println("CEEDLOCT failed with msg " + ((Case1ConditionId) (fc.getConditionTokenValue())).getMsgNo());
+        return;
+    }
+    int wsCustomerAge = wsTodayGregorian.getWsTodayGYear() - commDobGroup.getCommBirthYear();
+    if (wsCustomerAge > 150) {
+        this.setWsDateOfBirthError('Y');
+        commDobGroup.setCommFailCode('O');
+        return;
+    }
+    if (wsTodayLillian < wsDateOfBirthLillian) {
+        this.setWsDateOfBirthError('Y');
+        commDobGroup.setCommFailCode('Y');
+    }
+}

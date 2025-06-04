@@ -1,0 +1,356 @@
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+       MAINLINE SECTION.                                                
+           Move EIBCALEN To WS-Commarea-Len.                            
+           Move CA-Request-ID(4:1) To WF-Request-ID                     
+           Move CA-Policy-Num      To WF-Policy-Num                     
+           Move CA-Customer-Num    To WF-Customer-Num                   
+           Evaluate WF-Request-ID                                       
+             When 'C'                                                   
+               Move CA-B-Postcode  To WF-B-Postcode                     
+               Move CA-B-Status    To WF-B-Status                       
+               Move CA-B-Customer  To WF-B-Customer                     
+             When 'E'                                                   
+               Move CA-E-WITH-PROFITS To  WF-E-WITH-PROFITS             
+               Move CA-E-EQUITIES     To  WF-E-EQUITIES                 
+               Move CA-E-MANAGED-FUND To  WF-E-MANAGED-FUND             
+               Move CA-E-FUND-NAME    To  WF-E-FUND-NAME                
+               Move CA-E-LIFE-ASSURED To  WF-E-LIFE-ASSURED             
+             When 'H'                                                   
+               Move CA-H-PROPERTY-TYPE To  WF-H-PROPERTY-TYPE           
+               Move CA-H-BEDROOMS      To  WF-H-BEDROOMS                
+               Move CA-H-VALUE         To  WF-H-VALUE                   
+               Move CA-H-POSTCODE      To  WF-H-POSTCODE                
+               Move CA-H-HOUSE-NAME    To  WF-H-HOUSE-NAME              
+             When 'M'                                                   
+               Move CA-M-MAKE          To  WF-M-MAKE                    
+               Move CA-M-MODEL         To  WF-M-MODEL                   
+               Move CA-M-VALUE         To  WF-M-VALUE                   
+               Move CA-M-REGNUMBER     To  WF-M-REGNUMBER               
+             When Other                                                 
+               Move Spaces To WF-Policy-Data                            
+           End-Evaluate                                                 
+           Move CA-Policy-Num      To WF-Policy-Num                     
+           EXEC CICS WRITE
+                FILE('KSDSPOLY')
+                FROM(WF-Policy-Info)
+                KEYLENGTH(21)
+                LENGTH(64)
+                RESP(WS-RESP)
+                RIDFLD(WF-Policy-Key)
+           END-EXEC.                                                    
+           If WS-RESP Not = DFHRESP(NORMAL)                             
+             Move EIBRESP2 To WS-RESP2                                  
+             MOVE '80' TO CA-RETURN-CODE                                
+             PERFORM WRITE-ERROR-MESSAGE                                
+             EXEC CICS RETURN
+             END-EXEC                                  
+           End-If.                                                      
+
+## Variable Map:
+WS-RESP2 gettermapping wsResp2
+WS-RESP2 settermapping wsResp2 = val
+WS-RESP2 PIC S9(8) JavaType int
+WS-RESP gettermapping wsResp
+WS-RESP settermapping wsResp = val
+WS-RESP PIC S9(8) JavaType int
+WS-Commarea-Len gettermapping wsCommareaLen
+WS-Commarea-Len settermapping wsCommareaLen = val
+WS-Commarea-Len PIC S9(4) JavaType int
+WF-Request-ID gettermapping wfPolicyInfo.getWfPolicyKey().getWfRequestId()
+WF-Request-ID settermapping wfPolicyInfo.getWfPolicyKey().setWfRequestId(val)
+WF-Request-ID PIC X JavaType char
+WF-Policy-Num gettermapping wfPolicyInfo.getWfPolicyKey().getWfPolicyNum()
+WF-Policy-Num settermapping wfPolicyInfo.getWfPolicyKey().setWfPolicyNum(val)
+WF-Policy-Num PIC X(10) JavaType String
+WF-Policy-Key gettermapping wfPolicyInfo.getWfPolicyKey().getBytes()
+WF-Policy-Key settermapping wfPolicyInfo.getWfPolicyKey().setBytes(val)
+WF-Policy-Key GROUP JavaType WfPolicyKey
+WF-Policy-Info gettermapping wfPolicyInfo.getBytes()
+WF-Policy-Info settermapping wfPolicyInfo.setBytes(val)
+WF-Policy-Info GROUP JavaType WfPolicyInfo
+WF-Policy-Data gettermapping wfPolicyData
+WF-Policy-Data settermapping wfPolicyData = val
+WF-Policy-Data PIC X(43) JavaType String
+WF-M-VALUE gettermapping ((WfMPolicyData)(wfPolicyInfo)).getWfMValue()
+WF-M-VALUE settermapping ((WfMPolicyData)(wfPolicyInfo)).setWfMValue(val)
+WF-M-VALUE PIC 9(6) JavaType int
+WF-M-REGNUMBER gettermapping ((WfMPolicyData)(wfPolicyInfo)).getWfMRegnumber()
+WF-M-REGNUMBER settermapping ((WfMPolicyData)(wfPolicyInfo)).setWfMRegnumber(val)
+WF-M-REGNUMBER PIC X(7) JavaType String
+WF-M-MODEL gettermapping ((WfMPolicyData)(wfPolicyInfo)).getWfMModel()
+WF-M-MODEL settermapping ((WfMPolicyData)(wfPolicyInfo)).setWfMModel(val)
+WF-M-MODEL PIC X(15) JavaType String
+WF-M-MAKE gettermapping ((WfMPolicyData)(wfPolicyInfo)).getWfMMake()
+WF-M-MAKE settermapping ((WfMPolicyData)(wfPolicyInfo)).setWfMMake(val)
+WF-M-MAKE PIC X(15) JavaType String
+WF-H-VALUE gettermapping ((WfHPolicyData)(wfPolicyInfo)).getWfHValue()
+WF-H-VALUE settermapping ((WfHPolicyData)(wfPolicyInfo)).setWfHValue(val)
+WF-H-VALUE PIC 9(8) JavaType int
+WF-H-PROPERTY-TYPE gettermapping ((WfHPolicyData)(wfPolicyInfo)).getWfHPropertyType()
+WF-H-PROPERTY-TYPE settermapping ((WfHPolicyData)(wfPolicyInfo)).setWfHPropertyType(val)
+WF-H-PROPERTY-TYPE PIC X(15) JavaType String
+WF-H-POSTCODE gettermapping ((WfHPolicyData)(wfPolicyInfo)).getWfHPostcode()
+WF-H-POSTCODE settermapping ((WfHPolicyData)(wfPolicyInfo)).setWfHPostcode(val)
+WF-H-POSTCODE PIC X(8) JavaType String
+WF-H-HOUSE-NAME gettermapping ((WfHPolicyData)(wfPolicyInfo)).getWfHHouseName()
+WF-H-HOUSE-NAME settermapping ((WfHPolicyData)(wfPolicyInfo)).setWfHHouseName(val)
+WF-H-HOUSE-NAME PIC X(9) JavaType String
+WF-H-BEDROOMS gettermapping ((WfHPolicyData)(wfPolicyInfo)).getWfHBedrooms()
+WF-H-BEDROOMS settermapping ((WfHPolicyData)(wfPolicyInfo)).setWfHBedrooms(val)
+WF-H-BEDROOMS PIC 999 JavaType int
+WF-E-WITH-PROFITS gettermapping ((WfEPolicyData)(wfPolicyInfo)).getWfEWithProfits()
+WF-E-WITH-PROFITS settermapping ((WfEPolicyData)(wfPolicyInfo)).setWfEWithProfits(val)
+WF-E-WITH-PROFITS PIC X JavaType char
+WF-E-MANAGED-FUND gettermapping ((WfEPolicyData)(wfPolicyInfo)).getWfEManagedFund()
+WF-E-MANAGED-FUND settermapping ((WfEPolicyData)(wfPolicyInfo)).setWfEManagedFund(val)
+WF-E-MANAGED-FUND PIC X JavaType char
+WF-E-LIFE-ASSURED gettermapping ((WfEPolicyData)(wfPolicyInfo)).getWfELifeAssured()
+WF-E-LIFE-ASSURED settermapping ((WfEPolicyData)(wfPolicyInfo)).setWfELifeAssured(val)
+WF-E-LIFE-ASSURED PIC X(30) JavaType String
+WF-E-FUND-NAME gettermapping ((WfEPolicyData)(wfPolicyInfo)).getWfEFundName()
+WF-E-FUND-NAME settermapping ((WfEPolicyData)(wfPolicyInfo)).setWfEFundName(val)
+WF-E-FUND-NAME PIC X(10) JavaType String
+WF-E-EQUITIES gettermapping ((WfEPolicyData)(wfPolicyInfo)).getWfEEquities()
+WF-E-EQUITIES settermapping ((WfEPolicyData)(wfPolicyInfo)).setWfEEquities(val)
+WF-E-EQUITIES PIC X JavaType char
+WF-Customer-Num gettermapping wfPolicyInfo.getWfPolicyKey().getWfCustomerNum()
+WF-Customer-Num settermapping wfPolicyInfo.getWfPolicyKey().setWfCustomerNum(val)
+WF-Customer-Num PIC X(10) JavaType String
+WF-B-Status gettermapping ((WfCPolicyData)(wfPolicyInfo)).getWfBStatus()
+WF-B-Status settermapping ((WfCPolicyData)(wfPolicyInfo)).setWfBStatus(val)
+WF-B-Status PIC 9(4) JavaType int
+WF-B-Postcode gettermapping ((WfCPolicyData)(wfPolicyInfo)).getWfBPostcode()
+WF-B-Postcode settermapping ((WfCPolicyData)(wfPolicyInfo)).setWfBPostcode(val)
+WF-B-Postcode PIC X(8) JavaType String
+WF-B-Customer gettermapping ((WfCPolicyData)(wfPolicyInfo)).getWfBCustomer()
+WF-B-Customer settermapping ((WfCPolicyData)(wfPolicyInfo)).setWfBCustomer(val)
+WF-B-Customer PIC X(31) JavaType String
+CA-RETURN-CODE gettermapping caPolicyRequest.getCaReturnCode()
+CA-RETURN-CODE settermapping caPolicyRequest.setCaReturnCode(val)
+CA-RETURN-CODE PIC 9(2) JavaType int
+CA-REQUEST-ID gettermapping caPolicyRequest.getCaRequestId()
+CA-REQUEST-ID settermapping caPolicyRequest.setCaRequestId(val)
+CA-REQUEST-ID PIC X(6) JavaType String
+CA-POLICY-NUM gettermapping caPolicyRequest.getCaPolicyNum()
+CA-POLICY-NUM settermapping caPolicyRequest.setCaPolicyNum(val)
+CA-POLICY-NUM PIC 9(10) JavaType long
+CA-M-VALUE gettermapping ((CaMotor)(caPolicyRequest)).getCaMValue()
+CA-M-VALUE settermapping ((CaMotor)(caPolicyRequest)).setCaMValue(val)
+CA-M-VALUE PIC 9(6) JavaType int
+CA-M-REGNUMBER gettermapping ((CaMotor)(caPolicyRequest)).getCaMRegnumber()
+CA-M-REGNUMBER settermapping ((CaMotor)(caPolicyRequest)).setCaMRegnumber(val)
+CA-M-REGNUMBER PIC X(7) JavaType String
+CA-M-MODEL gettermapping ((CaMotor)(caPolicyRequest)).getCaMModel()
+CA-M-MODEL settermapping ((CaMotor)(caPolicyRequest)).setCaMModel(val)
+CA-M-MODEL PIC X(15) JavaType String
+CA-M-MAKE gettermapping ((CaMotor)(caPolicyRequest)).getCaMMake()
+CA-M-MAKE settermapping ((CaMotor)(caPolicyRequest)).setCaMMake(val)
+CA-M-MAKE PIC X(15) JavaType String
+CA-H-VALUE gettermapping ((CaHouse)(caPolicyRequest)).getCaHValue()
+CA-H-VALUE settermapping ((CaHouse)(caPolicyRequest)).setCaHValue(val)
+CA-H-VALUE PIC 9(8) JavaType int
+CA-H-PROPERTY-TYPE gettermapping ((CaHouse)(caPolicyRequest)).getCaHPropertyType()
+CA-H-PROPERTY-TYPE settermapping ((CaHouse)(caPolicyRequest)).setCaHPropertyType(val)
+CA-H-PROPERTY-TYPE PIC X(15) JavaType String
+CA-H-POSTCODE gettermapping ((CaHouse)(caPolicyRequest)).getCaHPostcode()
+CA-H-POSTCODE settermapping ((CaHouse)(caPolicyRequest)).setCaHPostcode(val)
+CA-H-POSTCODE PIC X(8) JavaType String
+CA-H-HOUSE-NAME gettermapping ((CaHouse)(caPolicyRequest)).getCaHHouseName()
+CA-H-HOUSE-NAME settermapping ((CaHouse)(caPolicyRequest)).setCaHHouseName(val)
+CA-H-HOUSE-NAME PIC X(20) JavaType String
+CA-H-BEDROOMS gettermapping ((CaHouse)(caPolicyRequest)).getCaHBedrooms()
+CA-H-BEDROOMS settermapping ((CaHouse)(caPolicyRequest)).setCaHBedrooms(val)
+CA-H-BEDROOMS PIC 9(3) JavaType int
+CA-E-WITH-PROFITS gettermapping ((CaEndowment)(caPolicyRequest)).getCaEWithProfits()
+CA-E-WITH-PROFITS settermapping ((CaEndowment)(caPolicyRequest)).setCaEWithProfits(val)
+CA-E-WITH-PROFITS PIC X JavaType char
+CA-E-MANAGED-FUND gettermapping ((CaEndowment)(caPolicyRequest)).getCaEManagedFund()
+CA-E-MANAGED-FUND settermapping ((CaEndowment)(caPolicyRequest)).setCaEManagedFund(val)
+CA-E-MANAGED-FUND PIC X JavaType char
+CA-E-LIFE-ASSURED gettermapping ((CaEndowment)(caPolicyRequest)).getCaELifeAssured()
+CA-E-LIFE-ASSURED settermapping ((CaEndowment)(caPolicyRequest)).setCaELifeAssured(val)
+CA-E-LIFE-ASSURED PIC X(31) JavaType String
+CA-E-FUND-NAME gettermapping ((CaEndowment)(caPolicyRequest)).getCaEFundName()
+CA-E-FUND-NAME settermapping ((CaEndowment)(caPolicyRequest)).setCaEFundName(val)
+CA-E-FUND-NAME PIC X(10) JavaType String
+CA-E-EQUITIES gettermapping ((CaEndowment)(caPolicyRequest)).getCaEEquities()
+CA-E-EQUITIES settermapping ((CaEndowment)(caPolicyRequest)).setCaEEquities(val)
+CA-E-EQUITIES PIC X JavaType char
+CA-CUSTOMER-NUM gettermapping caPolicyRequest.getCaCustomerNum()
+CA-CUSTOMER-NUM settermapping caPolicyRequest.setCaCustomerNum(val)
+CA-CUSTOMER-NUM PIC 9(10) JavaType long
+CA-B-Status gettermapping ((CaCommercial)(caPolicyRequest)).getCaBStatus()
+CA-B-Status settermapping ((CaCommercial)(caPolicyRequest)).setCaBStatus(val)
+CA-B-Status PIC 9(4) JavaType int
+CA-B-Postcode gettermapping ((CaCommercial)(caPolicyRequest)).getCaBPostcode()
+CA-B-Postcode settermapping ((CaCommercial)(caPolicyRequest)).setCaBPostcode(val)
+CA-B-Postcode PIC X(8) JavaType String
+CA-B-Customer gettermapping ((CaCommercial)(caPolicyRequest)).getCaBCustomer()
+CA-B-Customer settermapping ((CaCommercial)(caPolicyRequest)).setCaBCustomer(val)
+CA-B-Customer PIC X(255) JavaType String
+MAINLINE_WRITE-ERROR-MESSAGE, mainlineWriteErrorMessage(dfhcommarea, wsResp, wsResp2)
+
+## Class Map:
+public void invokeMainline(CaPolicyRequest caPolicyRequest){
+    String wfPolicyData = "";
+    WfPolicyInfo wfPolicyInfo = new WfPolicyInfo();
+    int wsCommareaLen;
+    int wsResp;
+    int wsResp2;
+}
+
+
+Output:

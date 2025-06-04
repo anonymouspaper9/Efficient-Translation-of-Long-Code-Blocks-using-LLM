@@ -1,0 +1,33 @@
+public void receiveMapRm010() {
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    String wsAbendPgm = "ABNDPROC";
+    WsFailInfo wsFailInfo = new WsFailInfo();
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+    try {
+        bnk1dai = kzov0oA100.receive("BNK1DA");
+    } catch (CicsConditionException e) {
+        abndinfoRec.setAbndRespcode(e.getRespCode());
+        abndinfoRec.setAbndResp2Code(e.getResp2Code());
+        abndinfoRec.setAbndApplid(Region.getAPPLID());
+        abndinfoRec.setAbndTasknoKey(Task.getTask().getTaskNumber());
+        abndinfoRec.setAbndTranid(Task.getTask().getTransactionName());
+        populateTimeDatePtd010();
+        abndinfoRec.setAbndDate(wsOrigDate);
+        abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":"
+                + wsTimeNowGrp.getWsTimeNowGrpSs());
+        abndinfoRec.setAbndUtimeKey(wsUTime);
+        abndinfoRec.setAbndCode("HBNK");
+        abndinfoRec.setAbndProgram(Task.getTask().getProgramName());
+        abndinfoRec.setAbndSqlcode(0);
+        abndinfoRec.setAbndFreeform("RM010 - RECEIVE MAP FAIL. EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2="
+                + abndinfoRec.getAbndResp2Code());
+        abndinfoRec.setAbndFreeform(abndinfoRec.getAbndFreeform() + " " + abndinfoRec.getAbndApplid() + " "
+                + abndinfoRec.getAbndProgram() + " " + abndinfoRec.getAbndDate() + " " + abndinfoRec.getAbndTime());
+        abndinfoRec.setAbndFreeform(abndinfoRec.getAbndFreeform() + " " + abndinfoRec.getAbndUtimeKey() + " "
+                + abndinfoRec.getAbndTasknoKey() + " " + abndinfoRec.getAbndTranid() + " " + abndinfoRec.getAbndCode());
+        abndinfoRec.setAbndFreeform(abndinfoRec.getAbndFreeform() + " " + abndinfoRec.getAbndSqlcode() + " "
+                + abndinfoRec.getAbndRespcode() + " " + abndinfoRec.getAbndResp2Code());
+        abndinfoRec.setAbndFreeform(abndinfoRec.getAbndFreeform() + " " + abndinfoRec.getAbndFreeform());
+        abndThisTaskAtt010();
+    }
+}

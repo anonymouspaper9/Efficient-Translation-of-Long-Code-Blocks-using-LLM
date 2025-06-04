@@ -1,0 +1,120 @@
+public void sendTerminationMsgStm010() {
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    String endOfSessionMessage = "Session Ended";
+    String wsAbendPgm = "ABNDPROC";
+    int wsCicsResp = 0;
+    int wsCicsResp2 = 0;
+    WsFailInfo wsFailInfo = new WsFailInfo();
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+    try {
+        Task.getTask().getChannel("CHANNEL-NAME0001").delete();
+    } catch (CicsConditionException e) {
+        abndinfoRec.setAbndRespcode(e.getErrorCode());
+        abndinfoRec.setAbndResp2Code(e.getCompletionCode());
+        abndinfoRec.setAbndApplid(Region.getAPPLID());
+        abndinfoRec.setAbndTasknoKey(Task.getTask().getTaskNumber());
+        abndinfoRec.setAbndTranid(Task.getTask().getTransactionName());
+        populateTimeDatePtd010();
+        abndinfoRec.setAbndDate(this.getWsOrigDate());
+        String wsTimeNow = this.getWsTimeNowGrp().getWsTimeNowGrpHh() + ":" + this.getWsTimeNowGrp().getWsTimeNowGrpMm()
+                + ":" + this.getWsTimeNowGrp().getWsTimeNowGrpSs();
+        abndinfoRec.setAbndTime(wsTimeNow);
+        abndinfoRec.setAbndUtimeKey(this.getWsUTime());
+        abndinfoRec.setAbndCode("HBNK");
+        abndinfoRec.setAbndProgram(Task.getTask().getProgramName());
+        abndinfoRec.setAbndSqlcode(0);
+        String wsFailMsg = "BNKMENU - STM010 - DELETE CHANNEL FAIL";
+        abndinfoRec.setAbndFreeform(
+                wsFailMsg + " EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2=" + abndinfoRec.getAbndResp2Code());
+        abndThisTaskAtt010(wsFailInfo);
+        wsFailInfo.setWsCicsFailMsg(wsFailMsg);
+        wsFailInfo.setWsCicsRespDisp(abndinfoRec.getAbndRespcode());
+        wsFailInfo.setWsCicsResp2Disp(abndinfoRec.getAbndResp2Code());
+        abendThisTaskAtt010(wsFailInfo);
+    }
+    try {
+        Task.getTask().getCurrentChannel().deleteContainer("CONTAINER1");
+    } catch (CicsConditionException e) {
+        abndinfoRec.setAbndRespcode(e.getErrorCode());
+        abndinfoRec.setAbndResp2Code(e.getCompletionCode());
+        abndinfoRec.setAbndApplid(Region.getAPPLID());
+        abndinfoRec.setAbndTasknoKey(Task.getTask().getTaskNumber());
+        abndinfoRec.setAbndTranid(Task.getTask().getTransactionName());
+        populateTimeDatePtd010();
+        abndinfoRec.setAbndDate(this.getWsOrigDate());
+        String wsTimeNow = this.getWsTimeNowGrp().getWsTimeNowGrpHh() + ":" + this.getWsTimeNowGrp().getWsTimeNowGrpMm()
+                + ":" + this.getWsTimeNowGrp().getWsTimeNowGrpSs();
+        abndinfoRec.setAbndTime(wsTimeNow);
+        abndinfoRec.setAbndUtimeKey(this.getWsUTime());
+        abndinfoRec.setAbndCode("HBNK");
+        abndinfoRec.setAbndProgram(Task.getTask().getProgramName());
+        abndinfoRec.setAbndSqlcode(0);
+        String wsFailMsg = "BNKMENU - STM010 - DELETE CONTAINER FAIL";
+        abndinfoRec.setAbndFreeform(
+                wsFailMsg + " EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2=" + abndinfoRec.getAbndResp2Code());
+        abndThisTaskAtt010(wsFailInfo);
+        wsFailInfo.setWsCicsFailMsg(wsFailMsg);
+        wsFailInfo.setWsCicsRespDisp(abndinfoRec.getAbndRespcode());
+        wsFailInfo.setWsCicsResp2Disp(abndinfoRec.getAbndResp2Code());
+        abendThisTaskAtt010(wsFailInfo);
+    }
+    try {
+        Task.getTask().getCurrentChannel().delete();
+    } catch (CicsConditionException e) {
+        abndinfoRec.setAbndRespcode(e.getErrorCode());
+        abndinfoRec.setAbndResp2Code(e.getCompletionCode());
+        abndinfoRec.setAbndApplid(Region.getAPPLID());
+        abndinfoRec.setAbndTasknoKey(Task.getTask().getTaskNumber());
+        abndinfoRec.setAbndTranid(Task.getTask().getTransactionName());
+        populateTimeDatePtd010();
+        abndinfoRec.setAbndDate(this.getWsOrigDate());
+        String wsTimeNow = this.getWsTimeNowGrp().getWsTimeNowGrpHh() + ":" + this.getWsTimeNowGrp().getWsTimeNowGrpMm()
+                + ":" + this.getWsTimeNowGrp().getWsTimeNowGrpSs();
+        abndinfoRec.setAbndTime(wsTimeNow);
+        abndinfoRec.setAbndUtimeKey(this.getWsUTime());
+        abndinfoRec.setAbndCode("HBNK");
+        abndinfoRec.setAbndProgram(Task.getTask().getProgramName());
+        abndinfoRec.setAbndSqlcode(0);
+        String wsFailMsg = "BNKMENU - STM010 - DELETE CHANNEL FAIL";
+        abndinfoRec.setAbndFreeform(
+                wsFailMsg + " EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2=" + abndinfoRec.getAbndResp2Code());
+        abndThisTaskAtt010(wsFailInfo);
+        wsFailInfo.setWsCicsFailMsg(wsFailMsg);
+        wsFailInfo.setWsCicsRespDisp(abndinfoRec.getAbndRespcode());
+        wsFailInfo.setWsCicsResp2Disp(abndinfoRec.getAbndResp2Code());
+        abendThisTaskAtt010(wsFailInfo);
+    }
+    try {
+        Task.getTask().getChannel("CHANNEL-NAME0001").delete();
+    } catch (CicsConditionException e) {
+        abndinfoRec.setAbndRespcode(e.getErrorCode());
+        abndinfoRec.setAbndResp2Code(e.getCompletionCode());
+        abndinfoRec.setAbndApplid(Region.getAPPLID());
+        abndinfoRec.setAbndTasknoKey(Task.getTask().getTaskNumber());
+        abndinfoRec.setAbndTranid(Task.getTask().getTransactionName());
+        populateTimeDatePtd010();
+        abndinfoRec.setAbndDate(this.getWsOrigDate());
+        String wsTimeNow = this.getWsTimeNowGrp().getWsTimeNowGrpHh() + ":" + this.getWsTimeNowGrp().getWsTimeNowGrpMm()
+                + ":" + this.getWsTimeNowGrp().getWsTimeNowGrpSs();
+        abndinfoRec.setAbndTime(wsTimeNow);
+        abndinfoRec.setAbndUtimeKey(this.getWsUTime());
+        abndinfoRec.setAbndCode("HBNK");
+        abndinfoRec.setAbndProgram(Task.getTask().getProgramName());
+        abndinfoRec.setAbndSqlcode(0);
+        String wsFailMsg = "BNKMENU - STM010 - DELETE CHANNEL FAIL";
+        abndinfoRec.setAbndFreeform(
+                wsFailMsg + " EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2=" + abndinfoRec.getAbndResp2Code());
+        abndThisTaskAtt010(wsFailInfo);
+        wsFailInfo.setWsCicsFailMsg(wsFailMsg);
+        wsFailInfo.setWsCicsRespDisp(abndinfoRec.getAbndRespcode());
+        wsFailInfo.setWsCicsResp2Disp(abndinfoRec.getAbndResp2Code());
+        abendThisTaskAtt010(wsFailInfo);
+    }
+    try {
+        Task.getTask().getCurrentChannel().deleteContainer("CONTAINER1");
+    } catch (CicsConditionException e) {
+        abndinfoRec.setAbndRespcode(e.getErrorCode());
+        abndinfoRec.setAbndResp2Code(e.getCompletionCode());
+        abndinfoRec.setAbndApplid(Region.getAPPLID());
+    }
+}

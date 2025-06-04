@@ -1,0 +1,51 @@
+```java
+public void dateOfBirthCheckDobc010(CommDobGroup7 commDobGroup) {
+    WsTodayGregorian wsTodayGregorian = new WsTodayGregorian();
+    int wsTodayLillian = wsTodayGregorian.getWsTodayGYear();
+    int commBirthYear = commDobGroup.getCommBirthYear();
+    int commBirthMonth = commDobGroup.getCommBirthMonth();
+    int commBirthDay = commDobGroup.getCommBirthDay();
+
+    dateOfBirthForCeedays.setCeedaysYear(commBirthYear);
+    dateOfBirthForCeedays.setCeedaysMonth(commBirthMonth);
+    dateOfBirthForCeedays.setCeedaysDay(commBirthDay);
+
+    dateOfBirthFormat.setBytes(dateOfBirthForCeedays.getBytes());
+
+    if (commBirthYear < 1601) {
+        this.setWsDateOfBirthError('Y');
+        commDobGroup.setCommFailCode('O');
+        return;
+    }
+
+    wsTodayGregorian.setBytes(wsTodayGregorian.getBytes());
+
+    if (wsTodayGregorian.cee000OfFC()) {
+        this.setWsDateOfBirthError('Y');
+        commDobGroup.setCommFailCode('Z');
+        System.out.println("CEEDAYS failed, FORMAT LENGTH 10 with msg " + ((Case1ConditionId)(fc.getConditionTokenValue())).getMsgNo() + " for date " + new String(dateOfBirthForCeedays.getBytes()));
+        return;
+    }
+
+    WsTodayLillian wsDateOfBirthLillian = new WsTodayLillian(dateOfBirthForCeedays.getBytes());
+
+    if (!wsTodayGregorian.cee000OfFC()) {
+        this.setWsDateOfBirthError('Y');
+        System.out.println("CEEDLOCT failed with msg " + ((Case1ConditionId)(fc.getConditionTokenValue())).getMsgNo());
+        return;
+    }
+
+    wsCustomerAge = wsTodayGregorian.getWsTodayGYear() - commBirthYear;
+
+    if (wsCustomerAge > 150) {
+        this.setWsDateOfBirthError('Y');
+        commDobGroup.setCommFailCode('O');
+        return;
+    }
+
+    if (wsTodayLillian < wsDateOfBirthLillian) {
+        this.setWsDateOfBirthError('Y');
+        commDobGroup.setCommFailCode('Y');
+    }
+}
+```

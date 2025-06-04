@@ -1,0 +1,70 @@
+public void invokeMainline(CaPolicyRequest caPolicyRequest) {
+    WfPolicyInfo wfPolicyInfo = new WfPolicyInfo();
+    String wsFileIn = "";
+    int wsCommareaLen = 64;
+    int wsCommareaLenF = 64;
+
+    String wfPolicyData = "";
+    wfPolicyInfo.getWfPolicyKey().setWfRequestId(caPolicyRequest.getCaRequestId().charAt(3));
+    wfPolicyInfo.getWfPolicyKey().setWfPolicyNum(caPolicyRequest.getCaPolicyNum());
+    wfPolicyInfo.getWfPolicyKey().setWfCustomerNum(caPolicyRequest.getCaCustomerNum());
+    switch (wfPolicyInfo.getWfPolicyKey().getWfRequestId()) {
+    }
+
+    wfPolicyInfo = caPolicyRequest.getWfPolicyData();
+    wfPolicyInfo.setWfBPostcode(caPolicyRequest.getCaBPostcode());
+    wfPolicyInfo.setWfBStatus(caPolicyRequest.getCaBStatus());
+    wfPolicyInfo.setWfBCustomer(caPolicyRequest.getCaBCustomer());
+    if (wfPolicyInfo.getWfPolicyType() == 'E') {
+        ((WfEPolicyData) wfPolicyInfo).setWfEWithProfits(caPolicyRequest.getCaEWithProfits());
+        ((WfEPolicyData) wfPolicyInfo).setWfEEquities(caPolicyRequest.getCaEEquities());
+        ((WfEPolicyData) wfPolicyInfo).setWfEManagedFund(caPolicyRequest.getCaEManagedFund());
+        ((WfEPolicyData) wfPolicyInfo).setWfEFundName(caPolicyRequest.getCaEFundName());
+        ((WfEPolicyData) wfPolicyInfo).setWfELifeAssured(caPolicyRequest.getCaELifeAssured());
+    } else if (wfPolicyInfo.getWfPolicyType() == 'H') {
+        ((WfHPolicyData) wfPolicyInfo).setWfHPropertyType(caPolicyRequest.getCaHPropertyType());
+        ((WfHPolicyData) wfPolicyInfo).setWfHBedrooms(caPolicyRequest.getCaHBedrooms());
+        ((WfHPolicyData) wfPolicyInfo).setWfHValue(caPolicyRequest.getCaHValue());
+        ((WfHPolicyData) wfPolicyInfo).setWfHPostcode(caPolicyRequest.getCaHPostcode());
+        ((WfHPolicyData) wfPolicyInfo).setWfHHouseName(caPolicyRequest.getCaHHouseName());
+    } else if (wfPolicyInfo.getWfPolicyType() == 'M') {
+        ((WfMPolicyData) wfPolicyInfo).setWfMMake(caPolicyRequest.getCaMMake());
+        ((WfMPolicyData) wfPolicyInfo).setWfMModel(caPolicyRequest.getCaMModel());
+        ((WfMPolicyData) wfPolicyInfo).setWfMValue(caPolicyRequest.getCaMValue());
+        ((WfMPolicyData) wfPolicyInfo).setWfMRegnumber(caPolicyRequest.getCaMRegnumber());
+    }
+
+    break;
+    wfPolicyData = String.valueOf(' ').repeat(43);
+
+    wfPolicyInfo = new WfPolicyInfo();
+    wsCommareaLen = 64;
+    try {
+        wfPolicyInfo.setWfPolicyKey(new WfPolicyKey(caPolicyRequest.getCaPolicyNum()));
+        wsFileIn = wfPolicyInfo.toByteString();
+        KeyedFile jdeclKeyedFile = new KeyedFile();
+        jdeclKeyedFile.setName("KSDSPOLY");
+        KeyedFileBrowse jdeclKeyFileBrowse = jdeclKeyedFile.startBrowse(
+                wfPolicyInfo.getWfPolicyKey().toByteString().getBytes(ZFile.DEFAULT_EBCDIC_CODE_PAGE),
+                SearchType.EQUAL);
+         wfPolicyInfo.setBytes(wsFileIn.getBytes(ZFile.DEFAULT_EBCDIC_CODE_PAGE));
+        
+         jdeclKeyFileBrowse.update(wfPolicyInfo.toByteString().getBytes(ZFile.DEFAULT_EBCDIC_CODE_PAGE));
+        
+        jdeclKeyFileBrowse.end();
+    } catch (Exception e) {
+        wsResp2 = e.getErrnoMsg().getErrno();
+        caPolicyRequest.setCaReturnCode(81);
+        writeErrorMessage(caPolicyRequest);
+        Task.getTask().abend("LGV3", false);
+    }
+
+    if (wsResp != DFHRESP(NORMAL)) {
+        wsResp2 = EIBRESP2;
+        caPolicyRequest.setCaReturnCode(82);
+        writeErrorMessage();
+        Task.getTask().abend("LGV4", false);
+        return;
+    }
+
+}

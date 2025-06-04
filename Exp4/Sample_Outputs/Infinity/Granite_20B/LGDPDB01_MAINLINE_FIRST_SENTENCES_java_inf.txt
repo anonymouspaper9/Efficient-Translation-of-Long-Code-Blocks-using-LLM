@@ -1,0 +1,26 @@
+public void invokeMainline(Dfhcommarea dfhcommarea) {
+    Db2InIntegers db2InIntegers = new Db2InIntegers();
+    ErrorMsg errorMsg = new ErrorMsg();
+    String lgdpvs01 = "LGDPVS01";
+    int wsCaHeaderLen = 28;
+    WsHeader wsHeader = new WsHeader();
+    wsHeader.setWsTransid(Task.getTask().getTransactionName());
+    wsHeader.setWsTermid(Task.getTask().getSTARTCODE());
+    wsHeader.setWsTasknum(Task.getTask().getTaskNumber());
+    db2InIntegers.setDb2CustomernumInt(dfhcommarea.getCaCustomerNum());
+    db2InIntegers.setDb2PolicynumInt(((CaPolicyRequest) (dfhcommarea)).getPolicy().getPolicynumber());
+    errorMsg.getEmVariable().setEmCusnum(String.valueOf(dfhcommarea.getCaCustomerNum()));
+    errorMsg.getEmVariable()
+            .setEmPolnum(String.valueOf(((CaPolicyRequest) (dfhcommarea)).getPolicy().getPolicynumber()));
+    if (dfhcommarea.getCaRequestId() != "01DEND" && dfhcommarea.getCaRequestId() != "01DHOU"
+            && dfhcommarea.getCaRequestId() != "01DCOM" && dfhcommarea.getCaRequestId() != "01DMOT") {
+        dfhcommarea.setCaReturnCode("99");
+    } else {
+        mainlineDeletePolicyDb2Info(db2InIntegers, dfhcommarea, errorMsg);
+        byte[] jdeclByteArray = dfhcommarea.getBytes();
+        Program jdeclProgram = new Program();
+        Charset jdeclCharSet = Charset.forName(System.getProperty("com.ibm.cics.jvmserver.local.ccsid"));
+        jdeclProgram.setName(lgdpvs01);
+        jdeclProgram.link(jdeclByteArray, jdeclCharSet);
+    }
+}

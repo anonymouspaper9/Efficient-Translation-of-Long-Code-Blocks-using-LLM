@@ -1,0 +1,314 @@
+       ED010.
+      *
+      *    Perform validation on the incoming fields
+      *
+           EXEC CICS BIF DEEDIT
+              FIELD(CUSTNOI)
+           END-EXEC.
+
+           IF CUSTNOL < 1 OR CUSTNOI = '__________'
+              MOVE SPACES TO MESSAGEO
+              STRING 'Please enter a 10 digit Customer Number '
+                    DELIMITED BY SIZE,
+                     ' ' DELIMITED BY SIZE
+                 INTO MESSAGEO
+              MOVE 'N' TO VALID-DATA-SW
+              MOVE -1 TO CUSTNOL
+              GO TO ED999
+           END-IF.
+
+           IF CUSTNOI NOT NUMERIC
+              MOVE SPACES TO MESSAGEO
+              STRING 'Please enter a numeric Customer number '
+                    DELIMITED BY SIZE,
+                     ' ' DELIMITED BY SIZE
+                 INTO MESSAGEO
+              MOVE 'N' TO VALID-DATA-SW
+              MOVE -1 TO CUSTNOL
+              GO TO ED999
+           END-IF.
+
+           IF ACCTYPI = '________' OR ACCTYPL < 1
+              MOVE SPACES TO MESSAGEO
+              STRING 'Account Type should be ISA,CURRENT,LOAN,'
+                 DELIMITED BY SIZE,
+                    'SAVING or MORTGAGE' DELIMITED BY SIZE
+                 INTO MESSAGEO
+              MOVE 'N' TO VALID-DATA-SW
+              move -1 to acctypl
+              GO TO ED999
+           END-IF.
+
+           MOVE SPACES TO MESSAGEO.
+
+           IF ACCTYPL > 0
+
+              EVALUATE ACCTYPI
+                 WHEN 'ISA_____'
+                    MOVE 'ISA     ' TO ACCTYPI
+                    CONTINUE
+                 WHEN 'isa_____'
+                    MOVE 'ISA     ' TO ACCTYPI
+                    CONTINUE
+                 WHEN 'ISA     '
+                    CONTINUE
+                 WHEN 'isa     '
+                    MOVE 'ISA     ' TO ACCTYPI
+                    CONTINUE
+                 WHEN 'CURRENT_'
+                    MOVE 'CURRENT ' TO ACCTYPI
+                    CONTINUE
+                 WHEN 'current_'
+                    MOVE 'CURRENT ' TO ACCTYPI
+                    CONTINUE
+                 WHEN 'CURRENT '
+                    CONTINUE
+                 WHEN 'current '
+                    MOVE 'CURRENT ' TO ACCTYPI
+                    CONTINUE
+                 WHEN 'LOAN____'
+                    MOVE 'LOAN    ' TO ACCTYPI
+                    CONTINUE
+                 WHEN 'loan____'
+                    MOVE 'LOAN    ' TO ACCTYPI
+                    CONTINUE
+                 WHEN 'loan    '
+                    MOVE 'LOAN    ' TO ACCTYPI
+                    CONTINUE
+                 WHEN 'LOAN    '
+                    CONTINUE
+                 WHEN 'SAVING__'
+                    MOVE 'SAVING  ' TO ACCTYPI
+                    CONTINUE
+                 WHEN 'saving__'
+                    MOVE 'SAVING  ' TO ACCTYPI
+                    CONTINUE
+                 WHEN 'saving  '
+                    MOVE 'SAVING  ' TO ACCTYPI
+                    CONTINUE
+                 WHEN 'SAVING  '
+                    CONTINUE
+                 WHEN 'MORTGAGE'
+                    CONTINUE
+                 WHEN 'mortgage'
+                    MOVE 'MORTGAGE' TO ACCTYPI
+                    CONTINUE
+                 WHEN OTHER
+                    MOVE SPACES TO MESSAGEO
+                    STRING 'Account Type should be ISA,CURRENT,LOAN,'
+                       DELIMITED BY SIZE,
+                       'SAVING or MORTGAGE' DELIMITED BY SIZE
+                       INTO MESSAGEO
+                    MOVE 'N' TO VALID-DATA-SW
+                    MOVE -1 TO ACCTYPL
+                    GO TO ED999
+
+              END-EVALUATE
+
+           END-IF.
+
+           IF INTRTL = ZERO
+              MOVE SPACES TO MESSAGEO
+              STRING 'Please supply a numeric interest rate'
+                    DELIMITED BY SIZE,
+              INTO MESSAGEO
+              MOVE 'N' TO VALID-DATA-SW
+              MOVE -1 TO INTRTL
+              GO TO ED999
+           END-IF
+
+           IF INTRTI(1:INTRTL) IS NOT NUMERIC
+              MOVE ZERO TO WS-NUM-COUNT-TOTAL
+              INSPECT INTRTI(1:INTRTL) TALLYING
+                 WS-NUM-COUNT-TOTAL FOR ALL '0'
+                 WS-NUM-COUNT-TOTAL FOR ALL '1'
+                 WS-NUM-COUNT-TOTAL FOR ALL '2'
+                 WS-NUM-COUNT-TOTAL FOR ALL '3'
+                 WS-NUM-COUNT-TOTAL FOR ALL '4'
+                 WS-NUM-COUNT-TOTAL FOR ALL '5'
+                 WS-NUM-COUNT-TOTAL FOR ALL '6'
+                 WS-NUM-COUNT-TOTAL FOR ALL '7'
+                 WS-NUM-COUNT-TOTAL FOR ALL '8'
+                 WS-NUM-COUNT-TOTAL FOR ALL '9'
+                 WS-NUM-COUNT-TOTAL FOR ALL '.'
+                 WS-NUM-COUNT-TOTAL FOR ALL '-'
+                 WS-NUM-COUNT-TOTAL FOR ALL '+'
+                 WS-NUM-COUNT-TOTAL FOR ALL ' '
+      *
+      *       So the idea here is that if there is a
+      *       decimal point, the field is not numeric. But if it
+      *       is 1.1 then it is valid. So first of all we check
+      *       to see that only the above chars are OK. We also
+      *       want to tolerate the minus and plus signs. We don't
+      *       support negative interest though. We tolerate
+      *       trailing spaces too.
+      *
+
+              IF WS-NUM-COUNT-TOTAL < INTRTL
+                 MOVE SPACES TO MESSAGEO
+                 STRING 'Please supply a numeric interest rate'
+                      DELIMITED BY SIZE,
+                 INTO MESSAGEO
+                 MOVE 'N' TO VALID-DATA-SW
+                 MOVE -1 TO INTRTL
+                 GO TO ED999
+              END-IF
+      *
+      *       And let's check to make sure we only have 0 to 1
+      *       decimal points
+      *
+              MOVE ZERO TO WS-NUM-COUNT-POINT
+
+              INSPECT INTRTI(1:INTRTL) TALLYING
+                 WS-NUM-COUNT-POINT for ALL '.'
+
+
+              IF WS-NUM-COUNT-POINT > 1
+                 MOVE SPACES TO MESSAGEO
+                 STRING 'Use one decimal point for interest rate only'
+                      DELIMITED BY SIZE,
+                 INTO MESSAGEO
+                 MOVE 'N' TO VALID-DATA-SW
+                 MOVE -1 TO INTRTL
+                 GO TO ED999
+              END-If
+      *
+      *       Now let's check to see if we have too many decimals!
+      *
+              IF WS-NUM-COUNT-POINT = 1
+                 MOVE ZERO TO WS-NUM-COUNT-TOTAL
+                 INSPECT INTRTI(1:INTRTL) TALLYING
+                    WS-NUM-COUNT-TOTAL FOR CHARACTERS AFTER '.'
+
+                 IF WS-NUM-COUNT-TOTAL > 2
+      *
+      *             There are more than 2 characters after the point
+      *
+                    MOVE ZERO TO WS-NUM-COUNT-TOTAL WS-NUM-COUNT-POINT
+                    INSPECT INTRTI(1:INTRTL) TALLYING
+                       WS-NUM-COUNT-POINT FOR CHARACTERS BEFORE '.'
+
+                    ADD 2 TO WS-NUM-COUNT-POINT
+                       GIVING WS-NUM-COUNT-POINT
+
+                    INSPECT INTRTI(WS-NUM-COUNT-POINT:INTRTL) TALLYING
+                       WS-NUM-COUNT-TOTAL FOR ALL '0'
+                       WS-NUM-COUNT-TOTAL FOR ALL '1'
+                       WS-NUM-COUNT-TOTAL FOR ALL '2'
+                       WS-NUM-COUNT-TOTAL FOR ALL '3'
+                       WS-NUM-COUNT-TOTAL FOR ALL '4'
+                       WS-NUM-COUNT-TOTAL FOR ALL '5'
+                       WS-NUM-COUNT-TOTAL FOR ALL '6'
+                       WS-NUM-COUNT-TOTAL FOR ALL '7'
+                       WS-NUM-COUNT-TOTAL FOR ALL '8'
+                       WS-NUM-COUNT-TOTAL FOR ALL '9'
+                       WS-NUM-COUNT-TOTAL FOR ALL '-'
+                       WS-NUM-COUNT-TOTAL FOR ALL '+'
+                       AFTER '.'
+
+                    IF WS-NUM-COUNT-TOTAL > 2
+      *
+      *                More than two of them are numeric
+      *
+                       MOVE SPACES TO MESSAGEO
+                       STRING
+                         'Only up to two decimal places are supported'
+                         DELIMITED BY SIZE,
+                       INTO MESSAGEO
+
+                       MOVE 'N' TO VALID-DATA-SW
+                       MOVE -1 TO INTRTL
+                       GO TO ED999
+                    END-IF
+
+                 END-IF
+
+              END-IF
+
+           END-IF
+
+           COMPUTE INTRTI-COMP-1 = FUNCTION NUMVAL(INTRTI)
+
+      *
+      *    Validate the interest rate
+      *
+           IF INTRTI-COMP-1 < 0
+              MOVE SPACES TO MESSAGEO
+              STRING 'Please supply a zero or positive interest rate'
+                    DELIMITED BY SIZE,
+              INTO MESSAGEO
+              MOVE 'N' TO VALID-DATA-SW
+              MOVE -1 TO INTRTL
+              GO TO ED999
+           END-IF
+
+           IF INTRTI-COMP-1 > 9999.99
+              MOVE SPACES TO MESSAGEO
+              STRING 'Please supply an interest rate less than 9999.99%'
+                    DELIMITED BY SIZE,
+              INTO MESSAGEO
+              MOVE 'N' TO VALID-DATA-SW
+              MOVE -1 TO INTRTL
+              GO TO ED999
+           END-IF
+      * Remove trailing spaces from OVERDRAFT
+           MOVE FUNCTION REVERSE(OVERDRI) TO WS-REVERSE
+           MOVE ZERO TO WS-NUM-COUNT-TOTAL
+           INSPECT WS-REVERSE TALLYING WS-NUM-COUNT-TOTAL
+           FOR LEADING SPACES
+           SUBTRACT WS-NUM-COUNT-TOTAL FROM OVERDRL
+             GIVING OVERDRL
+           MOVE ZERO TO WS-NUM-COUNT-TOTAL
+           INSPECT OVERDRI(1:OVERDRL) TALLYING
+              WS-NUM-COUNT-TOTAL FOR ALL '0'
+              WS-NUM-COUNT-TOTAL FOR ALL '1'
+              WS-NUM-COUNT-TOTAL FOR ALL '2'
+              WS-NUM-COUNT-TOTAL FOR ALL '3'
+              WS-NUM-COUNT-TOTAL FOR ALL '4'
+              WS-NUM-COUNT-TOTAL FOR ALL '5'
+              WS-NUM-COUNT-TOTAL FOR ALL '6'
+              WS-NUM-COUNT-TOTAL FOR ALL '7'
+              WS-NUM-COUNT-TOTAL FOR ALL '8'
+              WS-NUM-COUNT-TOTAL FOR ALL '9'.
+           IF WS-NUM-COUNT-TOTAL < OVERDRL
+              MOVE SPACES TO MESSAGEO
+              MOVE 'Overdraft Limit must be numeric positive int' TO
+                 MESSAGEO
+              MOVE 'N' TO VALID-DATA-SW
+              MOVE -1 TO OVERDRL
+              GO TO ED999
+           END-IF.
+
+           EXEC CICS BIF DEEDIT FIELD(OVERDRI)
+           END-EXEC.
+
+      *
+      *    If the overdraft limit hasn't been supplied then make it
+      *    zero
+      *
+           IF OVERDRL < 1 OR OVERDRI = '________' or overdri = spaces
+              MOVE ZERO TO OVERDRI
+           END-IF.
+
+      *
+      *    If the overdraft limit is supplied it must be numeric
+      *
+           IF OVERDRI NOT NUMERIC
+              MOVE SPACES TO MESSAGEO
+              MOVE 'The Overdraft Limit must be numeric ' TO
+                 MESSAGEO
+              MOVE 'N' TO VALID-DATA-SW
+              MOVE -1 TO OVERDRL
+              GO TO ED999
+           END-IF.
+
+      *
+      *    Check to see if we have all the data we expected
+      *
+           IF CUSTNOL < 1 OR ACCTYPL < 1
+              MOVE SPACES TO MESSAGEO
+              MOVE 'Missing expected data.               ' TO
+                 MESSAGEO
+              MOVE 'N' TO VALID-DATA-SW
+              GO TO ED999
+           END-IF.

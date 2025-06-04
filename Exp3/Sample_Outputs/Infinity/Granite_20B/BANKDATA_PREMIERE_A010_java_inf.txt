@@ -1,0 +1,29 @@
+public void premiereA010() {
+    int accountTypesPtr = 0;
+    int commitCount;
+    CustomerControlRecord customerControlRecord = new CustomerControlRecord();
+    CustomerRecordStructure customerRecordStructure = new CustomerRecordStructure();
+    CustomerVsamStatus customerVsamStatus = new CustomerVsamStatus();
+    long endKey;
+    int forenamesPtr = 0;
+    int houseNumber;
+    Initials initials = new Initials();
+    int initialsPtr = 0;
+    long nextKey;
+    String returnCode = "00000";
+    int sortcode = 987654;
+    long startKey;
+    long stepKey;
+    int streetNameRPtr = 0;
+    int streetNameTPtr = 0;
+    SttesterControl sttesterControl = new SttesterControl();
+    int surnamesPtr = 0;
+    String timestampFunction = "";
+    int titleNumber;
+    TitleWords titleWords = new TitleWords();
+    int townPtr = 0;
+    int wsNewReviewDateInt = 0;
+    int wsNewReviewYyyymmdd = 0;
+    int wsReviewDateAdd = 0;
+    int wsSqlcodeDisplay;
+}

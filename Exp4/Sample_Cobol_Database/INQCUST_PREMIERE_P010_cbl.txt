@@ -1,0 +1,74 @@
+       P010.
+      *
+      *    Set up abend handling
+      *
+           EXEC CICS HANDLE ABEND
+              LABEL(ABEND-HANDLING)
+           END-EXEC.
+
+           MOVE 'N' TO INQCUST-INQ-SUCCESS
+           MOVE '0' TO INQCUST-INQ-FAIL-CD
+
+           MOVE SORTCODE TO REQUIRED-SORT-CODE.
+           MOVE INQCUST-CUSTNO TO REQUIRED-CUST-NUMBER.
+      *
+      *    Is the incoming CUSTOMER number set to 0's, 9's or
+      *    an actual value?
+      *
+      *    If the incoming CUSTOMER number is 0's (random
+      *    customer) or the incoming CUSTOMER number is 9's
+      *    (the last valid CUSTOMER in use) then access the
+      *    named counter server to get the last
+      *    CUSTOMER-NUMBER in use.
+      *
+           IF INQCUST-CUSTNO = 0000000000 OR INQCUST-CUSTNO = 9999999999
+              PERFORM READ-CUSTOMER-NCS
+      D       DISPLAY 'CUST NO RETURNED FROM NCS=' NCS-CUST-NO-VALUE
+              IF INQCUST-INQ-SUCCESS = 'Y'
+                MOVE NCS-CUST-NO-VALUE TO REQUIRED-CUST-NUMBER
+              ELSE
+                PERFORM GET-ME-OUT-OF-HERE
+              END-IF
+           END-IF.
+      *
+      * For a random customer generate a CUSTOMER number
+      * randomly which is less than the highest CUSTOMER
+      * number that is currently in use.
+      *
+           IF INQCUST-CUSTNO = 0000000000
+              PERFORM GENERATE-RANDOM-CUSTOMER
+              MOVE RANDOM-CUSTOMER TO REQUIRED-CUST-NUMBER
+           END-IF.
+           MOVE 'N' TO EXIT-VSAM-READ.
+           MOVE 'N' TO EXIT-DB2-READ.
+           MOVE 'N' TO WS-D-RETRIED.
+           MOVE 'N' TO WS-V-RETRIED.
+      *
+      *          Get the customer information
+      *
+           PERFORM READ-CUSTOMER-VSAM
+             UNTIL EXIT-VSAM-READ = 'Y'.
+      *
+      * Return the CUSTOMER data in the commarea.
+      *
+           IF INQCUST-INQ-SUCCESS = 'Y'
+             MOVE '0' TO INQCUST-INQ-FAIL-CD
+             MOVE CUSTOMER-EYECATCHER OF OUTPUT-DATA
+                TO INQCUST-EYE
+             MOVE CUSTOMER-SORTCODE OF OUTPUT-DATA
+                TO INQCUST-SCODE
+             MOVE CUSTOMER-NUMBER OF OUTPUT-DATA
+                TO INQCUST-CUSTNO
+             MOVE CUSTOMER-NAME OF OUTPUT-DATA
+                TO INQCUST-NAME
+             MOVE CUSTOMER-ADDRESS OF OUTPUT-DATA
+                TO INQCUST-ADDR
+             MOVE CUSTOMER-DATE-OF-BIRTH OF OUTPUT-DATA
+                TO INQCUST-DOB
+             MOVE CUSTOMER-CREDIT-SCORE OF OUTPUT-DATA
+                TO INQCUST-CREDIT-SCORE
+             MOVE CUSTOMER-CS-REVIEW-DATE OF OUTPUT-DATA
+                TO INQCUST-CS-REVIEW-DT
+           END-IF.
+
+           PERFORM GET-ME-OUT-OF-HERE.

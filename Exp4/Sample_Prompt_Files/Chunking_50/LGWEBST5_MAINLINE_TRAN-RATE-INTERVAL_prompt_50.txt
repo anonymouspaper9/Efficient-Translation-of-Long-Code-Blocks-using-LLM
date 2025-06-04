@@ -1,0 +1,443 @@
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+           DISPLAY "SNIPPET-1"
+           Exit.                                                        
+
+## Variable Map:
+
+
+
+## Class Map:
+public void mainlineTranRateInterval(String tsQpre, String wsTime){
+}
+
+
+Output:
+=====================
+
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+           String TSQpre,                                               
+                  '000V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Exec Cics ReadQ TS Queue(WS-TSQname)                         
+                     Into(WS-OLDV)                                      
+                     Item(1)                                            
+                     Length(Length of WS-OLDV)                          
+                     Resp(WS-RESP)                                      
+           End-Exec.                                                    
+           If WS-RESP Not = DFHRESP(NORMAL)                             
+            Move '120000' To WS-OLDV.                                   
+           Exec Cics DeleteQ TS Queue(WS-TSQNAME)                       
+                     Resp(WS-RESP)                                      
+           End-Exec.                                                    
+           Move WS-TIME   To WS-HHMMSS                                  
+           Exec Cics WRITEQ TS Queue(WS-TSQNAME)                        
+                     FROM(WS-HHMMSS)                                    
+                     Length(Length of WS-HHMMSS)                        
+                     Resp(WS-RESP)                                      
+           End-Exec.                                                    
+           Move WS-HH     To HHVal                                      
+           Move WS-MM     To MMVal                                      
+           Move WS-SS     To SSVal                                      
+           Compute NCountVal = (HHVal * 3600) +                         
+                               (MMVal * 60)   +                         
+                                SSVal                                   
+           Move WS-OLDVHH To HHVal                                      
+           Move WS-OLDVMM To MMVal                                      
+           Move WS-OLDVSS To SSVal                                      
+           Compute OCountVal = (HHVal * 3600) +                         
+                               (MMVal * 60)   +                         
+                                SSVal                                   
+           Compute ICountVal = NCountVal - OCountVal                    
+           move ICountVal To WS-NEWV                                    
+           String TSQpre,                                               
+                  '000V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Exec Cics WRITEQ TS Queue(WS-TSQNAME)                        
+                     FROM(WS-NEWV)                                      
+                     Length(Length of WS-NEWV)                          
+                     Resp(WS-RESP)                                      
+           End-Exec.                                                    
+           Exec Cics Start Transid('SSST')                              
+                     After                                              
+                     Minutes(1)                                         
+                     Resp(WS-RESP)                                      
+           End-Exec.                                                    
+
+## Variable Map:
+WS-TSQname gettermapping wsTsQname
+WS-TSQname settermapping wsTsQname = val
+WS-TSQname PIC X(8) JavaType String
+WS-TIME gettermapping wsTime
+WS-TIME settermapping wsTime = val
+WS-TIME PIC X(8) JavaType String
+WS-SS gettermapping wsHhmmss.getWsSs()
+WS-SS settermapping wsHhmmss.setWsSs(val)
+WS-SS PIC X(2) JavaType String
+WS-RESP gettermapping wsResp
+WS-RESP settermapping wsResp = val
+WS-RESP PIC S9(8) JavaType int
+WS-OLDVSS gettermapping wsOldv.getWsOldvss()
+WS-OLDVSS settermapping wsOldv.setWsOldvss(val)
+WS-OLDVSS PIC X(2) JavaType String
+WS-OLDVMM gettermapping wsOldv.getWsOldvmm()
+WS-OLDVMM settermapping wsOldv.setWsOldvmm(val)
+WS-OLDVMM PIC X(2) JavaType String
+WS-OLDVHH gettermapping wsOldv.getWsOldvhh()
+WS-OLDVHH settermapping wsOldv.setWsOldvhh(val)
+WS-OLDVHH PIC X(2) JavaType String
+WS-OLDV gettermapping wsOldv.getBytes()
+WS-OLDV settermapping wsOldv.setBytes(val)
+WS-OLDV GROUP JavaType WsOldv
+WS-NEWV gettermapping wsNewv
+WS-NEWV settermapping wsNewv = val
+WS-NEWV PIC X(6) JavaType String
+WS-MM gettermapping wsHhmmss.getWsMm()
+WS-MM settermapping wsHhmmss.setWsMm(val)
+WS-MM PIC X(2) JavaType String
+WS-HHMMSS gettermapping wsHhmmss.getBytes()
+WS-HHMMSS settermapping wsHhmmss.setBytes(val)
+WS-HHMMSS GROUP JavaType WsHhmmss
+WS-HH gettermapping wsHhmmss.getWsHh()
+WS-HH settermapping wsHhmmss.setWsHh(val)
+WS-HH PIC X(2) JavaType String
+TSQpre gettermapping tsQpre
+TSQpre settermapping tsQpre = val
+TSQpre PIC X(4) JavaType String
+SSval gettermapping sSval
+SSval settermapping sSval = val
+SSval PIC 9(6) JavaType int
+OCountVal gettermapping oCountVal
+OCountVal settermapping oCountVal = val
+OCountVal PIC 9(6) JavaType int
+NCountVal gettermapping nCountVal
+NCountVal settermapping nCountVal = val
+NCountVal PIC 9(6) JavaType int
+MMval gettermapping mMval
+MMval settermapping mMval = val
+MMval PIC 9(6) JavaType int
+ICountVal gettermapping iCountVal
+ICountVal settermapping iCountVal = val
+ICountVal PIC 9(6) JavaType int
+HHval gettermapping hHval
+HHval settermapping hHval = val
+HHval PIC 9(6) JavaType int
+
+
+## Class Map:
+public void mainlineTranRateInterval(String tsQpre, String wsTime){
+    String wsTsQname = "";
+    WsHhmmss wsHhmmss = new WsHhmmss();
+    WsOldv wsOldv = new WsOldv();
+    String wsNewv = "";
+}
+
+
+Output:
+=====================
+

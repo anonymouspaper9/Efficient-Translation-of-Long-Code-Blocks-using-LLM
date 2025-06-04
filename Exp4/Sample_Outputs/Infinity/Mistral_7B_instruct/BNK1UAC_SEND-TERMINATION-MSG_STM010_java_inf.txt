@@ -1,0 +1,40 @@
+```java
+public void sendTerminationMsgStm010() {
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    String endOfSessionMessage = "Session Ended";
+    String wsAbendPgm = "ABNDPROC";
+    WsFailInfo wsFailInfo = new WsFailInfo();
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+
+    /* This is prompt example 2 */
+    if (CICS.send(endOfSessionMessage, CICS.erase(), CICS.freeKb(), CICS.from(endOfSessionMessage), CICS.response(wsResponse), CICS.response2(wsResponse2))) {
+        if (!wsResponse.equals(CICS.normal())) {
+            abndinfoRec.initialize();
+            abndinfoRec.setAbndRespcode(wsResponse);
+            abndinfoRec.setAbndResp2Code(wsResponse2);
+            CICS.assign(abndinfoRec.getAbndApplid());
+            abndinfoRec.setAbndTasknoKey(CICS.getTaskNo());
+            abndinfoRec.setAbndTranid(CICS.getTranId());
+            populateTimeDatePtd010(wsTimeNowGrp, abndinfoRec);
+            abndinfoRec.setAbndDate(wsTimeNowGrp.getWsOrigDate());
+            String[] timeParts = new String[3];
+            timeParts[0] = wsTimeNowGrp.getWsTimeNowGrpHh();
+            timeParts[1] = wsTimeNowGrp.getWsTimeNowGrpMm();
+            timeParts[2] = wsTimeNowGrp.getWsTimeNowGrpSs();
+            abndinfoRec.setAbndTime(String.join(":", timeParts));
+            abndinfoRec.setAbndUtimeKey(CICS.getUTime());
+            abndinfoRec.setAbndCode("HBNK");
+            CICS.assign(wsAbendPgm);
+            abndinfoRec.setAbndSqlcode(0);
+            abndinfoRec.setAbndFreeform("STM010 - SEND TEXT FAIL.");
+            abndinfoRec.setAbndProgram(wsAbendPgm);
+            CICS.link(abndinfoRec.getBytes());
+            wsFailInfo.initialize();
+            wsFailInfo.setWsCicsFailMsg("BNK1UAC - STM010 - SEND TEXT FAIL");
+            wsFailInfo.setWsCicsResp(wsResponse);
+            wsFailInfo.setWsCicsResp2(wsResponse2);
+            abendThisTaskAtt010(wsFailInfo);
+        }
+    }
+}
+```

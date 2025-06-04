@@ -1,0 +1,56 @@
+public void invokeMainline(Dfhcommarea dfhcommarea) {
+    WsHeader wsHeader = new WsHeader();
+    String lgacvs01 = "LGACVS01";
+    int wsCaHeaderLen = 18;
+    int wsRequiredCaLen = 0;
+    int wsCustomerLen = 72;
+    ErrorMsg errorMsg = new ErrorMsg();
+    Cdb2Area cdb2Area = new Cdb2Area();
+
+    String lgacdb02 = "LGACDB02";
+
+    cdb2Area = new Cdb2Area();
+    wsHeader.setWsTransid(Task.getTask().getTransactionName());
+    wsHeader.setWsTermid(Task.getTask().getSTARTCODE());
+    wsHeader.setWsTasknum(Task.getTask().getTaskNumber());
+    wsRequiredCaLen = wsCaHeaderLen + wsCustomerLen;
+    if (dfhcommarea.getEibcalen() == 0) {
+        errorMsg.getEmVariable().setEmVariable(" NO COMMAREA RECEIVED");
+        this.writeErrorMessage(errorMsg);
+        Task.getTask().abend("LGCA");
+    }
+    dfhcommarea.setCaReturnCode("00");
+    wsHeader.setWsCalen(dfhcommarea.getEibcalen());
+    wsHeader.setWsAddrDfhcommarea(dfhcommarea.getEibaddr());
+    wsRequiredCaLen = wsCaHeaderLen + wsCustomerLen;
+    if (dfhcommarea.getEibcalen() < wsRequiredCaLen) {
+        dfhcommarea.setCaReturnCode("98");
+        Task.getTask().abend();
+    }
+    this.obtainCustomerNumber();
+    this.insertCustomer();
+    byte[] jdeclCommareaByteArray = new byte[90];
+    Program jdeclProgram = new Program();
+    Charset jdeclCharSet = Charset.forName(System.getProperty("com.ibm.cics.jvmserver.local.ccsid"));
+     byte[] jdeclInqBytes=lgacvs01.getBytes(jdeclCharSet);
+     
+    System.arraycopy(jdeclInqBytes, 0, jdeclCommareaByteArray, 0, jdeclInqBytes.length);
+    jdeclProgram.setName(lgacvs01);
+    jdeclProgram.link(jdeclCommareaByteArray);
+    lgacvs01 = new String(jdeclCommareaByteArray, jdeclCharSet);
+    cdb2Area.setD2CustomerNum(this.getDb2CustomernumInt());
+    cdb2Area.getCustomerSecure().setD2RequestId("02ACUS");
+    cdb2Area.getCustomerSecure().setCustomerpass("5732fec825535eeafb8fac50fee3a8aa");
+    cdb2Area.getCustomerSecure().setPassChanges("0000");
+
+    cdb2Area.getCustomerSecure().setStateIndicator("N");
+    try {
+        byte[] jdeclByteArray = cdb2Area.toString().getBytes();
+        qnmVjyqvmld8fpjA101.setName(lgacdb02);
+        qnmVjyqvmld8fpjA101.link(jdeclByteArray);
+    } catch (CicsConditionException e) {
+        dfhcommarea.setCaReturnCode(e.getReturnCode());
+        throw e;
+    }
+
+}

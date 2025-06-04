@@ -1,0 +1,48 @@
+public void invokeMainline(Dfhcommarea dfhcommarea) {
+    BusinessRules businessRules = new BusinessRules();
+    String lgapbr01 = "LGAPBR01";
+    int wsCaHeaderLen = 28;
+    int wsRequiredCaLen = 0;
+
+    String lgapdb01 = "LGAPDB01";
+
+    WsHeader wsHeader = new WsHeader();
+    wsHeader.setWsTransid(Task.getTask().getTransId());
+    wsHeader.setWsTermid(Task.getTask().getTERMID());
+    wsHeader.setWsTasknum(Task.getTask().getTask().getApplicationContext().getOperation());
+    wsHeader.setWsCalen(dfhcommarea.getCalen());
+    if (dfhcommarea.getCalen() == 0) {
+        errorMsg.getEmVariable().setEmVariable(" NO COMMAREA RECEIVED");
+        this.writeErrorMessage(errorMsg);
+        Task.getTask().abend("LGCA");
+    }
+    dfhcommarea.setCaReturnCode(0);
+    wsHeader.setWsAddrDfhcommarea(dfhcommarea.getByteArray());
+    dfhcommarea.setCaCustomerNum(dfhcommarea.getCaCustomerNum());
+
+    wsRequiredCaLen = wsCaHeaderLen;
+    if (dfhcommarea.getEibcalen() < wsRequiredCaLen) {
+        dfhcommarea.setCaReturnCode(98);
+        return;
+    }
+    if (businessRules.isInRulesMode() && dfhcommarea.getCaRequestId().equals("01AEND")) {
+        byte[] jdeclCommareaByteArray = dfhcommarea.getBytes();
+        Program jdeclProgram = new Program();
+        Charset jdeclCharSet = Charset.forName(System.getProperty("com.ibm.cics.jvmserver.local.ccsid"));
+        jdeclProgram.setName(lgapbr01);
+        jdeclProgram.link(jdeclCommareaByteArray, jdeclCharSet);
+        dfhcommarea.setBytes(jdeclCommareaByteArray);
+    }
+
+    try {
+        byte[] jdeclByteArray = dfhcommarea.getBytes();
+        gxyrJA108.setName(lgapdb01);
+        gxyrJA108.link(jdeclByteArray);
+        dfhcommarea.setBytes(jdeclByteArray);
+    } catch (CicsConditionException e) {
+        dfhcommarea.setCaReturnCode(e.getReturnCode());
+        throw e;
+    }
+    return;
+
+}

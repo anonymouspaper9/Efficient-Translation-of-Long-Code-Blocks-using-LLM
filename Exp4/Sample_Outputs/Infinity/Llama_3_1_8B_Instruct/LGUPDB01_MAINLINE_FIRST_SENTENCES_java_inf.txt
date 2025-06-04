@@ -1,0 +1,26 @@
+public void invokeMainline(Dfhcommarea dfhcommarea){
+    Db2InIntegers db2InIntegers = new Db2InIntegers();
+    Db2Policy db2Policy = new Db2Policy();
+    ErrorMsg errorMsg = new ErrorMsg();
+    String lgupvs01 = "LGUPVS01";
+    WsHeader wsHeader = new WsHeader();
+    if (dfhcommarea.getEibCaleN() == 0) {
+        errorMsg.setEmVariable("NO COMMAREA RECEIVED");
+        mainlineWriteErrorMessage(dfhcommarea, errorMsg);
+        System.exit(0);
+    }
+    dfhcommarea.setCaReturnCode(0);
+    wsHeader.setWsCalen(dfhcommarea.getEibCaleN());
+    wsHeader.setWsAddrDfhcommarea(dfhcommarea.getBytes());
+    db2InIntegers.setDb2CustomernumInt(dfhcommarea.getCaCustomerNum());
+    db2InIntegers.setDb2PolicynumInt(dfhcommarea.getPolicy().getPolicynumber());
+    errorMsg.setEmVariable(dfhcommarea.getCaCustomerNum());
+    errorMsg.setEmPolnum(dfhcommarea.getPolicy().getPolicynumber());
+    mainlineUpdatePolicyDb2Info((CaPolicyRequest)dfhcommarea, db2InIntegers, errorMsg);
+    try {
+        CICSLink link = new CICSLink();
+        link.link(dfhcommarea.getBytes(), 225, lgupvs01);
+    } catch (Exception e) {
+        System.out.println(e);
+    }
+} 

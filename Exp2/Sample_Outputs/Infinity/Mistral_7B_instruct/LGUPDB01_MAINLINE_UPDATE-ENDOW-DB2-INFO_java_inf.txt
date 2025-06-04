@@ -1,0 +1,56 @@
+
+```java
+public void mainlineUpdateEndowDb2Info(CaEndowment caEndowment, Db2InIntegers db2InIntegers, ErrorMsg errorMsg) {
+    int wsRequiredCaLen = caEndowment.getEndowment().getRequiredCaLen();
+    String wsVaryChar = caEndowment.getEndowment().getPaddingdata();
+    int wsVaryLen;
+
+    /* Calculate the length of the padding data */
+    if (wsRequiredCaLen > wsVaryChar.length()) {
+        wsVaryLen = wsRequiredCaLen - wsVaryChar.length();
+    } else {
+        wsVaryLen = 0;
+    }
+
+    /* If there is padding data, set it */
+    if (wsVaryLen > 0) {
+        String paddingData = wsVaryChar.substring(wsVaryChar.length() - wsVaryLen);
+        wsVaryChar = paddingData + wsVaryChar.substring(0, wsVaryChar.length() - wsVaryLen);
+    }
+
+    /* Update the endowment record */
+    try (Connection connection = JdbcConnection.connection) {
+        String sql = "UPDATE ENDOWMENT SET WITHPROFITS = ?, EQUITIES = ?, MANAGEDFUND = ?, FUNDNAME = ?, TERM = ?, SUMASSURED = ?, LIFEASSURED = ? WHERE POLICYNUMBER = ?";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setString(1, caEndowment.getEndowment().getWithprofits());
+        ps.setString(2, caEndowment.getEndowment().getEquities());
+        ps.setString(3, caEndowment.getEndowment().getManagedfund());
+        ps.setString(4, caEndowment.getEndowment().getFundname());
+        ps.setInt(5, db2InIntegers.getDb2ETermSint());
+        ps.setInt(6, db2InIntegers.getDb2ESumassuredInt());
+        ps.setString(7, String.valueOf(db2InIntegers.getDb2PolicynumInt()));
+
+        if (wsVaryChar.length() > 0) {
+            ps.setString(8, wsVaryChar.substring(0, wsVaryLen));
+        } else {
+            ps.setString(8, "");
+        }
+
+        ps.executeUpdate();
+    } catch (SQLException e) {
+        int sqlCode = e.getErrorCode();
+        if (sqlCode == 100) {
+            caEndowment.setCaReturnCode(1);
+        } else {
+            caEndowment.setCaReturnCode(90);
+            errorMsg.setErrorMessage(e.getMessage());
+        }
+        return;
+    }
+
+    /* If there was no padding data, set it */
+    if (wsVaryChar.length() == 0 && wsVaryLen > 0) {
+        caEndowment.getEndowment().setPaddingdata(wsVaryChar);
+    }
+}
+```

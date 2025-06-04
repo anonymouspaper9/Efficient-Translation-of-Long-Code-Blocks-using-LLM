@@ -1,0 +1,48 @@
+public void invokeMainline(Dfhcommarea dfhcommarea) {
+    ErrorMsg errorMsg = new ErrorMsg();
+    int wsCaHeaderLen = 28;
+    int wsFullEndowLen = 124;
+    int wsFullHouseLen = 130;
+    int wsFullMotorLen = 137;
+    WsHeader wsHeader = new WsHeader();
+    int wsRequiredCaLen = 0;
+    wsHeader.setWsTransid(Task.getTask().getTransactionName());
+    wsHeader.setWsTermid(Task.getTask().getSTARTCODE());
+    wsHeader.setWsTasknum(Task.getTask().getTaskNumber());
+    if (Task.getTask().getPrincipalFacility().getTERMCODE() == 0) {
+        errorMsg.getEmVariable().setEmVariable(" NO COMMAREA RECEIVED");
+        mainlineWriteErrorMessage(dfhcommarea, errorMsg);
+        Task.getTask().abend("LGCA");
+    }
+    dfhcommarea.setCaReturnCode(0);
+    wsHeader.setWsCalen(Task.getTask().getPrincipalFacility().getTERMCODE());
+    wsHeader.setWsAddrDfhcommarea(dfhcommarea.toByteString());
+    errorMsg.getEmVariable().setEmCusnum(String.valueOf(dfhcommarea.getCaCustomerNum()));
+    errorMsg.getEmVariable().setEmPolnum(String.valueOf(dfhcommarea.getCaPolicyNum()));
+    switch (dfhcommarea.getCaRequestId()) {
+    case "01UEND":
+        wsRequiredCaLen = wsCaHeaderLen + wsFullEndowLen;
+        if (wsHeader.getWsCalen() < wsRequiredCaLen) {
+            dfhcommarea.setCaReturnCode(98);
+            Task.getTask().abend();
+        }
+        break;
+    case "01UHOU":
+        wsRequiredCaLen = wsCaHeaderLen + wsFullHouseLen;
+        if (wsHeader.getWsCalen() < wsRequiredCaLen) {
+            dfhcommarea.setCaReturnCode(98);
+            Task.getTask().abend();
+        }
+        break;
+    case "01UMOT":
+        wsRequiredCaLen = wsCaHeaderLen + wsFullMotorLen;
+        if (wsHeader.getWsCalen() < wsRequiredCaLen) {
+            dfhcommarea.setCaReturnCode(98);
+            Task.getTask().abend();
+        }
+        break;
+    default:
+        dfhcommarea.setCaReturnCode(99);
+    }
+    mainlineUpdatePolicyDb2Info(dfhcommarea);
+}

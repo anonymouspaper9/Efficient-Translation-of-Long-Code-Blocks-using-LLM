@@ -1,0 +1,75 @@
+public void invokeMainline(Dfhcommarea dfhcommarea) {
+    GenAcount genAcount = new GenAcount();
+    String genApool = "GENA";
+    int wsAbstime = 0;
+    String wsChaNname1 = "DFHEP.DATA.00001";
+    String wsChaNname2 = "DFHEP.DATA.00002";
+    String wsDataRc = "";
+    String wsDataReq = "";
+    String wsDate = "";
+    WsHeader wsHeader = new WsHeader();
+    WsQarea wsQarea = new WsQarea();
+    String wsQname = "GENASTRT";
+    int wsResp;
+    String wsTime = "";
+    wsHeader.setWsTransid(Task.getTask().getTransactionName());
+    wsHeader.setWsTermid(Task.getTask().getSTARTCODE());
+    wsHeader.setWsTasknum(Task.getTask().getTaskNumber());
+    wsHeader.setWsCalen(dfhcommarea.getCalen());
+    Object jdeclTask = Task.getTask();
+    Channel jdeclChannel = jdeclTask.getCurrentChannel();
+    Container jdeclContainer1 = jdeclChannel.getContainer(wsChaNname1);
+    byte[] jdeclTempOutputData = jdeclContainer1.get();
+    Charset jdeclCharset = Charset.forName(System.getProperty("com.ibm.cics.jvmserver.local.ccsid"));
+    wsDataReq = new String(jdeclTempOutputData, jdeclCharset);
+    Container jdeclContainer2 = jdeclChannel.getContainer(wsChaNname2);
+    jdeclTempOutputData = jdeclContainer2.get();
+    jdeclCharset = Charset.forName(System.getProperty("com.ibm.cics.jvmserver.local.ccsid"));
+    wsDataRc = new String(jdeclTempOutputData, jdeclCharset);
+    if (wsResp == 0) {
+        genAcount.setGenAcounter(wsDataReq);
+        genAcount.setGenAtype(wsDataRc);
+    } else {
+        if (dfhcommarea.getCalen() == 0) {
+            Task.getTask().abend();
+        } else {
+            genAcount.setGenAcounter(dfhcommarea.getCaRequestId());
+            genAcount.setGenAtype(String.valueOf(dfhcommarea.getCaReturnCode()));
+        }
+    }
+    TSQ jdeclTsq = new TSQ();
+    ItemHolder jdeclRecord = new ItemHolder();
+    jdeclTsq.setName(wsQname);
+    try {
+        jdeclTsq.readNextItem(jdeclRecord);
+    } catch (InvalidQueueIdException e) {
+        throw e;
+        /* STATEMENT BLOCK 1 */
+    } catch (InvalidQueueIdException e) {
+        wsAbstime = AskTimeUtils.askTimeAbsTime();
+        wsDate = CICSDateTimeFormat.DDMMYYYY.formatDateTime(wsAbstime, ZoneId.systemDefault());
+        wsTime = CICSDateTimeFormat.HHMMSS.formatDateTime(wsAbstime, ZoneId.systemDefault());
+        wsQarea.setWsAreaD(wsDate);
+        wsQarea.setWsAreaT(wsTime);
+        jdeclTsq = new TSQ();
+        jdeclTsq.setName(wsQname);
+        try {
+            jdeclTsq.writeString(wsQarea.toByteString());
+        } catch (CicsConditionException e) {
+            throw e;
+        }
+    }
+    if (genAcount.getGenAcounter().equals("02ACUS")) {
+        genAcount.setGenAcounter("01ACUS");
+    }
+    if (genAcount.getGenAcounter().equals("02ICOM") || genAcount.getGenAcounter().equals("03ICOM")
+            || genAcount.getGenAcounter().equals("05ICOM")) {
+        genAcount.setGenAcounter("01ICOM");
+    }
+    if (!genAcount.getGenAtype().equals("00")) {
+        genAcount.setGenAtype("99");
+    }
+    jdeclTask = Task.getTask();
+    int trancount = jdeclTask.getCounterValue(genApool, genAcount.getGenAcounter());
+    Task.getTask().returnFromTask();
+}

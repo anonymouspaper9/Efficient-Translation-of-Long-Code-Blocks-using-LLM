@@ -1,0 +1,32 @@
+public void invokeMainline(Dfhcommarea dfhcommarea) {
+    WsHeader wsHeader = new WsHeader();
+    ErrorMsg errorMsg = new ErrorMsg();
+
+    int wsCustomerLen = 72;
+    int wsCaHeadertrailerLen = 18;
+    int wsRequiredCaLen = 0;
+
+    wsHeader.setWsTransid(Task.getTask().getTransId());
+    wsHeader.setWsTermid(Task.getTask().getTERMId());
+    wsHeader.setWsTasknum(Task.getTask().getTask().getApplicationContext().getOperation());
+    if (dfhcommarea.getEibcalen() == 0) {
+        errorMsg.getEmVariable().setEmVariable(" NO COMMAREA RECEIVED");
+        this.writeErrorMessage(errorMsg);
+        Task.getTask().abend("LGCA");
+    }
+    dfhcommarea.setCaReturnCode(0);
+    wsHeader.setWsCalen(dfhcommarea.getEibcalen());
+    wsHeader.setWsAddrDfhcommarea(dfhcommarea.getEibdfhcommarea());
+    db2CustomernumberInt = 0;
+
+    wsRequiredCaLen = wsCustomerLen;
+    wsRequiredCaLen = wsCaHeadertrailerLen + wsRequiredCaLen;
+    if (dfhcommarea.getEibcalen() < wsRequiredCaLen) {
+        dfhcommarea.setCaReturnCode(98);
+        return;
+    }
+    db2CustomernumberInt = dfhcommarea.getCaCustomerNum();
+    errorMsg.getEmVariable().setEmCusnum(String.valueOf(dfhcommarea.getCaCustomerNum()));
+    getCustomerInfo();
+
+}

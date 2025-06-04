@@ -1,0 +1,44 @@
+public void sendTerminationMsgStm010() {
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    WsFailInfo wsFailInfo = new WsFailInfo();
+
+    String wsAbendPgm = "ABNDPROC";
+    String endOfSessionMessage = "Session Ended";
+    try {
+        Task.getTask().getChannel("CHANNEL-NAME0001").delete();
+    } catch (CicsConditionException e) {
+
+        wsTimeNowGrp = new WsTimeNowGrp();
+        abndinfoRec = new AbndinfoRec();
+        wsFailInfo = new WsFailInfo();
+        wsFailInfo.setWsCicsFailMsg("BNK1CAC - STM010 - SEND TEXT FAIL");
+        wsFailInfo.setWsCicsRespDisp(this.getWsCicsResp());
+        wsFailInfo.setWsCicsResp2Disp(this.getWsCicsResp2());
+        abndinfoRec.setAbndRespcode(eibresp);
+        abndinfoRec.setAbndResp2Code(eibresp2);
+        abndinfoRec.setAbndTranid(eibtrnid);
+        abndinfoRec.setAbndTasknoKey(eibtaskn);
+        abndinfoRec.setAbndDate(this.getWsOrigDate());
+        wsTimeNowGrp.setWsTimeNowGrpHh(LocalTime.now().getHour());
+        wsTimeNowGrp.setWsTimeNowGrpMm(LocalTime.now().getMinute());
+        wsTimeNowGrp.setWsTimeNowGrpSs(LocalTime.now().getSecond());
+        abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":"
+                + wsTimeNowGrp.getWsTimeNowGrpSs());
+        abndinfoRec.setAbndUtimeKey(this.getWsUTime());
+        abndinfoRec.setAbndCode("HBNK");
+        abndinfoRec.setAbndProgram(Task.getTask().getProgramName());
+        abndinfoRec.setAbndSqlcode(0);
+        String jdeclVar1 = "STM010 - SEND TEXT FAIL" + " EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2="
+                + abndinfoRec.getAbndResp2Code();
+        abndinfoRec.setAbndFreeform(jdeclVar1);
+
+        try {
+            Task.getTask().link(wsAbendPgm);
+        } catch (CicsConditionException e1) {
+            throw e1;
+        }
+        throw e;
+    }
+
+}

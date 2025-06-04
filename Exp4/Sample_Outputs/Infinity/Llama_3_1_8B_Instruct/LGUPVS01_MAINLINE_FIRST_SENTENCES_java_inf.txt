@@ -1,0 +1,71 @@
+public void invokeMainline(CaPolicyRequest caPolicyRequest){
+    String wfPolicyData = "";
+    WfPolicyInfo wfPolicyInfo = new WfPolicyInfo();
+    int wsCommareaLen = 64;
+    int wsCommareaLenF = 64;
+    String wsFileIn = "";
+    int wsResp;
+    int wsResp2;
+    /* MAINLINE SECTION */
+    wfPolicyInfo.getWfPolicyKey().setWfRequestId(caPolicyRequest.getCaRequestId().substring(0, 1));
+    wfPolicyInfo.getWfPolicyKey().setWfPolicyNum(caPolicyRequest.getCaPolicyNum());
+    wfPolicyInfo.getWfPolicyKey().setWfCustomerNum(caPolicyRequest.getCaCustomerNum());
+    switch (caPolicyRequest.getCaRequestId().substring(0, 1)) {
+        case 'C':
+            wfPolicyInfo.getWfPolicyKey().setWfBPostcode(caPolicyRequest.getCaBPostcode());
+            wfPolicyInfo.getWfPolicyKey().setWfBStatus(caPolicyRequest.getCaBStatus());
+            wfPolicyInfo.getWfPolicyKey().setWfBCustomer(caPolicyRequest.getCaBCustomer());
+            break;
+        case 'E':
+            ((WfEPolicyData)wfPolicyInfo).setWfEWithProfits(caPolicyRequest.getCaEWithProfits());
+            ((WfEPolicyData)wfPolicyInfo).setWfEManagedFund(caPolicyRequest.getCaEManagedFund());
+            ((WfEPolicyData)wfPolicyInfo).setWfELifeAssured(caPolicyRequest.getCaELifeAssured());
+            ((WfEPolicyData)wfPolicyInfo).setWfEFundName(caPolicyRequest.getCaEFundName());
+            ((WfEPolicyData)wfPolicyInfo).setWfEEquities(caPolicyRequest.getCaEEquities());
+            break;
+        case 'H':
+            ((WfHPolicyData)wfPolicyInfo).setWfHValue(caPolicyRequest.getCaHValue());
+            ((WfHPolicyData)wfPolicyInfo).setWfHPropertyType(caPolicyRequest.getCaHPropertyType());
+            ((WfHPolicyData)wfPolicyInfo).setWfHPostcode(caPolicyRequest.getCaHPostcode());
+            ((WfHPolicyData)wfPolicyInfo).setWfHHouseName(caPolicyRequest.getCaHHouseName());
+            ((WfHPolicyData)wfPolicyInfo).setWfHBedrooms(caPolicyRequest.getCaHBedrooms());
+            break;
+        case 'M':
+            ((WfMPolicyData)wfPolicyInfo).setWfMValue(caPolicyRequest.getCaMValue());
+            ((WfMPolicyData)wfPolicyInfo).setWfMRegnumber(caPolicyRequest.getCaMRegnumber());
+            ((WfMPolicyData)wfPolicyInfo).setWfMModel(caPolicyRequest.getCaMModel());
+            ((WfMPolicyData)wfPolicyInfo).setWfMMake(caPolicyRequest.getCaMMake());
+            break;
+        default:
+            wfPolicyData = " ";
+            break;
+    }
+    try {
+        String sql = "SELECT * FROM KSDSPOLY WHERE WF-POLICY-KEY = ?";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setString(1, wfPolicyInfo.getWfPolicyKey().getBytes());
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            wsFileIn = rs.getString(1);
+        }
+        ps.close();
+    } catch (SQLException e) {
+        wsResp = 1;
+        wsResp2 = 1;
+        mainlineWriteErrorMessage(dfhcommarea, wsResp, wsResp2);
+        return;
+    }
+    try {
+        String sql = "UPDATE KSDSPOLY SET WF-POLICY-INFO = ? WHERE WF-POLICY-KEY = ?";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setString(1, wfPolicyInfo.getBytes());
+        ps.setString(2, wfPolicyInfo.getWfPolicyKey().getBytes());
+        ps.executeUpdate();
+        ps.close();
+    } catch (SQLException e) {
+        wsResp = 2;
+        wsResp2 = 2;
+        mainlineWriteErrorMessage(dfhcommarea, wsResp, wsResp2);
+        return;
+    }
+} 

@@ -1,0 +1,107 @@
+
+```java
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class Main {
+    public static void mainlineInsertCustomer(CaCustomerRequest caCustomerRequest) {
+        String lgacNcs = caCustomerRequest.getLgacNcs();
+        String emSqlReq = "";
+        int db2CustomernumInt = 0;
+        int caReturnCode = 0;
+        String postcode = caCustomerRequest.getCustomer().getPostcode();
+        String phonemobile = caCustomerRequest.getCustomer().getPhonemobile();
+        String phonehome = caCustomerRequest.getCustomer().getPhonehome();
+        String lastname = caCustomerRequest.getCustomer().getLastname();
+        String housename = caCustomerRequest.getCustomer().getHousename();
+        String housenum = caCustomerRequest.getCustomer().getHousenumber();
+        String firstname = caCustomerRequest.getCustomer().getFirstname();
+        String emailaddress = caCustomerRequest.getCustomer().getEmailaddress();
+        Date dob = caCustomerRequest.getCustomer().getDateofbirth();
+
+        try {
+            Class.forName("com.ibm.db2.jcc.DB2Driver");
+            Connection connection = DriverManager.getConnection("jdbc:db2://localhost:50000/database", "username", "password");
+
+            if (lgacNcs.equals("ON")) {
+                emSqlReq = "INSERT INTO CUSTOMER (CUSTOMERNUMBER, FIRSTNAME, LASTNAME, DATEOFBIRTH, HOUSENAME, HOUSENUMBER, POSTCODE, PHONEMOBILE, PHONEHOME, EMAILADDRESS) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                PreparedStatement preparedStatement = connection.prepareStatement(emSqlReq);
+                preparedStatement.setLong(1, db2CustomernumInt);
+                preparedStatement.setString(2, firstname);
+                preparedStatement.setString(3, lastname);
+                preparedStatement.setDate(4, dob);
+                preparedStatement.setString(5, housename);
+                preparedStatement.setString(6, housenum);
+                preparedStatement.setString(7, postcode);
+                preparedStatement.setString(8, phonemobile);
+                preparedStatement.setString(9, phonehome);
+                preparedStatement.setString(10, emailaddress);
+                preparedStatement.executeUpdate();
+                preparedStatement.close();
+            } else {
+                emSqlReq = "INSERT INTO CUSTOMER (CUSTOMERNUMBER, FIRSTNAME, LASTNAME, DATEOFBIRTH, HOUSENAME, HOUSENUMBER, POSTCODE, PHONEMOBILE, PHONEHOME, EMAILADDRESS) VALUES (DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                PreparedStatement preparedStatement = connection.prepareStatement(emSqlReq);
+                preparedStatement.setString(1, firstname);
+                preparedStatement.setString(2, lastname);
+                preparedStatement.setDate(3, dob);
+                preparedStatement.setString(4, housename);
+                preparedStatement.setString(5, housenum);
+                preparedStatement.setString(6, postcode);
+                preparedStatement.setString(7, phonemobile);
+                preparedStatement.setString(8, phonehome);
+                preparedStatement.setString(9, emailaddress);
+                preparedStatement.executeUpdate();
+                preparedStatement.close();
+
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+                resultSet.next();
+                db2CustomernumInt = resultSet.getInt(1);
+            }
+
+            caCustomerRequest.setDb2CustomernumInt(db2CustomernumInt);
+            caCustomerRequest.setCaReturnCode(0);
+
+        } catch (SQLException e) {
+            caCustomerRequest.setCaReturnCode(90);
+            mainlineWriteErrorMessage(e);
+        } catch (ClassNotFoundException e) {
+            caCustomerRequest.setCaReturnCode(90);
+            mainlineWriteErrorMessage(e);
+        }
+    }
+
+    private static void mainlineWriteErrorMessage(SQLException e) {
+        // Implement the logic for writing error messages
+    }
+}
+
+class CaCustomerRequest {
+    private int db2CustomernumInt;
+    private int caReturnCode;
+
+    public int getDb2CustomernumInt() {
+        return db2CustomernumInt;
+    }
+
+    public void setDb2CustomernumInt(int db2CustomernumInt) {
+        this.db2CustomernumInt = db2CustomernumInt;
+    }
+
+    public int getCaReturnCode() {
+        return caReturnCode;
+    }
+
+    public void setCaReturnCode(int caReturnCode) {
+        this.caReturnCode = caReturnCode;
+    }
+
+    // Add other getter and setter methods for the customer data
+}
+```

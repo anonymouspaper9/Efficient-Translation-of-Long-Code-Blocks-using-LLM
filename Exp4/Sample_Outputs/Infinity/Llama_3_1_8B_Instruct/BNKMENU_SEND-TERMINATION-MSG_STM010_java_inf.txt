@@ -1,0 +1,36 @@
+public void sendTerminationMsgStm010(){
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    String endOfSessionMessage = "Session Ended";
+    String wsAbendPgm = "ABNDPROC";
+    int wsCicsResp = 0;
+    int wsCicsResp2 = 0;
+    WsFailInfo wsFailInfo = new WsFailInfo();
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+    try {
+        String sql = "EXEC CICS SEND TEXT ERASE FREEKB FROM(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setString(1, endOfSessionMessage);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        abndinfoRec.setAbndSqlcode(exception.getErrorCode());
+        abndinfoRec.setAbndRespcode(exception.getErrorCode());
+        abndinfoRec.setAbndResp2Code(exception.getErrorCode());
+        abndinfoRec.setAbndProgram(wsAbendPgm);
+        abndinfoRec.setAbndFreeform("STM010 - SEND TEXT FAIL. EIBRESP=" + exception.getErrorCode() + " RESP2=" + exception.getErrorCode());
+        abndinfoRec.setAbndDate(getWsOrigDate());
+        abndinfoRec.setAbndTime(getWsTimeNowGrp().getWsTimeNowGrpHh() + ":" + getWsTimeNowGrp().getWsTimeNowGrpMm() + ":" + getWsTimeNowGrp().getWsTimeNowGrpSs());
+        abndinfoRec.setAbndUtimeKey(getWsUTime());
+        abndinfoRec.setAbndTasknoKey(getWsTasknoKey());
+        abndinfoRec.setAbndTranid(getWsTranid());
+        abndinfoRec.setAbndCode("HBNK");
+        abndinfoRec.setAbndApplid("ABND-APPLID");
+        abndinfoRec.setBytes(abndinfoRec.getBytes());
+        wsFailInfo.setWsCicsRespDisp(getWsCicsResp());
+        wsFailInfo.setWsCicsResp2Disp(getWsCicsResp2());
+        wsFailInfo.setWsCicsFailMsg("BNKMENU - STM010 - SEND TEXT FAIL");
+        abendThisTaskAtt010(wsFailInfo);
+        return;
+    }
+} 

@@ -1,0 +1,267 @@
+public void creditCheckCc010(Dfhcommarea dfhcommarea){
+    WsOrigDateGrp wsOrigDateGrp = new WsOrigDateGrp();
+
+    String wsAnyChildFetchAbcode="";
+    char wsFinishedFetching='N';
+
+    int wsChildIssuedCnt=0;
+    ArrayList<WsChildDetails> wsChildDetails=Stream.generate(() -> new WsChildDetails()).limit(9).collect(Collectors.toCollection(ArrayList::new));
+    int wsCcCnt=0;
+    int wsPutContLen=0;
+    char wsFinishedFetching='N';
+    int wsRetrievedCnt=0;
+    String wsChannelName="";
+    int wsTotalCsScr=0;
+    String wsAnyChildTkn="";
+    wsChannelName="CIPCREDCHANN    ";
+    wsChildIssuedCnt=0;
+    wsPutContLen=dfhcommarea.getBytes().length;
+    for (wsCcCnt=1; wsCcCnt <= 5; wsCcCnt++) {
+
+    int wsCcCnt=0;
+    String wsPutContName="";
+    int wsPutContLen=0;
+    String wsChannelName="";
+    String wsRunTransid="";
+    String wsAnyChildTkn="";
+    wsRunTransid="OCR" + wsCcCnt;
+switch (wsCcCnt) {
+case 1:      wsPutContName="CIPA            ";
+    break;
+case 2:  wsPutContName="CIPB            ";
+break;
+case 3:wsPutContName="CIPC            ";
+break;
+case 4:wsPutContName="CIPD            ";
+break;
+case 5:wsPutContName="CIPE            ";
+break;
+case 6:wsPutContName="CIPF            ";
+break;
+case 7:wsPutContName="CIPG            ";
+break;
+case 8:wsPutContName="CIPH            ";
+break;
+case 9:wsPutContName="CIPI            ";
+break;
+}
+try {
+Task jdeclTask=Task.getTask();
+Channel jdeclChannel=jdeclTask.createChannel(wsChannelName);
+Container jdeclContainer=jdeclChannel.createContainer(wsPutContName);
+jdeclContainer.put(dfhcommarea.getBytes(),"IBM037");
+}
+ catch (CicsConditionException e) {
+dfhcommarea.setCommSuccess('N');
+dfhcommarea.setCommFailCode('A');
+System.out.println("Unsuccessful attempt to PUT CONTAINER. CONTAINER=" + wsPutContName + "CHANNEL="+ wsChannelName+ ". FLENGTH ="+ wsPutContLen+ ".");
+System.out.println("    RESP=" + e.getRESP() + " RESP2="+ e.getRESP2());
+return;
+}
+try {
+Task jdeclTask=Task.getTask();
+Channel jdeclChannel=jdeclTask.createChannel(wsChannelName);
+AsyncServiceImpl jdeclAsService=new AsyncServiceImpl();
+Future<ChildResponse> jdeclChild=jdeclAsService.runTransactionId(wsRunTransid,jdeclChannel);
+}
+ catch (CicsConditionException e) {
+dfhcommarea.setCommSuccess('N');
+dfhcommarea.setCommFailCode('B');
+System.out.println("Unsuccessful attempt to RUN TRANSID. TRANSID=" + wsRunTransid + "CHANNEL="+ wsChannelName+ ". TOKEN="+ wsAnyChildTkn);
+System.out.println("    RESP=" + e.getRESP() + " RESP2="+ e.getRESP2());
+return;
+}
+
+      wsChildIssuedCnt=wsChildIssuedCnt + 1;
+      wsChildDetails.get(wsChildIssuedCnt - 1).setWsChildChan(wsChannelName);
+      wsChildDetails.get(wsChildIssuedCnt - 1).setWsChildTkn(wsAnyChildTkn);
+    }
+    try {
+      Thread.sleep(3000);
+    }
+ catch (    InterruptedException e) {
+      e.printStackTrace();
+    }
+    wsFinishedFetching='N';
+    wsRetrievedCnt=0;
+    wsTotalCsScr=0;
+  
+    while (wsFinishedFetching != 'Y') {
+      wsAnyChildFetchAbcode="";
+      Task.getTask().getChannel(wsAnyChildFetchChan).fetch(wsAnyChildFetchTkn,wsAnyChildFetchAbcode);
+      if (wsAnyChildFetchAbcode.length() > 0) {
+
+    WsOrigDateGrp wsOrigDateGrp=new WsOrigDateGrp();
+    WsCurrentDateData wsCurrentDateData=new WsCurrentDateData();
+    int wsCurrentDate9=0;
+    int wsTodayInt=0;
+    int wsReviewDateAdd=0;
+    int wsNewReviewDateInt=0;
+    int wsNewReviewYyyymmdd=0;
+    char wsFinishedFetching='N';
+    int wsRetrievedCnt=0;
+    int wsActualCsScr=0;
+    int wsTotalCsScr=0;
+
+    WsOrigDateGrp wsOrigDateGrp=new WsOrigDateGrp();
+    char wsFinishedFetching='N';
+    int wsRetrievedCnt=0;
+    if (this.getWsCicsResp() == 104 && this.getWsCicsResp2() == 52) {
+      if (wsRetrievedCnt == 0) {
+        wsFinishedFetching='Y';
+        dfhcommarea.setCommCreditScore(0);
+        this.setWsCreditCheckError('Y');
+        String jdeclVar1=String.valueOf(wsOrigDateGrp.getWsOrigDateDd()) + String.valueOf(wsOrigDateGrp.getWsOrigDateMm()) + String.valueOf(wsOrigDateGrp.getWsOrigDateYyyy());
+        this.setCommCsReviewDate(Integer.parseInt(jdeclVar1));
+        dfhcommarea.setCommSuccess('N');
+        dfhcommarea.setCommFailCode('C');
+        System.out.println("EXEC CICS FETCH ANY failed. RESP=" + this.getWsCicsResp() + " RESP2="+ this.getWsCicsResp2());
+        System.out.println("   NOTFINISHED (no data) was returned");
+        System.out.println("   Exiting CRECUST. COMMAREA=" + dfhcommarea.toByteString());
+        return;
+      }
+ else {
+
+    WsCurrentDateData wsCurrentDateData=new WsCurrentDateData();
+    int wsCurrentDate9=0;
+    int wsTodayInt=0;
+    int wsReviewDateAdd=0;
+    int wsNewReviewDateInt=0;
+    int wsNewReviewYyyymmdd=0;
+    char wsFinishedFetching='N';
+    int wsRetrievedCnt=0;
+    int wsActualCsScr=0;
+    int wsTotalCsScr=0;
+    wsFinishedFetching='Y';
+    this.setWsCreditCheckError('N');
+    wsActualCsScr=wsTotalCsScr / wsRetrievedCnt;
+    dfhcommarea.setCommCreditScore(wsActualCsScr);
+    wsCurrentDateData.setWsCurrentDateData(new java.util.Date());
+    wsCurrentDate9=wsCurrentDateData.getWsCurrentDateData().getYear() * 10000 + wsCurrentDateData.getWsCurrentDateData().getMonth() * 100 + wsCurrentDateData.getWsCurrentDateData().getDate();
+    wsTodayInt=Integer.parseInt(String.valueOf(wsCurrentDate9));
+    wsReviewDateAdd=21 - 1;
+    wsNewReviewDateInt=wsTodayInt + wsReviewDateAdd;
+    wsNewReviewYyyymmdd=Integer.parseInt(String.valueOf(wsNewReviewDateInt));
+    this.setCommCsReviewDate(wsNewReviewYyyymmdd);
+  
+      }
+    }
+    if (this.getWsCicsResp() == 104 && this.getWsCicsResp2() == 1) {
+      dfhcommarea.setCommCreditScore(0);
+      String jdeclVar1=String.valueOf(wsOrigDateGrp.getWsOrigDateDd()) + String.valueOf(wsOrigDateGrp.getWsOrigDateMm()) + String.valueOf(wsOrigDateGrp.getWsOrigDateYyyy());
+      this.setCommCsReviewDate(Integer.parseInt(jdeclVar1));
+      dfhcommarea.setCommSuccess('N');
+      dfhcommarea.setCommFailCode('D');
+      System.out.println("EXEC CICS FETCH ANY failed. RESP=" + this.getWsCicsResp() + " RESP2="+ this.getWsCicsResp2());
+      System.out.println("   INVREQ (no data) was returned");
+      System.out.println("   Exiting CRECUST. COMMAREA=" + dfhcommarea.toByteString());
+      return;
+    }
+  
+    if (this.getWsCicsResp() == 28 && this.getWsCicsResp2() == 1) {
+      if (wsRetrievedCnt == 0) {
+        wsFinishedFetching='Y';
+        dfhcommarea.setCommCreditScore(0);
+        this.setCommCsReviewDate(Integer.parseInt(wsOrigDateGrp.getWsOrigDateDd() + wsOrigDateGrp.getWsOrigDateMm() + wsOrigDateGrp.getWsOrigDateYyyy()));
+      }
+ else {
+        wsFinishedFetching='Y';
+        this.setWsCreditCheckError('N');
+        dfhcommarea.setCommCreditScore(wsTotalCsScr / wsRetrievedCnt);
+        wsCurrentDateData.setWsCurrentDateData(new SimpleDateFormat("yyyyMMdd").format(new Date()));
+        wsCurrentDate9=Integer.parseInt(wsCurrentDateData.getWsCurrentDateData().substring(0,8));
+        wsTodayInt=Integer.parseInt(new SimpleDateFormat("yyyyMMdd").format(new Date()));
+        wsReviewDateAdd=21 - 1;
+        wsNewReviewDateInt=wsTodayInt + wsReviewDateAdd;
+        wsNewReviewYyyymmdd=Integer.parseInt(new SimpleDateFormat("yyyyMMdd").format(new Date(wsNewReviewDateInt)));
+        this.setCommCsReviewDate(Integer.parseInt(wsNewReviewYyyymmdd + ""));
+      }
+    }
+  
+      }
+ else {
+
+    WsOrigDateGrp wsOrigDateGrp=new WsOrigDateGrp();
+switch (wsChildFetchCompst) {}
+
+    WsOrigDateGrp wsOrigDateGrp=new WsOrigDateGrp();
+    int wsRetrievedCnt=0;
+    WsChildDataDobGroup wsChildDataDobGroup=new WsChildDataDobGroup();
+    String wsContainerName="";
+    int wsTotalCsScr=0;
+    int wsChildContainerLen=0;
+    String wsAnyChildFetchTkn="";
+    String wsAnyChildFetchChan="";
+    wsAnyChildFetchChan="MYCHANNEL";
+    wsAnyChildFetchTkn="MYCONTAINER";
+    while (wsRetrievedCnt < 9) {
+switch (wsAnyChildFetchTkn) {
+case "CIPA":        wsContainerName="CIPA";
+      break;
+case "CIPB":    wsContainerName="CIPB";
+  break;
+case "CIPC":wsContainerName="CIPC";
+break;
+case "CIPD":wsContainerName="CIPD";
+break;
+case "CIPE":wsContainerName="CIPE";
+break;
+case "CIPF":wsContainerName="CIPF";
+break;
+case "CIPG":wsContainerName="CIPG";
+break;
+case "CIPH":wsContainerName="CIPH";
+break;
+case "CIPI":wsContainerName="CIPI";
+break;
+}
+wsChildContainerLen=261;
+try {
+Task.getTask().getChannel(wsAnyChildFetchChan).getContainer(wsContainerName).get(wsChildData.getBytes(),0,wsChildContainerLen);
+}
+ catch (CicsConditionException e) {
+dfhcommarea.setCommCreditScore(0);
+dfhcommarea.setCommCsReviewDate(Integer.parseInt(wsOrigDateGrp.getWsOrigDateDd() + wsOrigDateGrp.getWsOrigDateMm() + wsOrigDateGrp.getWsOrigDateYyyy()));
+dfhcommarea.setCommSuccess('N');
+dfhcommarea.setCommFailCode('E');
+System.out.println("EXEC CICS FETCH ANY worked, but GET CONTAINER failed." + " CONTAINER=" + wsContainerName + " CHANNEL="+ wsAnyChildFetchChan+ " RESP="+ e.getRESP()+ " RESP2="+ e.getRESP2());
+System.out.println("   Exiting CRECUST. COMMAREA=" + dfhcommarea);
+return;
+}
+wsRetrievedCnt=wsRetrievedCnt + 1;
+wsTotalCsScr=wsTotalCsScr + wsChildDataDobGroup.getWsChildDataCreditScore();
+}
+
+    break;
+case 1:  dfhcommarea.setCommCreditScore(0);
+String wsOrigDate=String.valueOf(wsOrigDateGrp.getWsOrigDateDd()) + String.valueOf(wsOrigDateGrp.getWsOrigDateMm()) + String.valueOf(wsOrigDateGrp.getWsOrigDateYyyy());
+this.setCommCsReviewDate(Integer.parseInt(wsOrigDate));
+dfhcommarea.setCommSuccess('N');
+dfhcommarea.setCommFailCode('F');
+break;
+case 2:dfhcommarea.setCommCreditScore(0);
+String wsOrigDate=String.valueOf(wsOrigDateGrp.getWsOrigDateDd()) + String.valueOf(wsOrigDateGrp.getWsOrigDateMm()) + String.valueOf(wsOrigDateGrp.getWsOrigDateYyyy());
+this.setCommCsReviewDate(Integer.parseInt(wsOrigDate));
+dfhcommarea.setCommSuccess('N');
+dfhcommarea.setCommFailCode('G');
+System.out.println("EXEC CICS FETCH ANY worked, but COMP-STATUS = SECERROR. RESP=" + this.getWsCicsResp() + " RESP2="+ this.getWsCicsResp2());
+System.out.println("   Exiting CRECUST. COMMAREA=" + dfhcommarea.toString());
+break;
+
+    WsOrigDateGrp wsOrigDateGrp=new WsOrigDateGrp();
+    dfhcommarea.setCommCreditScore(0);
+    String wsOrigDate=String.valueOf(wsOrigDateGrp.getWsOrigDateDd()) + String.valueOf(wsOrigDateGrp.getWsOrigDateMm()) + String.valueOf(wsOrigDateGrp.getWsOrigDateYyyy());
+    this.setCommCsReviewDate(Integer.parseInt(wsOrigDate));
+    dfhcommarea.setCommSuccess('N');
+    dfhcommarea.setCommFailCode('H');
+    System.out.println("EXEC CICS FETCH ANY worked, but COMP-STATUS IS UNKNOWN. RESP=" + this.getWsCicsResp() + " RESP2="+ this.getWsCicsResp2());
+    System.out.println("   Exiting CRECUST. COMMAREA=" + dfhcommarea.toString());
+  
+break;
+}
+
+      }
+    
+  
+
+}

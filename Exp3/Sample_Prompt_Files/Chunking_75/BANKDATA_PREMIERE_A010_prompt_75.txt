@@ -1,0 +1,1365 @@
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+           DISPLAY "SNIPPET-1"
+           DISPLAY "SNIPPET-2"
+           DISPLAY "SNIPPET-4"
+           MOVE 'Finishing BANKDATA'
+             to TIMESTAMP-FUNCTION
+           perform TIMESTAMP.
+
+## Variable Map:
+TIMESTAMP-FUNCTION gettermapping timestampFunction
+TIMESTAMP-FUNCTION settermapping timestampFunction = val
+TIMESTAMP-FUNCTION PIC X(40) JavaType String
+
+
+## Class Map:
+public void premiereA010(){
+    String timestampFunction = "";
+}
+
+
+Output:
+=====================
+
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+           MOVE 'Starting BANKDATA'
+             to TIMESTAMP-FUNCTION
+           perform TIMESTAMP
+      D    DISPLAY 'About to initialise arrays'.
+           PERFORM INITIALISE-ARRAYS.
+           UNSTRING PARM(1:PARM-LENGTH)
+                    DELIMITED BY SPACE OR ','
+                    INTO START-KEY
+                         END-KEY
+                         STEP-KEY
+                         RANDOM-SEED.
+      D    DISPLAY 'INPUT PARMS ARE: START-KEY=' START-KEY
+      D             ' END-KEY=' END-KEY ' STEP-KEY=' STEP-KEY
+      D             ' RANDOM-SEED=' RANDOM-SEED '
+           IF END-KEY < START-KEY
+             MOVE 12 TO RETURN-CODE
+             DISPLAY 'Final customer number cannot be smaller than '
+               'first customer number'
+             GOBACK
+           END-IF
+           IF step-key = zero
+             MOVE 12 TO RETURN-CODE
+             DISPLAY 'Gap between customers cannot be zero'
+             GOBACK
+           END-IF
+           PERFORM GET-TODAYS-DATE.
+      D    DISPLAY 'About to delete DB2 rows'.
+           PERFORM DELETE-DB2-ROWS.
+      D    DISPLAY 'Back from delete DB2 rows'.
+      D    DISPLAY 'RANDOM SEED IS ' RANDOM-SEED-NUMERIC
+           COMPUTE FORENAMES-PTR = FORENAMES-CNT *
+                                   FUNCTION RANDOM(RANDOM-SEED-NUMERIC).
+      D    DISPLAY 'FORENAMES-PTR IS ' FORENAMES-PTR.
+           COMPUTE INITIALS-PTR =  INITIALS-CNT *
+                                   FUNCTION RANDOM.
+      D    DISPLAY 'INITIALS-PTR IS ' INITIALS-PTR
+           COMPUTE SURNAMES-PTR  =  SURNAMES-CNT *
+                                   FUNCTION RANDOM.
+           COMPUTE TOWN-PTR  =  TOWN-COUNT *
+                                   FUNCTION RANDOM.
+           COMPUTE STREET-NAME-R-PTR =  STREET-NAME-R-CNT *
+                                   FUNCTION RANDOM.
+           COMPUTE STREET-NAME-T-PTR =  STREET-NAME-T-CNT *
+                                   FUNCTION RANDOM.
+           COMPUTE ACCOUNT-TYPES-PTR = ACCOUNT-TYPES-COUNT *
+                                   FUNCTION RANDOM.
+
+## Variable Map:
+TOWN-PTR gettermapping townPtr
+TOWN-PTR settermapping townPtr = val
+TOWN-PTR PIC 9(8) JavaType int
+TOWN-COUNT gettermapping this.getTownCount()
+TOWN-COUNT settermapping this.setTownCount(val)
+TOWN-COUNT PIC 9(8) JavaType int
+TIMESTAMP-FUNCTION gettermapping timestampFunction
+TIMESTAMP-FUNCTION settermapping timestampFunction = val
+TIMESTAMP-FUNCTION PIC X(40) JavaType String
+SURNAMES-PTR gettermapping surnamesPtr
+SURNAMES-PTR settermapping surnamesPtr = val
+SURNAMES-PTR PIC 9(8) JavaType int
+SURNAMES-CNT gettermapping this.getSurnamesCnt()
+SURNAMES-CNT settermapping this.setSurnamesCnt(val)
+SURNAMES-CNT PIC 9(8) JavaType int
+STREET-NAME-T-PTR gettermapping streetNameTPtr
+STREET-NAME-T-PTR settermapping streetNameTPtr = val
+STREET-NAME-T-PTR PIC 9(8) JavaType int
+STREET-NAME-T-CNT gettermapping this.getStreetNameTCnt()
+STREET-NAME-T-CNT settermapping this.setStreetNameTCnt(val)
+STREET-NAME-T-CNT PIC 9(8) JavaType int
+STREET-NAME-R-PTR gettermapping streetNameRPtr
+STREET-NAME-R-PTR settermapping streetNameRPtr = val
+STREET-NAME-R-PTR PIC 9(8) JavaType int
+STREET-NAME-R-CNT gettermapping this.getStreetNameRCnt()
+STREET-NAME-R-CNT settermapping this.setStreetNameRCnt(val)
+STREET-NAME-R-CNT PIC 9(8) JavaType int
+STEP-KEY gettermapping stepKey
+STEP-KEY settermapping stepKey = val
+STEP-KEY PIC 9(10) JavaType long
+START-KEY gettermapping startKey
+START-KEY settermapping startKey = val
+START-KEY PIC 9(10) JavaType long
+RETURN-CODE gettermapping returnCode
+RETURN-CODE settermapping returnCode = val
+RETURN-CODE PIC S9(4) JavaType int
+RANDOM-SEED-NUMERIC gettermapping this.getRandomSeedNumeric()
+RANDOM-SEED-NUMERIC settermapping this.setRandomSeedNumeric(val)
+RANDOM-SEED-NUMERIC PIC 9(16) JavaType long
+RANDOM-SEED gettermapping this.getRandomSeed()
+RANDOM-SEED settermapping this.setRandomSeed(val)
+RANDOM-SEED PIC X(16) JavaType String
+PARM-LENGTH gettermapping this.getParmLength()
+PARM-LENGTH settermapping this.setParmLength(val)
+PARM-LENGTH PIC 9(4) JavaType int
+PARM gettermapping this.getParm()
+PARM settermapping this.setParm(val)
+PARM PIC X(256) JavaType String
+INITIALS-PTR gettermapping initialsPtr
+INITIALS-PTR settermapping initialsPtr = val
+INITIALS-PTR PIC 9(8) JavaType int
+INITIALS-CNT gettermapping this.getInitialsCnt()
+INITIALS-CNT settermapping this.setInitialsCnt(val)
+INITIALS-CNT PIC 9(8) JavaType int
+FORENAMES-PTR gettermapping forenamesPtr
+FORENAMES-PTR settermapping forenamesPtr = val
+FORENAMES-PTR PIC 9(8) JavaType int
+FORENAMES-CNT gettermapping this.getForenamesCnt()
+FORENAMES-CNT settermapping this.setForenamesCnt(val)
+FORENAMES-CNT PIC 9(8) JavaType int
+END-KEY gettermapping endKey
+END-KEY settermapping endKey = val
+END-KEY PIC 9(10) JavaType long
+ACCOUNT-TYPES-PTR gettermapping accountTypesPtr
+ACCOUNT-TYPES-PTR settermapping accountTypesPtr = val
+ACCOUNT-TYPES-PTR PIC 9(8) JavaType int
+ACCOUNT-TYPES-COUNT gettermapping this.getAccountTypesCount()
+ACCOUNT-TYPES-COUNT settermapping this.setAccountTypesCount(val)
+ACCOUNT-TYPES-COUNT PIC 9(8) JavaType int
+
+
+## Class Map:
+public void premiereA010(){
+    int surnamesPtr = 0;
+    int forenamesPtr = 0;
+    int streetNameTPtr = 0;
+    String timestampFunction = "";
+    int streetNameRPtr = 0;
+    int accountTypesPtr = 0;
+    int returnCode = 0;
+    int townPtr = 0;
+    int initialsPtr = 0;
+}
+
+
+Output:
+=====================
+
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+           OPEN OUTPUT CUSTOMER-FILE.
+           IF CUSTOMER-VSAM-STATUS NOT EQUAL '00' THEN
+               DISPLAY 'Error opening CUSTOMER file, status='
+                       CUSTOMER-VSAM-STATUS
+               MOVE 12 TO RETURN-CODE
+               PERFORM PROGRAM-DONE
+           END-IF.
+           MOVE 'Populating Customer + Account files'
+             to TIMESTAMP-FUNCTION
+           perform TIMESTAMP
+           MOVE ZERO TO COMMIT-COUNT
+           MOVE ZERO TO LAST-CUSTOMER-NUMBER NUMBER-OF-CUSTOMERS
+           MOVE ZERO TO LAST-ACCOUNT-NUMBER NUMBER-OF-ACCOUNTS
+           PERFORM TEST BEFORE
+                   VARYING NEXT-KEY FROM START-KEY BY STEP-KEY
+                     UNTIL NEXT-KEY > END-KEY
+               DISPLAY "SNIPPET-3"
+               COMPUTE WS-NEW-REVIEW-DATE-INT =
+                  WS-TODAY-INT + WS-REVIEW-DATE-ADD
+               COMPUTE WS-NEW-REVIEW-YYYYMMDD = FUNCTION
+                  DATE-OF-INTEGER (WS-NEW-REVIEW-DATE-INT)
+               MOVE WS-NEW-REVIEW-YYYYMMDD(1:4) TO
+                  CUSTOMER-CS-REVIEW-YEAR
+               MOVE WS-NEW-REVIEW-YYYYMMDD(5:2) TO
+                  CUSTOMER-CS-REVIEW-MONTH
+               MOVE WS-NEW-REVIEW-YYYYMMDD(7:2) TO
+                  CUSTOMER-CS-REVIEW-DAY
+               WRITE CUSTOMER-RECORD-STRUCTURE
+               IF CUSTOMER-VSAM-STATUS NOT EQUAL '00' THEN
+                   DISPLAY 'Error writing to VSAM file, status='
+                           CUSTOMER-VSAM-STATUS
+                   MOVE 12 TO RETURN-CODE
+                   PERFORM PROGRAM-DONE
+               END-IF
+               PERFORM DEFINE-ACC
+               ADD 1 TO COMMIT-COUNT GIVING COMMIT-COUNT
+               IF COMMIT-COUNT > 1000
+      D          DISPLAY 'Commit every 1,000 records or so'
+                 EXEC SQL
+                  COMMIT WORK
+                 END-EXEC
+                 MOVE ZERO TO COMMIT-COUNT
+               END-IF
+           END-PERFORM
+           MOVE '000000' TO CUSTOMER-CONTROL-SORTCODE
+           MOVE '9999999999' TO CUSTOMER-CONTROL-NUMBER
+           SET CUSTOMER-CONTROL-EYECATCHER-V TO TRUE
+      D    DISPLAY 'ABOUT TO WRITE CUSTOMER-CONTROL-RECORD'
+           MOVE CUSTOMER-CONTROL-RECORD
+             TO CUSTOMER-RECORD IN CUSTOMER-RECORD-STRUCTURE
+           WRITE CUSTOMER-RECORD-STRUCTURE
+
+## Variable Map:
+WS-TODAY-INT gettermapping this.getWsTodayInt()
+WS-TODAY-INT settermapping this.setWsTodayInt(val)
+WS-TODAY-INT PIC 9(8) JavaType int
+WS-REVIEW-DATE-ADD gettermapping wsReviewDateAdd
+WS-REVIEW-DATE-ADD settermapping wsReviewDateAdd = val
+WS-REVIEW-DATE-ADD PIC 99 JavaType int
+WS-NEW-REVIEW-YYYYMMDD gettermapping wsNewReviewYyyymmdd
+WS-NEW-REVIEW-YYYYMMDD settermapping wsNewReviewYyyymmdd = val
+WS-NEW-REVIEW-YYYYMMDD PIC 9(8) JavaType int
+WS-NEW-REVIEW-DATE-INT gettermapping wsNewReviewDateInt
+WS-NEW-REVIEW-DATE-INT settermapping wsNewReviewDateInt = val
+WS-NEW-REVIEW-DATE-INT PIC 9(8) JavaType int
+TIMESTAMP-FUNCTION gettermapping timestampFunction
+TIMESTAMP-FUNCTION settermapping timestampFunction = val
+TIMESTAMP-FUNCTION PIC X(40) JavaType String
+STEP-KEY gettermapping stepKey
+STEP-KEY settermapping stepKey = val
+STEP-KEY PIC 9(10) JavaType long
+START-KEY gettermapping startKey
+START-KEY settermapping startKey = val
+START-KEY PIC 9(10) JavaType long
+RETURN-CODE gettermapping returnCode
+RETURN-CODE settermapping returnCode = val
+RETURN-CODE PIC S9(4) JavaType int
+NUMBER-OF-CUSTOMERS gettermapping customerControlRecord.getNumberOfCustomers()
+NUMBER-OF-CUSTOMERS settermapping customerControlRecord.setNumberOfCustomers(val)
+NUMBER-OF-CUSTOMERS PIC 9(10) JavaType long
+NUMBER-OF-ACCOUNTS gettermapping this.getNumberOfAccounts()
+NUMBER-OF-ACCOUNTS settermapping this.setNumberOfAccounts(val)
+NUMBER-OF-ACCOUNTS PIC 9(8) JavaType int
+NEXT-KEY gettermapping nextKey
+NEXT-KEY settermapping nextKey = val
+NEXT-KEY PIC 9(10) JavaType long
+LAST-CUSTOMER-NUMBER gettermapping customerControlRecord.getLastCustomerNumber()
+LAST-CUSTOMER-NUMBER settermapping customerControlRecord.setLastCustomerNumber(val)
+LAST-CUSTOMER-NUMBER PIC 9(10) JavaType long
+LAST-ACCOUNT-NUMBER gettermapping this.getLastAccountNumber()
+LAST-ACCOUNT-NUMBER settermapping this.setLastAccountNumber(val)
+LAST-ACCOUNT-NUMBER PIC 9(8) JavaType int
+END-KEY gettermapping endKey
+END-KEY settermapping endKey = val
+END-KEY PIC 9(10) JavaType long
+CUSTOMER-VSAM-STATUS gettermapping customerVsamStatus.getBytes()
+CUSTOMER-VSAM-STATUS settermapping customerVsamStatus.setBytes(val)
+CUSTOMER-VSAM-STATUS GROUP JavaType CustomerVsamStatus
+CUSTOMER-RECORD-STRUCTURE writemapping customerRecordStructure.writeTo(Bankdata.getInstance().getCustomerFile())
+CUSTOMER-FILE gettermapping Bankdata.getInstance().getCustomerFile()
+CUSTOMER-FILE openmapping Bankdata.getInstance().openCustomerFile()
+CUSTOMER-FILE closemapping Bankdata.getInstance().closeCustomerFile()
+CUSTOMER-FILE readmapping customerRecordStructure.readFrom(Bankdata.getInstance().getCustomerFile())
+CUSTOMER-FILE FD JavaType ZFile
+CUSTOMER-RECORD-STRUCTURE gettermapping customerRecordStructure.getBytes()
+CUSTOMER-RECORD-STRUCTURE settermapping customerRecordStructure.setBytes(val)
+CUSTOMER-RECORD-STRUCTURE GROUP JavaType CustomerRecordStructure
+CUSTOMER-RECORD gettermapping customerRecordStructure.getCustomerRecord().getBytes()
+CUSTOMER-RECORD settermapping customerRecordStructure.getCustomerRecord().setBytes(val)
+CUSTOMER-RECORD GROUP JavaType CustomerRecord
+CUSTOMER-CS-REVIEW-YEAR gettermapping ((CustomerCsGroup)(customerRecordStructure.getCustomerRecord())).getCustomerCsReviewYear()
+CUSTOMER-CS-REVIEW-YEAR settermapping ((CustomerCsGroup)(customerRecordStructure.getCustomerRecord())).setCustomerCsReviewYear(val)
+CUSTOMER-CS-REVIEW-YEAR PIC 9999 JavaType int
+CUSTOMER-CS-REVIEW-MONTH gettermapping ((CustomerCsGroup)(customerRecordStructure.getCustomerRecord())).getCustomerCsReviewMonth()
+CUSTOMER-CS-REVIEW-MONTH settermapping ((CustomerCsGroup)(customerRecordStructure.getCustomerRecord())).setCustomerCsReviewMonth(val)
+CUSTOMER-CS-REVIEW-MONTH PIC 99 JavaType int
+CUSTOMER-CS-REVIEW-DAY gettermapping ((CustomerCsGroup)(customerRecordStructure.getCustomerRecord())).getCustomerCsReviewDay()
+CUSTOMER-CS-REVIEW-DAY settermapping ((CustomerCsGroup)(customerRecordStructure.getCustomerRecord())).setCustomerCsReviewDay(val)
+CUSTOMER-CS-REVIEW-DAY PIC 99 JavaType int
+CUSTOMER-CONTROL-SORTCODE gettermapping customerControlRecord.getCustomerControlSortcode()
+CUSTOMER-CONTROL-SORTCODE settermapping customerControlRecord.setCustomerControlSortcode(val)
+CUSTOMER-CONTROL-SORTCODE PIC 9(6) JavaType int
+CUSTOMER-CONTROL-RECORD gettermapping customerControlRecord.getBytes()
+CUSTOMER-CONTROL-RECORD settermapping customerControlRecord.setBytes(val)
+CUSTOMER-CONTROL-RECORD GROUP JavaType CustomerControlRecord
+CUSTOMER-CONTROL-NUMBER gettermapping customerControlRecord.getCustomerControlNumber()
+CUSTOMER-CONTROL-NUMBER settermapping customerControlRecord.setCustomerControlNumber(val)
+CUSTOMER-CONTROL-NUMBER PIC 9(10) JavaType long
+CUSTOMER-CONTROL-EYECATCHER-V gettermapping customerControlRecord.isCustomerControlEyecatcherV()
+CUSTOMER-CONTROL-EYECATCHER-V settermapping customerControlRecord.setCustomerControlEyecatcherV()
+CUSTOMER-CONTROL-EYECATCHER-V 88 JavaType boolean
+CUSTOMER-CONTROL-EYECATCHER gettermapping customerControlRecord.getCustomerControlEyecatcher()
+CUSTOMER-CONTROL-EYECATCHER settermapping customerControlRecord.setCustomerControlEyecatcher(val)
+CUSTOMER-CONTROL-EYECATCHER PIC X(4) JavaType String
+COMMIT-COUNT gettermapping commitCount
+COMMIT-COUNT settermapping commitCount = val
+COMMIT-COUNT PIC S9(8) JavaType int
+
+
+## Class Map:
+public void premiereA010(){
+    int wsReviewDateAdd = 0;
+    int wsNewReviewDateInt = 0;
+    int wsNewReviewYyyymmdd = 0;
+    CustomerControlRecord customerControlRecord = new CustomerControlRecord();
+    CustomerVsamStatus customerVsamStatus = new CustomerVsamStatus();
+    String timestampFunction = "";
+    CustomerRecordStructure customerRecordStructure = new CustomerRecordStructure();
+    int returnCode = 0;
+}
+
+
+Output:
+=====================
+
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+               INITIALIZE CUSTOMER-RECORD IN CUSTOMER-RECORD-STRUCTURE
+               SET CUSTOMER-EYECATCHER-VALUE TO TRUE
+               MOVE NEXT-KEY TO CUSTOMER-NUMBER
+               MOVE NEXT-KEY TO LAST-CUSTOMER-NUMBER
+               ADD 1 TO NUMBER-OF-CUSTOMERS GIVING NUMBER-OF-CUSTOMERS
+      D        DISPLAY 'Generating data for customer ' customer-number
+               COMPUTE TITLE-NUMBER = ((36 - 1)
+               COMPUTE FORENAMES-PTR = ((FORENAMES-CNT - 1)
+               COMPUTE INITIALS-PTR  = ((INITIALS-CNT - 1)
+               COMPUTE SURNAMES-PTR  = ((SURNAMES-CNT - 1)
+               COMPUTE HOUSE-NUMBER  = (99
+               COMPUTE STREET-NAME-T-PTR  = ((STREET-NAME-T-CNT - 1)
+               COMPUTE STREET-NAME-R-PTR  = ((STREET-NAME-R-CNT - 1)
+               COMPUTE TOWN-PTR           = ((TOWN-COUNT - 1)
+               MOVE SPACES TO CUSTOMER-NAME
+               STRING TITLE-WORD(TITLE-NUMBER) DELIMITED BY SPACE
+               ' '  DELIMITED BY SIZE
+               FORENAME(FORENAMES-PTR) DELIMITED BY SPACE
+               ' '  DELIMITED BY SIZE
+               INITIAL-CHARACTER(INITIALS-PTR) DELIMITED BY SPACE
+               ' '  DELIMITED BY SIZE
+               SURNAME(SURNAMES-PTR) DELIMITED BY SIZE
+               INTO CUSTOMER-NAME
+               MOVE SPACES TO CUSTOMER-ADDRESS
+               STRING
+               HOUSE-NUMBER DELIMITED BY SIZE
+               ' ' DELIMITED BY SIZE
+               STREET-NAME-TREE(STREET-NAME-T-PTR)
+               DELIMITED BY SPACE
+               ' ' DELIMITED BY SIZE
+               STREET-NAME-ROAD(STREET-NAME-R-PTR)
+               DELIMITED BY SPACE
+               ', ' DELIMITED BY SIZE
+               TOWN(TOWN-PTR)
+               DELIMITED BY SPACE
+               INTO CUSTOMER-ADDRESS
+               COMPUTE CUSTOMER-BIRTH-DAY =  ((28 - 1)
+               COMPUTE CUSTOMER-BIRTH-MONTH =  ((12 - 1)
+               COMPUTE CUSTOMER-BIRTH-YEAR =  ((2000 - 1900)
+               MOVE SORTCODE TO
+                  CUSTOMER-SORTCODE
+               COMPUTE CUSTOMER-CREDIT-SCORE = ((999 - 1)
+               COMPUTE WS-REVIEW-DATE-ADD = ((21 - 1)
+
+## Variable Map:
+WS-REVIEW-DATE-ADD gettermapping wsReviewDateAdd
+WS-REVIEW-DATE-ADD settermapping wsReviewDateAdd = val
+WS-REVIEW-DATE-ADD PIC 99 JavaType int
+TOWN-PTR gettermapping townPtr
+TOWN-PTR settermapping townPtr = val
+TOWN-PTR PIC 9(8) JavaType int
+TOWN-COUNT gettermapping this.getTownCount()
+TOWN-COUNT settermapping this.setTownCount(val)
+TOWN-COUNT PIC 9(8) JavaType int
+TOWN(i) gettermapping this.getTown().get(i-1)
+TOWN(i) settermapping this.getTown().set(i-1, val)
+TOWN(i) PIC X(20) JavaType String
+TITLE-WORD(i) gettermapping titleWords.getTitleWord().get(i-1)
+TITLE-WORD(i) settermapping titleWords.getTitleWord().set(i-1, val)
+TITLE-WORD(i) PIC X(9) JavaType String
+TITLE-NUMBER gettermapping titleNumber
+TITLE-NUMBER settermapping titleNumber = val
+TITLE-NUMBER PIC S9(9) JavaType int
+SURNAMES-PTR gettermapping surnamesPtr
+SURNAMES-PTR settermapping surnamesPtr = val
+SURNAMES-PTR PIC 9(8) JavaType int
+SURNAMES-CNT gettermapping this.getSurnamesCnt()
+SURNAMES-CNT settermapping this.setSurnamesCnt(val)
+SURNAMES-CNT PIC 9(8) JavaType int
+SURNAME(i) gettermapping this.getSurname().get(i-1)
+SURNAME(i) settermapping this.getSurname().set(i-1, val)
+SURNAME(i) PIC X(20) JavaType String
+STREET-NAME-TREE(i) gettermapping this.getStreetNameTree().get(i-1)
+STREET-NAME-TREE(i) settermapping this.getStreetNameTree().set(i-1, val)
+STREET-NAME-TREE(i) PIC X(20) JavaType String
+STREET-NAME-T-PTR gettermapping streetNameTPtr
+STREET-NAME-T-PTR settermapping streetNameTPtr = val
+STREET-NAME-T-PTR PIC 9(8) JavaType int
+STREET-NAME-T-CNT gettermapping this.getStreetNameTCnt()
+STREET-NAME-T-CNT settermapping this.setStreetNameTCnt(val)
+STREET-NAME-T-CNT PIC 9(8) JavaType int
+STREET-NAME-ROAD(i) gettermapping this.getStreetNameRoad().get(i-1)
+STREET-NAME-ROAD(i) settermapping this.getStreetNameRoad().set(i-1, val)
+STREET-NAME-ROAD(i) PIC X(20) JavaType String
+STREET-NAME-R-PTR gettermapping streetNameRPtr
+STREET-NAME-R-PTR settermapping streetNameRPtr = val
+STREET-NAME-R-PTR PIC 9(8) JavaType int
+STREET-NAME-R-CNT gettermapping this.getStreetNameRCnt()
+STREET-NAME-R-CNT settermapping this.setStreetNameRCnt(val)
+STREET-NAME-R-CNT PIC 9(8) JavaType int
+SORTCODE gettermapping sortcode
+SORTCODE settermapping sortcode = val
+SORTCODE PIC 9(6) JavaType int
+NUMBER-OF-CUSTOMERS gettermapping customerControlRecord.getNumberOfCustomers()
+NUMBER-OF-CUSTOMERS settermapping customerControlRecord.setNumberOfCustomers(val)
+NUMBER-OF-CUSTOMERS PIC 9(10) JavaType long
+NEXT-KEY gettermapping nextKey
+NEXT-KEY settermapping nextKey = val
+NEXT-KEY PIC 9(10) JavaType long
+LAST-CUSTOMER-NUMBER gettermapping customerControlRecord.getLastCustomerNumber()
+LAST-CUSTOMER-NUMBER settermapping customerControlRecord.setLastCustomerNumber(val)
+LAST-CUSTOMER-NUMBER PIC 9(10) JavaType long
+INITIALS-PTR gettermapping initialsPtr
+INITIALS-PTR settermapping initialsPtr = val
+INITIALS-PTR PIC 9(8) JavaType int
+INITIALS-CNT gettermapping this.getInitialsCnt()
+INITIALS-CNT settermapping this.setInitialsCnt(val)
+INITIALS-CNT PIC 9(8) JavaType int
+INITIAL-CHARACTER(i) gettermapping initials.getInitialCharacter().get(i-1)
+INITIAL-CHARACTER(i) settermapping initials.getInitialCharacter().set(i-1, val)
+INITIAL-CHARACTER(i) PIC X JavaType char
+HOUSE-NUMBER gettermapping houseNumber
+HOUSE-NUMBER settermapping houseNumber = val
+HOUSE-NUMBER PIC 99 JavaType int
+FORENAMES-PTR gettermapping forenamesPtr
+FORENAMES-PTR settermapping forenamesPtr = val
+FORENAMES-PTR PIC 9(8) JavaType int
+FORENAMES-CNT gettermapping this.getForenamesCnt()
+FORENAMES-CNT settermapping this.setForenamesCnt(val)
+FORENAMES-CNT PIC 9(8) JavaType int
+FORENAME(i) gettermapping this.getForename().get(i-1)
+FORENAME(i) settermapping this.getForename().set(i-1, val)
+FORENAME(i) PIC X(20) JavaType String
+CUSTOMER-SORTCODE gettermapping customerRecordStructure.getCustomerRecord().getCustomerSortcode()
+CUSTOMER-SORTCODE settermapping customerRecordStructure.getCustomerRecord().setCustomerSortcode(val)
+CUSTOMER-SORTCODE PIC 9(6) JavaType int
+CUSTOMER-RECORD gettermapping customerRecordStructure.getCustomerRecord().getBytes()
+CUSTOMER-RECORD settermapping customerRecordStructure.getCustomerRecord().setBytes(val)
+CUSTOMER-RECORD GROUP JavaType CustomerRecord
+CUSTOMER-NUMBER gettermapping customerRecordStructure.getCustomerRecord().getCustomerNumber()
+CUSTOMER-NUMBER settermapping customerRecordStructure.getCustomerRecord().setCustomerNumber(val)
+CUSTOMER-NUMBER PIC 9(10) JavaType long
+CUSTOMER-NAME gettermapping customerRecordStructure.getCustomerRecord().getCustomerName()
+CUSTOMER-NAME settermapping customerRecordStructure.getCustomerRecord().setCustomerName(val)
+CUSTOMER-NAME PIC X(60) JavaType String
+CUSTOMER-EYECATCHER-VALUE gettermapping customerRecordStructure.getCustomerRecord().isCustomerEyecatcherValue()
+CUSTOMER-EYECATCHER-VALUE settermapping customerRecordStructure.getCustomerRecord().setCustomerEyecatcherValue()
+CUSTOMER-EYECATCHER-VALUE 88 JavaType boolean
+CUSTOMER-EYECATCHER gettermapping customerRecordStructure.getCustomerRecord().getCustomerEyecatcher()
+CUSTOMER-EYECATCHER settermapping customerRecordStructure.getCustomerRecord().setCustomerEyecatcher(val)
+CUSTOMER-EYECATCHER PIC X(4) JavaType String
+CUSTOMER-CREDIT-SCORE gettermapping customerRecordStructure.getCustomerRecord().getCustomerCreditScore()
+CUSTOMER-CREDIT-SCORE settermapping customerRecordStructure.getCustomerRecord().setCustomerCreditScore(val)
+CUSTOMER-CREDIT-SCORE PIC 999 JavaType int
+CUSTOMER-BIRTH-YEAR gettermapping ((CustomerDobGroup)(customerRecordStructure.getCustomerRecord())).getCustomerBirthYear()
+CUSTOMER-BIRTH-YEAR settermapping ((CustomerDobGroup)(customerRecordStructure.getCustomerRecord())).setCustomerBirthYear(val)
+CUSTOMER-BIRTH-YEAR PIC 9999 JavaType int
+CUSTOMER-BIRTH-MONTH gettermapping ((CustomerDobGroup)(customerRecordStructure.getCustomerRecord())).getCustomerBirthMonth()
+CUSTOMER-BIRTH-MONTH settermapping ((CustomerDobGroup)(customerRecordStructure.getCustomerRecord())).setCustomerBirthMonth(val)
+CUSTOMER-BIRTH-MONTH PIC 99 JavaType int
+CUSTOMER-BIRTH-DAY gettermapping ((CustomerDobGroup)(customerRecordStructure.getCustomerRecord())).getCustomerBirthDay()
+CUSTOMER-BIRTH-DAY settermapping ((CustomerDobGroup)(customerRecordStructure.getCustomerRecord())).setCustomerBirthDay(val)
+CUSTOMER-BIRTH-DAY PIC 99 JavaType int
+CUSTOMER-ADDRESS gettermapping customerRecordStructure.getCustomerRecord().getCustomerAddress()
+CUSTOMER-ADDRESS settermapping customerRecordStructure.getCustomerRecord().setCustomerAddress(val)
+CUSTOMER-ADDRESS PIC X(160) JavaType String
+
+
+## Class Map:
+public void premiereA010(){
+    int wsReviewDateAdd = 0;
+    CustomerRecordStructure customerRecordStructure = new CustomerRecordStructure();
+    CustomerControlRecord customerControlRecord = new CustomerControlRecord();
+    int surnamesPtr = 0;
+    int forenamesPtr = 0;
+    int sortcode = 987654;
+    int streetNameTPtr = 0;
+    int streetNameRPtr = 0;
+    int townPtr = 0;
+    Initials initials = new Initials();
+    int initialsPtr = 0;
+    TitleWords titleWords = new TitleWords();
+}
+
+
+Output:
+=====================
+
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+           IF CUSTOMER-VSAM-STATUS NOT EQUAL '00' THEN
+                   DISPLAY 'Error writing CUSTOMER-CONTROL-RECORD file'
+                   ', status=' CUSTOMER-VSAM-STATUS
+                   MOVE 12 TO RETURN-CODE
+                   PERFORM PROGRAM-DONE
+           END-IF.
+           MOVE SPACES TO HV-CONTROL-NAME
+           MOVE LAST-ACCOUNT-NUMBER TO HV-CONTROL-VALUE-NUM
+           MOVE SPACES TO HV-CONTROL-VALUE-STR
+           STRING SORTCODE DELIMITED BY SIZE
+           '-' DELIMITED BY SIZE
+           'ACCOUNT-LAST' DELIMITED BY SIZE
+           INTO HV-CONTROL-NAME
+           EXEC SQL
+              INSERT INTO CONTROL
+                      (CONTROL_NAME,
+                       CONTROL_VALUE_NUM,
+                       CONTROL_VALUE_STR
+                      )
+              VALUES (:HV-CONTROL-NAME,
+                      :HV-CONTROL-VALUE-NUM,
+                      :HV-CONTROL-VALUE-STR
+                     )
+           END-EXEC.
+           IF SQLCODE IS NOT EQUAL TO ZERO
+             MOVE SQLCODE TO WS-SQLCODE-DISPLAY
+             DISPLAY 'Error inserting last account control record '
+             ws-sqlcode-display
+             '.'
+             HV-CONTROL-NAME,
+             ','
+             HV-CONTROL-VALUE-NUM
+           END-IF
+           MOVE SPACES TO HV-CONTROL-NAME
+           MOVE NUMBER-OF-ACCOUNTS TO HV-CONTROL-VALUE-NUM
+           MOVE SPACES TO HV-CONTROL-VALUE-STR
+           STRING SORTCODE DELIMITED BY SIZE
+           '-' DELIMITED BY SIZE
+           'ACCOUNT-COUNT' DELIMITED BY SIZE
+           INTO HV-CONTROL-NAME
+           EXEC SQL
+              INSERT INTO CONTROL
+                      (CONTROL_NAME,
+                       CONTROL_VALUE_NUM,
+                       CONTROL_VALUE_STR
+                      )
+              VALUES (:HV-CONTROL-NAME,
+                      :HV-CONTROL-VALUE-NUM,
+                      :HV-CONTROL-VALUE-STR
+                     )
+           END-EXEC.
+           IF SQLCODE IS NOT EQUAL TO ZERO
+             MOVE SQLCODE TO WS-SQLCODE-DISPLAY
+             DISPLAY 'Error inserting account count control record '
+             ws-sqlcode-display
+             '.'
+             HV-CONTROL-NAME,
+             ','
+             HV-CONTROL-VALUE-NUM
+           END-IF
+           CLOSE CUSTOMER-FILE.
+
+## Variable Map:
+WS-SQLCODE-DISPLAY gettermapping wsSqlcodeDisplay
+WS-SQLCODE-DISPLAY settermapping wsSqlcodeDisplay = val
+WS-SQLCODE-DISPLAY PIC S9(8) JavaType int
+SORTCODE gettermapping sortcode
+SORTCODE settermapping sortcode = val
+SORTCODE PIC 9(6) JavaType int
+RETURN-CODE gettermapping returnCode
+RETURN-CODE settermapping returnCode = val
+RETURN-CODE PIC S9(4) JavaType int
+NUMBER-OF-ACCOUNTS gettermapping this.getNumberOfAccounts()
+NUMBER-OF-ACCOUNTS settermapping this.setNumberOfAccounts(val)
+NUMBER-OF-ACCOUNTS PIC 9(8) JavaType int
+LAST-ACCOUNT-NUMBER gettermapping this.getLastAccountNumber()
+LAST-ACCOUNT-NUMBER settermapping this.setLastAccountNumber(val)
+LAST-ACCOUNT-NUMBER PIC 9(8) JavaType int
+HV-CONTROL-VALUE-STR gettermapping sttesterControl.getControlValueStr()
+HV-CONTROL-VALUE-STR settermapping sttesterControl.setControlValueStr(val)
+HV-CONTROL-VALUE-STR PIC X(40) JavaType String
+HV-CONTROL-VALUE-NUM gettermapping sttesterControl.getControlValueNum()
+HV-CONTROL-VALUE-NUM settermapping sttesterControl.setControlValueNum(val)
+HV-CONTROL-VALUE-NUM PIC S9(9) JavaType int
+HV-CONTROL-NAME gettermapping sttesterControl.getControlName()
+HV-CONTROL-NAME settermapping sttesterControl.setControlName(val)
+HV-CONTROL-NAME PIC X(32) JavaType String
+CUSTOMER-VSAM-STATUS gettermapping customerVsamStatus.getBytes()
+CUSTOMER-VSAM-STATUS settermapping customerVsamStatus.setBytes(val)
+CUSTOMER-VSAM-STATUS GROUP JavaType CustomerVsamStatus
+
+
+## Class Map:
+public void premiereA010(){
+    int sortcode = 987654;
+    CustomerVsamStatus customerVsamStatus = new CustomerVsamStatus();
+    int returnCode = 0;
+    SttesterControl sttesterControl = new SttesterControl();
+}
+
+
+Output:
+=====================
+

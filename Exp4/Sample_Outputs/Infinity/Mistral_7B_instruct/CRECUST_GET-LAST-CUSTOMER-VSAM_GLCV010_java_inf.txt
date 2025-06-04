@@ -1,0 +1,79 @@
+
+```java
+public void getLastCustomerVsamGlcv010(Dfhcommarea dfhcommarea) {
+    CustomerControlRecord customerControlRecord = new CustomerControlRecord();
+    CustomerKy2 customerKy2 = new CustomerKy2();
+    CustomerRecord customerRecord = new CustomerRecord();
+
+    customerControlRecord.setCustomerControlKey(dfhcommarea.getBytes());
+
+    try {
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement("SELECT LAST_CUSTOMER_NUMBER FROM CUSTOMER WHERE CUSTOMER_CONTROL_KEY = ?");
+        ps.setBytes(1, customerControlRecord.getCustomerControlKey());
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            long lastCustomerNumber = rs.getLong(1);
+            customerControlRecord.setLastCustomerNumber(lastCustomerNumber);
+        }
+    } catch (SQLException e) {
+        System.out.println(e);
+    }
+
+    if (customerControlRecord.getLastCustomerNumber() == 0) {
+        for (int retry = 1; retry <= 100; retry++) {
+            try {
+                customerControlRecord.setCustomerControlKey(dfhcommarea.getBytes());
+                PreparedStatement ps = JdbcConnection.connection.prepareStatement("UPDATE CUSTOMER SET CUSTOMER_CONTROL_SORTCODE = '999999', CUSTOMER_CONTROL_NUMBER = '9999999999' WHERE CUSTOMER_CONTROL_KEY = ?");
+                ps.setBytes(1, customerControlRecord.getCustomerControlKey());
+                ps.executeUpdate();
+                PreparedStatement ps2 = JdbcConnection.connection.prepareStatement("SELECT LAST_CUSTOMER_NUMBER FROM CUSTOMER WHERE CUSTOMER_CONTROL_KEY = ?");
+                ps2.setBytes(1, customerControlRecord.getCustomerControlKey());
+                ResultSet rs = ps2.executeQuery();
+                if (rs.next()) {
+                    long lastCustomerNumber = rs.getLong(1);
+                    customerControlRecord.setLastCustomerNumber(lastCustomerNumber);
+                    break;
+                }
+            } catch (SQLException e) {
+                System.out.println(e);
+            }
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                System.out.println(e);
+            }
+        }
+    }
+
+    if (customerControlRecord.getLastCustomerNumber() == 0) {
+        dfhcommarea.setCommSuccess('N');
+        dfhcommarea.setCommFailCode('4');
+        getMeOutOfHereGmofh010();
+        deqNamedCounterDnc010(dfhcommarea);
+        return;
+    }
+
+    customerKy2.setRequiredCustNumber2(customerControlRecord.getLastCustomerNumber());
+    customerRecord.getCustomerKey().setCustomerNumber(customerControlRecord.getLastCustomerNumber());
+
+    try {
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement("UPDATE CUSTOMER SET CUSTOMER_CONTROL_SORTCODE = '999999', CUSTOMER_CONTROL_NUMBER = '9999999999' WHERE CUSTOMER_CONTROL_KEY = ?");
+        ps.setBytes(1, customerControlRecord.getCustomerControlKey());
+        ps.executeUpdate();
+    } catch (SQLException e) {
+        System.out.println(e);
+    }
+
+    try {
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement("UPDATE CUSTOMER SET CUSTOMER_CONTROL_SORTCODE = ?, CUSTOMER_CONTROL_NUMBER = ? WHERE CUSTOMER_CONTROL_KEY = ?");
+        ps.setString(1, "999999");
+        ps.setLong(2, customerControlRecord.getLastCustomerNumber() + 1);
+        ps.setBytes(3, customerControlRecord.getCustomerControlKey());
+        ps.executeUpdate();
+    } catch (SQLException e) {
+        System.out.println(e);
+    }
+
+    dfhcommarea.setCommNumber(customerControlRecord.getLastCustomerNumber());
+}
+```

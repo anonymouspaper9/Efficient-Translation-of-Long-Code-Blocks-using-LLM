@@ -1,0 +1,191 @@
+public void premiereA010(){
+    int accountTypesPtr = 0;
+    int commitCount;
+    CustomerControlRecord customerControlRecord = new CustomerControlRecord();
+    CustomerRecordStructure customerRecordStructure = new CustomerRecordStructure();
+    CustomerVsamStatus customerVsamStatus = new CustomerVsamStatus();
+    long endKey;
+    int forenamesPtr = 0;
+    int houseNumber;
+    Initials initials = new Initials();
+    int initialsPtr = 0;
+    long nextKey;
+    String returnCode = "00000";
+    int sortcode = 987654;
+    long startKey;
+    long stepKey;
+    int streetNameRPtr = 0;
+    int streetNameTPtr = 0;
+    SttesterControl sttesterControl = new SttesterControl();
+    int surnamesPtr = 0;
+    String timestampFunction = "";
+    int titleNumber;
+    TitleWords titleWords = new TitleWords();
+    int townPtr = 0;
+    int wsNewReviewDateInt = 0;
+    int wsNewReviewYyyymmdd = 0;
+    int wsReviewDateAdd = 0;
+    int wsSqlcodeDisplay;
+    timestampFunction = "Starting BANKDATA";
+    invokeTimestamp();
+    System.out.println("About to initialise arrays.");
+    initialiseArraysIa010(initials, titleWords);
+    String[] parmArray = this.getParm().split("[ ,]+");
+    startKey = Long.parseLong(parmArray[0]);
+    endKey = Long.parseLong(parmArray[1]);
+    stepKey = Long.parseLong(parmArray[2]);
+    this.setRandomSeed(parmArray[3]);
+    System.out.println("INPUT PARMS ARE: START-KEY=" + startKey
+            + " END-KEY=" + endKey + " STEP-KEY=" + stepKey
+            + " RANDOM-SEED=" + this.getRandomSeed());
+    if (endKey < startKey) {
+        returnCode = "12";
+        System.out.println("Final customer number cannot be smaller than "
+                + "first customer number");
+        programDonePd010();
+    }
+    if (stepKey == 0) {
+        returnCode = "12";
+        System.out.println("Gap between customers cannot be zero");
+        programDonePd010();
+    }
+    getTodaysDateGtd010();
+    System.out.println("About to delete DB2 rows.");
+    deleteDb2RowsDbr010();
+    System.out.println("Back from delete DB2 rows.");
+    System.out.println("RANDOM SEED IS " + this.getRandomSeedNumeric());
+    forenamesPtr = (int) (this.getForenamesCnt() * Math.random());
+    System.out.println("FORENAMES-PTR IS " + forenamesPtr);
+    initialsPtr = (int) (this.getInitialsCnt() * Math.random());
+    System.out.println("INITIALS-PTR IS " + initialsPtr);
+    surnamesPtr = (int) (this.getSurnamesCnt() * Math.random());
+    townPtr = (int) (this.getTownCount() * Math.random());
+    streetNameRPtr = (int) (this.getStreetNameRCnt() * Math.random());
+    streetNameTPtr = (int) (this.getStreetNameTCnt() * Math.random());
+    accountTypesPtr = (int) (this.getAccountTypesCount() * Math.random());
+    Bankdata.getInstance().openCustomerFile();
+    if (customerVsamStatus.getBytes() != 0) {
+        System.out.println("Error opening CUSTOMER file, status="
+                + customerVsamStatus);
+        returnCode = "12";
+        programDonePd010();
+    }
+    timestampFunction = "Populating Customer + Account files";
+    invokeTimestamp();
+    commitCount = 0;
+    customerControlRecord.setLastCustomerNumber(0);
+    customerControlRecord.setNumberOfCustomers(0);
+    this.setLastAccountNumber(0);
+    this.setNumberOfAccounts(0);
+    for (nextKey = startKey; nextKey <= endKey; nextKey += stepKey) {
+        customerRecordStructure.initialize();
+        customerRecordStructure.getCustomerRecord().setCustomerEyecatcherValue(true);
+        customerRecordStructure.getCustomerRecord().setCustomerNumber(nextKey);
+        customerControlRecord.setLastCustomerNumber(nextKey);
+        customerControlRecord.setNumberOfCustomers(customerControlRecord.getNumberOfCustomers() + 1);
+        System.out.println("Generating data for customer " + nextKey);
+        titleNumber = (int) (36 * Math.random());
+        forenamesPtr = (int) (this.getForenamesCnt() * Math.random());
+        initialsPtr = (int) (this.getInitialsCnt() * Math.random());
+        surnamesPtr = (int) (this.getSurnamesCnt() * Math.random());
+        houseNumber = (int) (100 * Math.random());
+        streetNameTPtr = (int) (this.getStreetNameTCnt() * Math.random());
+        streetNameRPtr = (int) (this.getStreetNameRCnt() * Math.random());
+        townPtr = (int) (this.getTownCount() * Math.random());
+        customerRecordStructure.getCustomerRecord().setCustomerName(
+                titleWords.getTitleWord().get(titleNumber - 1) + " "
+                        + this.getForename().get(forenamesPtr - 1) + " "
+                        + initials.getInitialCharacter().get(initialsPtr - 1)
+                        + " " + this.getSurname().get(surnamesPtr - 1));
+        customerRecordStructure.getCustomerRecord().setCustomerAddress(
+                houseNumber + " "
+                        + this.getStreetNameTree().get(streetNameTPtr - 1) + " "
+                        + this.getStreetNameRoad().get(streetNameRPtr - 1) + ", "
+                        + this.getTown().get(townPtr - 1));
+        customerRecordStructure.getCustomerRecord().setCustomerBirthDay(
+                (int) (29 * Math.random()));
+        customerRecordStructure.getCustomerRecord().setCustomerBirthMonth(
+                (int) (13 * Math.random()));
+        customerRecordStructure.getCustomerRecord().setCustomerBirthYear(
+                (int) (101 * Math.random()) + 1900);
+        customerRecordStructure.getCustomerRecord().setCustomerSortcode(sortcode);
+        customerRecordStructure.getCustomerRecord().setCustomerCreditScore(
+                (int) (1000 * Math.random()));
+        wsReviewDateAdd = (int) (22 * Math.random());
+        wsNewReviewDateInt = this.getWsTodayInt() + wsReviewDateAdd;
+        wsNewReviewYyyymmdd = wsNewReviewDateInt;
+        customerRecordStructure.getCustomerRecord().setCustomerCsReviewYear(
+                wsNewReviewYyyymmdd / 10000);
+        customerRecordStructure.getCustomerRecord().setCustomerCsReviewMonth(
+                (wsNewReviewYyyymmdd / 100) % 100);
+        customerRecordStructure.getCustomerRecord().setCustomerCsReviewDay(
+                wsNewReviewYyyymmdd % 100);
+        customerRecordStructure.writeTo(Bankdata.getInstance().getCustomerFile());
+        if (customerVsamStatus.getBytes() != 0) {
+            System.out.println("Error writing to VSAM file, status="
+                    + customerVsamStatus);
+            returnCode = "12";
+            programDonePd010();
+        }
+        defineAccDa010(customerRecordStructure);
+        commitCount++;
+        if (commitCount > 1000) {
+            System.out.println("Commit every 1,000 records or so");
+            try {
+                JdbcConnection.connection.commit();
+            } catch (SQLException e) {
+                System.out.println(e);
+            }
+            commitCount = 0;
+        }
+    }
+    customerControlRecord.setCustomerControlSortcode("000000");
+    customerControlRecord.setCustomerControlNumber("9999999999");
+    customerControlRecord.setCustomerControlEyecatcherV(true);
+    System.out.println("ABOUT TO WRITE CUSTOMER-CONTROL-RECORD");
+    customerRecordStructure.getCustomerRecord().setBytes(customerControlRecord.getBytes());
+    customerRecordStructure.writeTo(Bankdata.getInstance().getCustomerFile());
+    if (customerVsamStatus.getBytes() != 0) {
+        System.out.println("Error writing CUSTOMER-CONTROL-RECORD file"
+                + ", status=" + customerVsamStatus);
+        returnCode = "12";
+        programDonePd010();
+    }
+    sttesterControl.setControlName(sortcode + "-ACCOUNT-LAST");
+    sttesterControl.setControlValueNum(this.getLastAccountNumber());
+    sttesterControl.setControlValueStr("");
+    try {
+        String sql = "INSERT INTO CONTROL(CONTROL_NAME, CONTROL_VALUE_NUM, CONTROL_VALUE_STR)VALUES(?, ?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setString(1, sttesterControl.getControlName());
+        ps.setInt(2, sttesterControl.getControlValueNum());
+        ps.setString(3, sttesterControl.getControlValueStr());
+        ps.executeUpdate();
+        ps.close();
+    } catch (SQLException e) {
+        wsSqlcodeDisplay = e.getErrorCode();
+        System.out.println("Error inserting last account control record "
+                + wsSqlcodeDisplay + "." + sttesterControl.getControlName()
+                + "," + sttesterControl.getControlValueNum());
+    }
+    sttesterControl.setControlName(sortcode + "-ACCOUNT-COUNT");
+    sttesterControl.setControlValueNum(this.getNumberOfAccounts());
+    sttesterControl.setControlValueStr("");
+    try {
+        String sql = "INSERT INTO CONTROL(CONTROL_NAME, CONTROL_VALUE_NUM, CONTROL_VALUE_STR)VALUES(?, ?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setString(1, sttesterControl.getControlName());
+        ps.setInt(2, sttesterControl.getControlValueNum());
+        ps.setString(3, sttesterControl.getControlValueStr());
+        ps.executeUpdate();
+        ps.close();
+    } catch (SQLException e) {
+        wsSqlcodeDisplay = e.getErrorCode();
+        System.out.println("Error inserting account count control record "
+                + wsSqlcodeDisplay + "." + sttesterControl.getControlName()
+                + "," + sttesterControl.getControlValueNum());
+    }
+    Bankdata.getInstance().closeCustomerFile();
+    timestampFunction = "Finishing BANKDATA";
+    invokeTimestamp();
+}

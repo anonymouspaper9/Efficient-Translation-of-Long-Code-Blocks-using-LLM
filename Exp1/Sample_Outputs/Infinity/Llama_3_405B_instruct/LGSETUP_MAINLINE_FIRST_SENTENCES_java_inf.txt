@@ -1,0 +1,182 @@
+public void invokeMainline(){
+    int frstCustNum = 1;
+    String genAcount = "GENACUSTNUM";
+    String genApool = "GENA";
+    String genacnt100 = "GENA01ICUS00";
+    String genacnt199 = "GENA01ICUS99";
+    String genacnt200 = "GENA01ACUS00";
+    String genacnt299 = "GENA01ACUS99";
+    String genacnt300 = "GENA01IMOT00";
+    String genacnt399 = "GENA01IMOT99";
+    String genacnt400 = "GENA01AMOT00";
+    String genacnt499 = "GENA01AMOT99";
+    String genacnt500 = "GENA01DMOT00";
+    String genacnt599 = "GENA01DMOT99";
+    String genacnt600 = "GENA01UMOT00";
+    String genacnt699 = "GENA01UMOT99";
+    String genacnt700 = "GENA01IEND00";
+    String genacnt799 = "GENA01IEND99";
+    String genacnt800 = "GENA01AEND00";
+    String genacnt899 = "GENA01AEND99";
+    String genacnt900 = "GENA01DEND00";
+    String genacnt999 = "GENA01DEND99";
+    String genacnta00 = "GENA01UEND00";
+    String genacnta99 = "GENA01UEND99";
+    String genacntb00 = "GENA01IHOU00";
+    String genacntb99 = "GENA01IHOU99";
+    String genacntc00 = "GENA01AHOU00";
+    String genacntc99 = "GENA01AHOU99";
+    String genacntd00 = "GENA01DHOU00";
+    String genacntd99 = "GENA01DHOU99";
+    String genacnte00 = "GENA01UHOU00";
+    String genacnte99 = "GENA01UHOU99";
+    String genacntf00 = "GENA01ICOM00";
+    String genacntf99 = "GENA01ICOM99";
+    String genacntg00 = "GENA01ACOM00";
+    String genacntg99 = "GENA01ACOM99";
+    String genacnth00 = "GENA01DCOM00";
+    String genacnth99 = "GENA01DCOM99";
+    String genacnti00 = "GENA01UCUS00";
+    String genacnti99 = "GENA01UCUS99";
+    int lastCustNum = 11;
+    Stsq stsq = new Stsq();
+    String stsqErrs = "GENAERRS";
+    String stsqStat = "GENASTAT";
+    String stsqStrt = "GENASTRT";
+    String writeMsgE = "**** GENAPP CNTL";
+    String writeMsgH = "HIGH CUSTOMER=";
+    long writeMsgHigh;
+    String writeMsgL = "LOW CUSTOMER=";
+    long writeMsgLow;
+    WsRecv wsRecv = new WsRecv();
+    int wsRecvLen = 80;
+    int wsResp;
+    try {
+        wsRecv = (WsRecv) JdbcConnection.connection.receive();
+        wsRecvLen = wsRecv.getBytes().length;
+        wsResp = JdbcConnection.connection.getReturnCode();
+    }
+    catch (Exception e) {
+        System.out.println(e);
+        return;
+    }
+    if (wsRecvLen > 5) {
+        wsRecvLen = wsRecvLen - 5;
+        lastCustNum = Integer.parseInt(wsRecv.getWsRecvData().substring(0, wsRecvLen));
+    }
+    try {
+        JdbcConnection.connection.deleteQ(stsqErrs);
+        JdbcConnection.connection.deleteQ(stsqStrt);
+        JdbcConnection.connection.deleteQ(stsqStat);
+        JdbcConnection.connection.deleteQ(stsq.getStsqName());
+    }
+    catch (Exception e) {
+        System.out.println(e);
+        return;
+    }
+    writeMsgLow = frstCustNum;
+    writeMsgHigh = lastCustNum;
+    try {
+        JdbcConnection.connection.writeQ(writeMsgE, 20, stsq.getStsqName());
+        JdbcConnection.connection.writeQ(writeMsgL, 23, stsq.getStsqName());
+        JdbcConnection.connection.writeQ(writeMsgH, 24, stsq.getStsqName());
+    }
+    catch (Exception e) {
+        System.out.println(e);
+        return;
+    }
+    try {
+        JdbcConnection.connection.deleteCounter(genAcount, genApool);
+        JdbcConnection.connection.defineCounter(genAcount, genApool, lastCustNum);
+        JdbcConnection.connection.deleteCounter(genacnt100, genApool);
+        JdbcConnection.connection.defineCounter(genacnt100, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacnt199, genApool);
+        JdbcConnection.connection.defineCounter(genacnt199, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacnt200, genApool);
+        JdbcConnection.connection.defineCounter(genacnt200, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacnt299, genApool);
+        JdbcConnection.connection.defineCounter(genacnt299, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacnt300, genApool);
+        JdbcConnection.connection.defineCounter(genacnt300, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacnt399, genApool);
+        JdbcConnection.connection.defineCounter(genacnt399, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacnt400, genApool);
+        JdbcConnection.connection.defineCounter(genacnt400, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacnt499, genApool);
+        JdbcConnection.connection.defineCounter(genacnt499, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacnt500, genApool);
+        JdbcConnection.connection.defineCounter(genacnt500, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacnt599, genApool);
+        JdbcConnection.connection.defineCounter(genacnt599, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacnt600, genApool);
+        JdbcConnection.connection.defineCounter(genacnt600, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacnt699, genApool);
+        JdbcConnection.connection.defineCounter(genacnt699, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacnt700, genApool);
+        JdbcConnection.connection.defineCounter(genacnt700, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacnt799, genApool);
+        JdbcConnection.connection.defineCounter(genacnt799, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacnt800, genApool);
+        JdbcConnection.connection.defineCounter(genacnt800, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacnt899, genApool);
+        JdbcConnection.connection.defineCounter(genacnt899, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacnt900, genApool);
+        JdbcConnection.connection.defineCounter(genacnt900, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacnt999, genApool);
+        JdbcConnection.connection.defineCounter(genacnt999, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacnta00, genApool);
+        JdbcConnection.connection.defineCounter(genacnta00, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacnta99, genApool);
+        JdbcConnection.connection.defineCounter(genacnta99, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacntb00, genApool);
+        JdbcConnection.connection.defineCounter(genacntb00, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacntb99, genApool);
+        JdbcConnection.connection.defineCounter(genacntb99, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacntc00, genApool);
+        JdbcConnection.connection.defineCounter(genacntc00, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacntc99, genApool);
+        JdbcConnection.connection.defineCounter(genacntc99, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacntd00, genApool);
+        JdbcConnection.connection.defineCounter(genacntd00, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacntd99, genApool);
+        JdbcConnection.connection.defineCounter(genacntd99, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacnte00, genApool);
+        JdbcConnection.connection.defineCounter(genacnte00, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacnte99, genApool);
+        JdbcConnection.connection.defineCounter(genacnte99, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacntf00, genApool);
+        JdbcConnection.connection.defineCounter(genacntf00, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacntf99, genApool);
+        JdbcConnection.connection.defineCounter(genacntf99, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacntg00, genApool);
+        JdbcConnection.connection.defineCounter(genacntg00, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacntg99, genApool);
+        JdbcConnection.connection.defineCounter(genacntg99, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacnth00, genApool);
+        JdbcConnection.connection.defineCounter(genacnth00, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacnth99, genApool);
+        JdbcConnection.connection.defineCounter(genacnth99, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacnti00, genApool);
+        JdbcConnection.connection.defineCounter(genacnti00, genApool, 0);
+        JdbcConnection.connection.deleteCounter(genacnti99, genApool);
+        JdbcConnection.connection.defineCounter(genacnti99, genApool, 0);
+    }
+    catch (Exception e) {
+        System.out.println(e);
+        return;
+    }
+    try {
+        JdbcConnection.connection.sendText(writeMsgH, 24);
+    }
+    catch (Exception e) {
+        System.out.println(e);
+        return;
+    }
+    try {
+        JdbcConnection.connection.returnTrans();
+    }
+    catch (Exception e) {
+        System.out.println(e);
+        return;
+    }
+}

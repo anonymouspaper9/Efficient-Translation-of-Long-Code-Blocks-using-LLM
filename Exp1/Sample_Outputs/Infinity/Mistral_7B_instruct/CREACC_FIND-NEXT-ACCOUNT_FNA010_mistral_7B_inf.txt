@@ -1,0 +1,107 @@
+ ```java
+public void findNextAccountFna010(Dfhcommarea dfhcommarea, NcsAccNoName ncsAccNoName, int requiredSortCode) {
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    AccountKy3 accountKy3 = new AccountKy3();
+    int accountLastStmtDate;
+    int accountNextStmtDate;
+    int accountOpened;
+    String hvControlName = "";
+    int hvControlValueNum;
+    String hvControlValueStr = "";
+    long ncsAccNoInc = 0L;
+    OutputData outputData = new OutputData();
+    int sortcode = requiredSortCode;
+    int sqlcodeDisplay;
+    String wsAbendPgm = "ABNDPROC";
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+
+    // Initialize output data
+    outputData.setBytes(new byte[0]);
+
+    // Initialize HV-CONTROL-NAME, HV-CONTROL-VALUE-NUM, and HV-CONTROL-VALUE-STR
+    hvControlName = "";
+    hvControlValueNum = 0;
+    hvControlValueStr = "";
+
+    // Get the sort code
+    sortcode = requiredSortCode;
+
+    // Get the current time
+    wsTimeNowGrp.getWsTimeNowGrpHh();
+    wsTimeNowGrp.getWsTimeNowGrpMm();
+
+    // Get the control name, value num, and value str for SORTCODE
+    hvControlName = "SORTCODE";
+    hvControlValueNum = 0;
+    hvControlValueStr = "";
+    try (Connection connection = JdbcConnection.connection) {
+        PreparedStatement ps = connection.prepareStatement(
+                "SELECT CONTROL_NAME, CONTROL_VALUE_NUM, CONTROL_VALUE_STR FROM CONTROL WHERE CONTROL_NAME = ?");
+        ps.setString(1, hvControlName);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            hvControlValueNum = rs.getInt(2);
+            hvControlValueStr = rs.getString(3);
+        } else {
+            sqlcodeDisplay = -1;
+            // Handle error
+            return;
+        }
+    } catch (SQLException e) {
+        sqlcodeDisplay = e.getErrorCode();
+        // Handle error
+        return;
+    }
+
+    // If SQLCODE is not equal to ZERO
+    if (sqlcodeDisplay != 0) {
+        // Handle error
+        return;
+    }
+
+    // Get the account number and increment it
+    accountLastStmtDate = getAccountLastStmtDate();
+    accountNextStmtDate = getAccountNextStmtDate(accountLastStmtDate);
+    accountOpened = getAccountOpened(accountLastStmtDate, accountNextStmtDate);
+
+    if (accountOpened == 0) {
+        // Handle error
+        return;
+    }
+
+    // Update the control value num
+    hvControlValueNum++;
+
+    try (Connection connection = JdbcConnection.connection) {
+        PreparedStatement ps = connection.prepareStatement(
+                "UPDATE CONTROL SET CONTROL_VALUE_NUM = ? WHERE (CONTROL_NAME = ?)");
+        ps.setInt(1, hvControlValueNum);
+        ps.setString(2, hvControlName);
+        ps.executeUpdate();
+    } catch (SQLException e) {
+        sqlcodeDisplay = e.getErrorCode();
+        // Handle error
+        return;
+    }
+
+    // Set the new account number
+    ncsAccNoInc = accountNextStmtDate;
+    ncsAccNoName.setBytes(String.valueOf(ncsAccNoInc).getBytes());
+}
+
+// Methods to get accountLastStmtDate, accountNextStmtDate, and accountOpened
+private int getAccountLastStmtDate() {
+    // Implement the logic to get the account last stmt date
+    // ...
+}
+
+private int getAccountNextStmtDate(int accountLastStmtDate) {
+    // Implement the logic to get the account next stmt date
+    // ...
+}
+
+private int getAccountOpened(int accountLastStmtDate, int accountNextStmtDate) {
+    // Implement the logic to check if the account is opened
+    // ...
+}
+```

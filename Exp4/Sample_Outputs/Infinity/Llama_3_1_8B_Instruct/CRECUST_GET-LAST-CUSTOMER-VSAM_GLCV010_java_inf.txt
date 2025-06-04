@@ -1,0 +1,366 @@
+public void getLastCustomerVsamGlcv010(Dfhcommarea dfhcommarea){
+    CustomerControlRecord customerControlRecord = new CustomerControlRecord();
+    CustomerKy2 customerKy2 = new CustomerKy2();
+    CustomerRecord customerRecord = new CustomerRecord();
+    /* Initialize customer control */
+    customerControlRecord.initialize();
+    customerControlRecord.getCustomerControlKey().setCustomerControlSortcode(0);
+    customerControlRecord.getCustomerControlKey().setCustomerControlNumber("9999999999");
+    try {
+        String sql = "SELECT * FROM CUSTOMER WHERE CUSTOMER-CONTROL-KEY = ?";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setString(1, customerControlRecord.getCustomerControlKey().getBytes());
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            customerRecord.setCustomerKey(rs.getLong("CUSTOMER-NUMBER"));
+            customerKy2.setRequiredCustNumber2(rs.getLong("REQUIRED-CUST-NUMBER2"));
+            customerControlRecord.setLastCustomerNumber(rs.getLong("LAST-CUSTOMER-NUMBER"));
+        }
+        rs.close();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        String sql = "UPDATE CUSTOMER SET LAST-CUSTOMER-NUMBER = ? WHERE CUSTOMER-CONTROL-KEY = ?";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setLong(1, customerControlRecord.getLastCustomerNumber());
+        ps.setString(2, customerControlRecord.getCustomerControlKey().getBytes());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    dfhcommarea.setCommSuccess('Y');
+    dfhcommarea.setCommNumber(customerControlRecord.getLastCustomerNumber());
+    dfhcommarea.setCommFailCode('0');
+    customerKy2.setRequiredCustNumber2(customerControlRecord.getLastCustomerNumber());
+    getMeOutOfHereGmofh010();
+    deqNamedCounterDnc010(dfhcommarea);
+} 
+
+Input:
+       GLCV020.
+           INITIALIZE CUSTOMER-CONTROL
+           MOVE ZERO TO CUSTOMER-CONTROL-SORTCODE
+           MOVE ALL '9' TO CUSTOMER-CONTROL-NUMBER
+           EXEC CICS READ
+                UPDATE
+                FILE('CUSTOMER')
+                INTO(CUSTOMER-CONTROL)
+                RESP(WS-CICS-RESP)
+                RESP2(WS-CICS-RESP2)
+                RIDFLD(CUSTOMER-CONTROL-KEY)
+           END-EXEC
+           IF WS-CICS-RESP = DFHRESP(SYSIDERR)
+             PERFORM VARYING SYSIDERR-RETRY FROM 1 BY 1
+             UNTIL SYSIDERR-RETRY > 100
+             OR WS-CICS-RESP = DFHRESP(NORMAL)
+             OR WS-CICS-RESP IS NOT EQUAL TO DFHRESP(SYSIDERR)
+               EXEC CICS DELAY
+                    FOR
+                    SECONDS(3)
+               END-EXEC
+               EXEC CICS READ
+                    UPDATE
+                    FILE('CUSTOMER')
+                    INTO(CUSTOMER-CONTROL)
+                    RESP(WS-CICS-RESP)
+                    RESP2(WS-CICS-RESP2)
+                    RIDFLD(CUSTOMER-CONTROL-KEY)
+               END-EXEC
+             END-PERFORM
+           ELSE
+             IF WS-CICS-RESP IS NOT = DFHRESP(NORMAL)
+               MOVE 'N' TO COMM-SUCCESS
+               MOVE '4' TO COMM-FAIL-CODE
+               PERFORM DEQ-NAMED-COUNTER
+               PERFORM GET-ME-OUT-OF-HERE
+             END-IF
+           END-IF.
+           ADD 1 TO LAST-CUSTOMER-NUMBER IN CUSTOMER-CONTROL
+           GIVING LAST-CUSTOMER-NUMBER IN CUSTOMER-CONTROL
+           EXEC CICS REWRITE
+                FILE('CUSTOMER')
+                FROM(CUSTOMER-CONTROL)
+                RESP(WS-CICS-RESP)
+                RESP2(WS-CICS-RESP2)
+           END-EXEC
+           IF WS-CICS-RESP = DFHRESP(SYSIDERR)
+              PERFORM VARYING SYSIDERR-RETRY FROM 1 BY 1
+              UNTIL SYSIDERR-RETRY > 100
+              OR WS-CICS-RESP = DFHRESP(NORMAL)
+              OR WS-CICS-RESP IS NOT EQUAL TO DFHRESP(SYSIDERR)
+                 EXEC CICS DELAY
+                      FOR
+                      SECONDS(3)
+                 END-EXEC
+                 EXEC CICS REWRITE
+                      FILE('CUSTOMER')
+                      FROM(CUSTOMER-CONTROL)
+                      RESP(WS-CICS-RESP)
+                      RESP2(WS-CICS-RESP2)
+                 END-EXEC
+              END-PERFORM
+           ELSE
+              IF WS-CICS-RESP IS NOT EQUAL TO DFHRESP(NORMAL)
+                 MOVE 'N' TO COMM-SUCCESS
+                 MOVE '4' TO COMM-FAIL-CODE
+                 PERFORM DEQ-NAMED-COUNTER
+                 PERFORM GET-ME-OUT-OF-HERE
+              END-IF
+           END-IF
+           MOVE LAST-CUSTOMER-NUMBER OF CUSTOMER-CONTROL  TO
+              COMM-NUMBER CUSTOMER-NUMBER REQUIRED-CUST-NUMBER2
+              NCS-CUST-NO-VALUE.
+
+## Variable Map:
+WS-CICS-RESP2 gettermapping this.getWsCicsResp2()
+WS-CICS-RESP2 settermapping this.setWsCicsResp2(val)
+WS-CICS-RESP2 PIC S9(8) JavaType int
+WS-CICS-RESP gettermapping this.getWsCicsResp()
+WS-CICS-RESP settermapping this.setWsCicsResp(val)
+WS-CICS-RESP PIC S9(8) JavaType int
+SYSIDERR-RETRY gettermapping this.getSysiderrRetry()
+SYSIDERR-RETRY settermapping this.setSysiderrRetry(val)
+SYSIDERR-RETRY PIC 999 JavaType int
+REQUIRED-CUST-NUMBER2 gettermapping customerKy2.getRequiredCustNumber2()
+REQUIRED-CUST-NUMBER2 settermapping customerKy2.setRequiredCustNumber2(val)
+REQUIRED-CUST-NUMBER2 PIC 9(10) JavaType long
+NCS-CUST-NO-VALUE gettermapping this.getNcsCustNoValue()
+NCS-CUST-NO-VALUE settermapping this.setNcsCustNoValue(val)
+NCS-CUST-NO-VALUE PIC 9(16) JavaType long
+LAST-CUSTOMER-NUMBER gettermapping customerControlRecord.getLastCustomerNumber()
+LAST-CUSTOMER-NUMBER settermapping customerControlRecord.setLastCustomerNumber(val)
+LAST-CUSTOMER-NUMBER PIC 9(10) JavaType long
+CUSTOMER-NUMBER gettermapping customerRecord.getCustomerKey().getCustomerNumber()
+CUSTOMER-NUMBER settermapping customerRecord.getCustomerKey().setCustomerNumber(val)
+CUSTOMER-NUMBER PIC 9(10) JavaType long
+CUSTOMER-CONTROL-SORTCODE gettermapping customerControlRecord.getCustomerControlKey().getCustomerControlSortcode()
+CUSTOMER-CONTROL-SORTCODE settermapping customerControlRecord.getCustomerControlKey().setCustomerControlSortcode(val)
+CUSTOMER-CONTROL-SORTCODE PIC 9(6) JavaType int
+CUSTOMER-CONTROL-NUMBER gettermapping customerControlRecord.getCustomerControlKey().getCustomerControlNumber()
+CUSTOMER-CONTROL-NUMBER settermapping customerControlRecord.getCustomerControlKey().setCustomerControlNumber(val)
+CUSTOMER-CONTROL-NUMBER PIC 9(10) JavaType long
+CUSTOMER-CONTROL-KEY gettermapping customerControlRecord.getCustomerControlKey().getBytes()
+CUSTOMER-CONTROL-KEY settermapping customerControlRecord.getCustomerControlKey().setBytes(val)
+CUSTOMER-CONTROL-KEY GROUP JavaType CustomerControlKey
+CUSTOMER-CONTROL gettermapping customerControlRecord.getBytes()
+CUSTOMER-CONTROL settermapping customerControlRecord.setBytes(val)
+CUSTOMER-CONTROL GROUP JavaType CustomerControlRecord
+COMM-SUCCESS gettermapping dfhcommarea.getCommSuccess()
+COMM-SUCCESS settermapping dfhcommarea.setCommSuccess(val)
+COMM-SUCCESS PIC X JavaType char
+COMM-NUMBER gettermapping dfhcommarea.getCommNumber()
+COMM-NUMBER settermapping dfhcommarea.setCommNumber(val)
+COMM-NUMBER PIC 9(10) JavaType long
+COMM-FAIL-CODE gettermapping dfhcommarea.getCommFailCode()
+COMM-FAIL-CODE settermapping dfhcommarea.setCommFailCode(val)
+COMM-FAIL-CODE PIC X JavaType char
+GET-ME-OUT-OF-HERE_GMOFH010, getMeOutOfHereGmofh010()
+DEQ-NAMED-COUNTER_DNC010, deqNamedCounterDnc010(dfhcommarea)
+
+## Class Map:
+public void getLastCustomerVsamGlcv020(Dfhcommarea dfhcommarea){
+    CustomerControlRecord customerControlRecord = new CustomerControlRecord();
+    CustomerKy2 customerKy2 = new CustomerKy2();
+    CustomerRecord customerRecord = new CustomerRecord();
+}
+
+
+Output:
+public void getLastCustomerVsamGlcv020(Dfhcommarea dfhcommarea){
+    CustomerControlRecord customerControlRecord = new CustomerControlRecord();
+    CustomerKy2 customerKy2 = new CustomerKy2();
+    CustomerRecord customerRecord = new CustomerRecord();
+    /* Initialize customer control */
+    customerControlRecord.initialize();
+    customerControlRecord.getCustomerControlKey().setCustomerControlSortcode(0);
+    customerControlRecord.getCustomerControlKey().setCustomerControlNumber("9999999999");
+    try {
+        String sql = "SELECT * FROM CUSTOMER WHERE CUSTOMER-CONTROL-KEY = ?";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setString(1, customerControlRecord.getCustomerControlKey().getBytes());
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            customerRecord.setCustomerKey(rs.getLong("CUSTOMER-NUMBER"));
+            customerKy2.setRequiredCustNumber2(rs.getLong("REQUIRED-CUST-NUMBER2"));
+            customerControlRecord.setLastCustomerNumber(rs.getLong("LAST-CUSTOMER-NUMBER"));
+        }
+        rs.close();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    try {
+        String sql = "UPDATE CUSTOMER SET LAST-CUSTOMER-NUMBER = ? WHERE CUSTOMER-CONTROL-KEY = ?";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setLong(1, customerControlRecord.getLastCustomerNumber());
+        ps.setString(2, customerControlRecord.getCustomerControlKey().getBytes());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    dfhcommarea.setCommSuccess('Y');
+    dfhcommarea.setCommNumber(customerControlRecord.getLastCustomerNumber());
+    dfhcommarea.setCommFailCode('0');
+    customerKy2.setRequiredCustNumber2(customerControlRecord.getLastCustomerNumber());
+    getMeOutOfHereGmofh010();
+    deqNamedCounterDnc010(dfhcommarea);
+} 
+
+Input:
+       GLCV030.
+           INITIALIZE CUSTOMER-CONTROL
+           MOVE ZERO TO CUSTOMER-CONTROL-SORTCODE
+           MOVE ALL '9' TO CUSTOMER-CONTROL-NUMBER
+           EXEC CICS READ
+                UPDATE
+                FILE('CUSTOMER')
+                INTO(CUSTOMER-CONTROL)
+                RESP(WS-CICS-RESP)
+                RESP2(WS-CICS-RESP2)
+                RIDFLD(CUSTOMER-CONTROL-KEY)
+           END-EXEC
+           IF WS-CICS-RESP = DFHRESP(SYSIDERR)
+             PERFORM VARYING SYSIDERR-RETRY FROM 1 BY 1
+             UNTIL SYSIDERR-RETRY > 100
+             OR WS-CICS-RESP = DFHRESP(NORMAL)
+             OR WS-CICS-RESP IS NOT EQUAL TO DFHRESP(SYSIDERR)
+               EXEC CICS DELAY
+                    FOR
+                    SECONDS(3)
+               END-EXEC
+               EXEC CICS READ
+                    UPDATE
+                    FILE('CUSTOMER')
+                    INTO(CUSTOMER-CONTROL)
+                    RESP(WS-CICS-RESP)
+                    RESP2(WS-CICS-RESP2)
+                    RIDFLD(CUSTOMER-CONTROL-KEY)
+               END-EXEC
+             END-PERFORM
+           ELSE
+             IF WS-CICS-RESP IS NOT = DFHRESP(NORMAL)
+               MOVE 'N' TO COMM-SUCCESS
+               MOVE '4' TO COMM-FAIL-CODE
+               PERFORM DEQ-NAMED-COUNTER
+               PERFORM GET-ME-OUT-OF-HERE
+             END-IF
+           END-IF.
+           ADD 1 TO LAST-CUSTOMER-NUMBER IN CUSTOMER-CONTROL
+           GIVING LAST-CUSTOMER-NUMBER IN CUSTOMER-CONTROL
+           EXEC CICS REWRITE
+                FILE('CUSTOMER')
+                FROM(CUSTOMER-CONTROL)
+                RESP(WS-CICS-RESP)
+                RESP2(WS-CICS-RESP2)
+           END-EXEC
+           IF WS-CICS-RESP = DFHRESP(SYSIDERR)
+              PERFORM VARYING SYSIDERR-RETRY FROM 1 BY 1
+              UNTIL SYSIDERR-RETRY > 100
+              OR WS-CICS-RESP = DFHRESP(NORMAL)
+              OR WS-CICS-RESP IS NOT EQUAL TO DFHRESP(SYSIDERR)
+                 EXEC CICS DELAY
+                      FOR
+                      SECONDS(3)
+                 END-EXEC
+                 EXEC CICS REWRITE
+                      FILE('CUSTOMER')
+                      FROM(CUSTOMER-CONTROL)
+                      RESP(WS-CICS-RESP)
+                      RESP2(WS-CICS-RESP2)
+                 END-EXEC
+              END-PERFORM
+           ELSE
+              IF WS-CICS-RESP IS NOT EQUAL TO DFHRESP(NORMAL)
+                 MOVE 'N' TO COMM-SUCCESS
+                 MOVE '4' TO COMM-FAIL-CODE
+                 PERFORM DEQ-NAMED-COUNTER
+                 PERFORM GET-ME-OUT-OF-HERE
+              END-IF
+           END-IF
+           MOVE LAST-CUSTOMER-NUMBER OF CUSTOMER-CONTROL  TO
+              COMM-NUMBER CUSTOMER-NUMBER REQUIRED-CUST-NUMBER2
+              NCS-CUST-NO-VALUE.
+
+## Variable Map:
+WS-CICS-RESP2 gettermapping this.getWsCicsResp2()
+WS-CICS-RESP2 settermapping this.setWsCicsResp2(val)
+WS-CICS-RESP2 PIC S9(8) JavaType int
+WS-CICS-RESP gettermapping this.getWsCicsResp()
+WS-CICS-RESP settermapping this.setWsCicsResp(val)
+WS-CICS-RESP PIC S9(8) JavaType int
+SYSIDERR-RETRY gettermapping this.getSysiderrRetry()
+SYSIDERR-RETRY settermapping this.setSysiderrRetry(val)
+SYSIDERR-RETRY PIC 999 JavaType int
+REQUIRED-CUST-NUMBER2 gettermapping customerKy2.getRequiredCustNumber2()
+REQUIRED-CUST-NUMBER2 settermapping customerKy2.setRequiredCustNumber2(val)
+REQUIRED-CUST-NUMBER2 PIC 9(10) JavaType long
+NCS-CUST-NO-VALUE gettermapping this.getNcsCustNoValue()
+NCS-CUST-NO-VALUE settermapping this.setNcsCustNoValue(val)
+NCS-CUST-NO-VALUE PIC 9(16) JavaType long
+LAST-CUSTOMER-NUMBER gettermapping customerControlRecord.getLastCustomerNumber()
+LAST-CUSTOMER-NUMBER settermapping customerControlRecord.setLastCustomerNumber(val)
+LAST-CUSTOMER-NUMBER PIC 9(10) JavaType long
+CUSTOMER-NUMBER gettermapping customerRecord.getCustomerKey().getCustomerNumber()
+CUSTOMER-NUMBER settermapping customerRecord.getCustomerKey().setCustomerNumber(val)
+CUSTOMER-NUMBER PIC 9(10) JavaType long
+CUSTOMER-CONTROL-SORTCODE gettermapping customerControlRecord.getCustomerControlKey().getCustomerControlSortcode()
+CUSTOMER-CONTROL-SORTCODE settermapping customerControlRecord.getCustomerControlKey().setCustomerControlSortcode(val)
+CUSTOMER-CONTROL-SORTCODE PIC 9(6) JavaType int
+CUSTOMER-CONTROL-NUMBER gettermapping customerControlRecord.getCustomerControlKey().getCustomerControlNumber()
+CUSTOMER-CONTROL-NUMBER settermapping customerControlRecord.getCustomerControlKey().setCustomerControlNumber(val)
+CUSTOMER-CONTROL-NUMBER PIC 9(10) JavaType long
+CUSTOMER-CONTROL-KEY gettermapping customerControlRecord.getCustomerControlKey().getBytes()
+CUSTOMER-CONTROL-KEY settermapping customerControlRecord.getCustomerControlKey().setBytes(val)
+CUSTOMER-CONTROL-KEY GROUP JavaType CustomerControlKey
+CUSTOMER-CONTROL gettermapping customerControlRecord.getBytes()
+CUSTOMER-CONTROL settermapping customerControlRecord.setBytes(val)
+CUSTOMER-CONTROL GROUP JavaType CustomerControlRecord
+COMM-SUCCESS gettermapping dfhcommarea.getCommSuccess()
+COMM-SUCCESS settermapping dfhcommarea.setCommSuccess(val)
+COMM-SUCCESS PIC X JavaType char
+COMM-NUMBER gettermapping dfhcommarea.getCommNumber()
+COMM-NUMBER settermapping dfhcommarea.setCommNumber(val)
+COMM-NUMBER PIC 9(10) JavaType long
+COMM-FAIL-CODE gettermapping dfhcommarea.getCommFailCode()
+COMM-FAIL-CODE settermapping dfhcommarea.setCommFailCode(val)
+COMM-FAIL-CODE PIC X JavaType char
+GET-ME-OUT-OF-HERE_GMOFH010, getMeOutOfHereGmofh010()
+DEQ-NAMED-COUNTER_DNC010, deqNamedCounterDnc010(dfhcommarea)
+
+## Class Map:
+public void getLastCustomerVsamGlcv030(Dfhcommarea dfhcommarea){
+    CustomerControlRecord customerControlRecord = new CustomerControlRecord();
+    CustomerKy2 customerKy2 = new CustomerKy2();
+    CustomerRecord customerRecord = new CustomerRecord();
+}
+
+
+Output:
+public void getLastCustomerVsamGlcv030(Dfhcommarea dfhcommarea){
+    CustomerControlRecord customerControlRecord = new CustomerControlRecord();
+    CustomerKy2 customerKy2 = new CustomerKy2();
+    CustomerRecord customerRecord = new CustomerRecord();
+    /* Initialize customer control */
+    customerControlRecord.initialize();
+    customerControlRecord.getCustomerControlKey().setCustomerControlSortcode(0);
+    customerControlRecord.getCustomerControlKey().setCustomerControlNumber("9999999999");
+    try {
+        String sql = "SELECT * FROM CUSTOMER WHERE CUSTOMER-CONTROL-KEY = ?";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setString(1, customerControlRecord.getCustomerControlKey().getBytes());
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            customerRecord.setCustomerKey(rs.getLong("CUSTOMER-NUMBER"));
+            customerKy2.setRequiredCustNumber2(rs.getLong("REQUIRED-CUST-NUM

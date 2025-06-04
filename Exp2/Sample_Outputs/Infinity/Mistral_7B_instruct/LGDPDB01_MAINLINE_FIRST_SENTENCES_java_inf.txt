@@ -1,0 +1,56 @@
+
+```java
+public void invokeMainline(Dfhcommarea dfhcommarea) {
+    Db2InIntegers db2InIntegers = new Db2InIntegers();
+    ErrorMsg errorMsg = new ErrorMsg();
+    String lgdpvs01 = "LGDPVS01";
+    int wsCaHeaderLen = 28;
+    WsHeader wsHeader = new WsHeader();
+
+    // Initialize WS-HEADER
+    wsHeader.setWsTransid(dfhcommarea.getWsTransid());
+    wsHeader.setWsTermid(dfhcommarea.getWsTermid());
+    wsHeader.setWsTasknum(dfhcommarea.getWsTasknum());
+    db2InIntegers.setDb2CustomernumInt(dfhcommarea.getCaCustomerNum());
+    db2InIntegers.setDb2PolicynumInt(dfhcommarea.getCaPolicyNum());
+
+    // Check if EIBCALEN is zero
+    if (dfhcommarea.getEibcalen() == 0) {
+        errorMsg.setEmVariable(new EmVariable("NO COMMAREA RECEIVED"));
+        mainlineWriteErrorMessage(dfhcommarea, errorMsg);
+        CICS.abend(NODUMP, "LGCA");
+        return;
+    }
+
+    // Set return code to 00
+    dfhcommarea.setCaReturnCode(0);
+
+    // Check if EIBCALEN is less than WS-CA-HEADER-LEN
+    if (dfhcommarea.getEibcalen() < wsCaHeaderLen) {
+        dfhcommarea.setCaReturnCode(98);
+        CICS.return_(dfhcommarea);
+        return;
+    }
+
+    // Set CA-CUSTOMER-NUM and CA-POLICY-NUM
+    db2InIntegers.setDb2CustomernumInt(dfhcommarea.getCaCustomerNum());
+    db2InIntegers.setDb2PolicynumInt(dfhcommarea.getCaPolicyNum());
+
+    // Check if CA-REQUEST-ID is not equal to specific values
+    if (!(dfhcommarea.getCaRequestId().equals("01DEND") ||
+          dfhcommarea.getCaRequestId().equals("01DHOU") ||
+          dfhcommarea.getCaRequestId().equals("01DCOM") ||
+          dfhcommarea.getCaRequestId().equals("01DMOT"))) {
+        dfhcommarea.setCaReturnCode(99);
+        return;
+    }
+
+    // Perform DELETE-POLICY-DB2-INFO and CICS LINK
+    mainlineDeletePolicyDb2Info(db2InIntegers, dfhcommarea, errorMsg);
+    CICS.link_(dfhcommarea, lgdpvs01);
+
+    // Set return code to 00
+    dfhcommarea.setCaReturnCode(0);
+    CICS.return_(dfhcommarea);
+}
+```

@@ -1,0 +1,336 @@
+       FNA010.
+
+           MOVE 1 TO NCS-ACC-NO-INC.
+
+           INITIALIZE OUTPUT-DATA.
+
+      * <<sortcode>>-ACCOUNT-LAST
+           MOVE SPACES TO HV-CONTROL-NAME
+           MOVE ZERO TO HV-CONTROL-VALUE-NUM
+           MOVE SPACES TO HV-CONTROL-VALUE-STR
+           STRING REQUIRED-SORT-CODE DELIMITED BY SIZE
+           '-' DELIMITED BY SIZE
+           'ACCOUNT-LAST' DELIMITED BY SIZE
+           INTO HV-CONTROL-NAME
+           EXEC SQL
+              SELECT CONTROL_NAME,
+                       CONTROL_VALUE_NUM,
+                       CONTROL_VALUE_STR
+              INTO :HV-CONTROL-NAME,
+                      :HV-CONTROL-VALUE-NUM,
+                      :HV-CONTROL-VALUE-STR
+              FROM CONTROL
+              WHERE CONTROL_NAME = :HV-CONTROL-NAME
+           END-EXEC.
+
+           IF SQLCODE IS NOT EQUAL TO ZERO
+
+             MOVE SQLCODE TO SQLCODE-DISPLAY
+
+      *
+      *      Preserve the RESP and RESP2, then set up the
+      *      standard ABEND info before getting the applid,
+      *      date/time etc. and linking to the Abend Handler
+      *      program.
+      *
+             INITIALIZE ABNDINFO-REC
+             MOVE EIBRESP    TO ABND-RESPCODE
+             MOVE EIBRESP2   TO ABND-RESP2CODE
+      *
+      *      Get supplemental information
+      *
+             EXEC CICS ASSIGN APPLID(ABND-APPLID)
+             END-EXEC
+
+             MOVE EIBTASKN   TO ABND-TASKNO-KEY
+             MOVE EIBTRNID   TO ABND-TRANID
+
+             PERFORM POPULATE-TIME-DATE2
+
+             MOVE WS-ORIG-DATE TO ABND-DATE
+             STRING WS-TIME-NOW-GRP-HH DELIMITED BY SIZE,
+                    ':' DELIMITED BY SIZE,
+                     WS-TIME-NOW-GRP-MM DELIMITED BY SIZE,
+                     ':' DELIMITED BY SIZE,
+                     WS-TIME-NOW-GRP-MM DELIMITED BY SIZE
+                     INTO ABND-TIME
+             END-STRING
+
+             MOVE WS-U-TIME   TO ABND-UTIME-KEY
+             MOVE 'HNCS'      TO ABND-CODE
+
+             EXEC CICS ASSIGN PROGRAM(ABND-PROGRAM)
+             END-EXEC
+
+             MOVE SQLCODE-DISPLAY    TO ABND-SQLCODE
+
+             STRING 'FNAND010 - ACCOUNT NCS '
+                    DELIMITED BY SIZE,
+                    NCS-ACC-NO-NAME DELIMITED BY SIZE,
+                    ' Cannot be accessed and DB2 SELECT failed.'
+                    DELIMITED BY SIZE,
+                    ' EIBRESP=' DELIMITED BY SIZE,
+                    ABND-RESPCODE DELIMITED BY SIZE,
+                    ' RESP2=' DELIMITED BY SIZE,
+                    ABND-RESP2CODE DELIMITED BY SIZE
+                    INTO ABND-FREEFORM
+             END-STRING
+
+             EXEC CICS LINK PROGRAM(WS-ABEND-PGM)
+                        COMMAREA(ABNDINFO-REC)
+             END-EXEC
+
+
+             DISPLAY 'CREACC - ACCOUNT NCS ' NCS-ACC-NO-NAME
+                ' CANNOT BE ACCESSED AND DB2 SELECT FAILED. SQLCODE='
+                SQLCODE-DISPLAY
+
+             EXEC CICS ABEND
+                       ABCODE('HNCS')
+                       NODUMP
+             END-EXEC
+           ELSE
+      D      MOVE SQLCODE TO SQLCODE-DISPLAY
+      D      DISPLAY 'SELECT WAS ' SQLCODE-DISPLAY ' AND FOUND '
+      D        HV-CONTROL-VALUE-NUM
+             ADD 1 TO HV-CONTROL-VALUE-NUM GIVING
+             COMM-NUMBER ACCOUNT-NUMBER REQUIRED-ACCT-NUMBER3
+             NCS-ACC-NO-VALUE HV-CONTROL-VALUE-NUM
+
+             EXEC SQL
+               UPDATE CONTROL
+               SET CONTROL_VALUE_NUM = :HV-CONTROL-VALUE-NUM
+               WHERE (CONTROL_NAME = :HV-CONTROL-NAME)
+             END-EXEC
+             IF SQLCODE IS NOT EQUAL TO ZERO
+               MOVE SQLCODE TO SQLCODE-DISPLAY
+
+      *
+      *        Preserve the RESP and RESP2, then set up the
+      *        standard ABEND info before getting the applid,
+      *        date/time etc. and linking to the Abend Handler
+      *        program.
+      *
+               INITIALIZE ABNDINFO-REC
+               MOVE EIBRESP    TO ABND-RESPCODE
+               MOVE EIBRESP2   TO ABND-RESP2CODE
+      *
+      *        Get supplemental information
+      *
+               EXEC CICS ASSIGN APPLID(ABND-APPLID)
+               END-EXEC
+
+               MOVE EIBTASKN   TO ABND-TASKNO-KEY
+               MOVE EIBTRNID   TO ABND-TRANID
+
+               PERFORM POPULATE-TIME-DATE2
+
+               MOVE WS-ORIG-DATE TO ABND-DATE
+               STRING WS-TIME-NOW-GRP-HH DELIMITED BY SIZE,
+                    ':' DELIMITED BY SIZE,
+                     WS-TIME-NOW-GRP-MM DELIMITED BY SIZE,
+                     ':' DELIMITED BY SIZE,
+                     WS-TIME-NOW-GRP-MM DELIMITED BY SIZE
+                     INTO ABND-TIME
+               END-STRING
+
+               MOVE WS-U-TIME   TO ABND-UTIME-KEY
+               MOVE 'HNCS'      TO ABND-CODE
+
+               EXEC CICS ASSIGN PROGRAM(ABND-PROGRAM)
+               END-EXEC
+
+               MOVE SQLCODE-DISPLAY    TO ABND-SQLCODE
+
+               STRING 'FNAND010(2) - ACCOUNT NCS '
+                    DELIMITED BY SIZE,
+                    NCS-ACC-NO-NAME DELIMITED BY SIZE,
+                    ' Cannot be accessed and DB2 UPDATE failed.'
+                    DELIMITED BY SIZE,
+                    ' EIBRESP=' DELIMITED BY SIZE,
+                    ABND-RESPCODE DELIMITED BY SIZE,
+                    ' RESP2=' DELIMITED BY SIZE,
+                    ABND-RESP2CODE DELIMITED BY SIZE
+                    INTO ABND-FREEFORM
+               END-STRING
+
+               EXEC CICS LINK PROGRAM(WS-ABEND-PGM)
+                        COMMAREA(ABNDINFO-REC)
+               END-EXEC
+
+
+               DISPLAY 'CREACC - ACCOUNT NCS ' NCS-ACC-NO-NAME
+                  ' CANNOT BE ACCESSED AND DB2 UPDATE FAILED. SQLCODE='
+                SQLCODE-DISPLAY
+
+               EXEC CICS ABEND
+                         ABCODE('HNCS')
+                         NODUMP
+               END-EXEC
+             END-IF
+           END-IF
+
+           MOVE NCS-ACC-NO-VALUE TO
+           COMM-NUMBER ACCOUNT-NUMBER REQUIRED-ACCT-NUMBER3.
+           MOVE SPACES TO HV-CONTROL-NAME
+           MOVE ZERO TO HV-CONTROL-VALUE-NUM
+           MOVE SPACES TO HV-CONTROL-VALUE-STR
+           STRING SORTCODE DELIMITED BY SIZE
+           '-' DELIMITED BY SIZE
+           'ACCOUNT-COUNT' DELIMITED BY SIZE
+           INTO HV-CONTROL-NAME
+           EXEC SQL
+              SELECT CONTROL_NAME,
+                       CONTROL_VALUE_NUM,
+                       CONTROL_VALUE_STR
+              INTO :HV-CONTROL-NAME,
+                      :HV-CONTROL-VALUE-NUM,
+                      :HV-CONTROL-VALUE-STR
+              FROM CONTROL
+              WHERE CONTROL_NAME = :HV-CONTROL-NAME
+           END-EXEC.
+
+           IF SQLCODE IS NOT EQUAL TO ZERO
+             MOVE SQLCODE TO SQLCODE-DISPLAY
+
+      *
+      *      Preserve the RESP and RESP2, then set up the
+      *      standard ABEND info before getting the applid,
+      *      date/time etc. and linking to the Abend Handler
+      *      program.
+      *
+             INITIALIZE ABNDINFO-REC
+             MOVE EIBRESP    TO ABND-RESPCODE
+             MOVE EIBRESP2   TO ABND-RESP2CODE
+      *
+      *      Get supplemental information
+      *
+             EXEC CICS ASSIGN APPLID(ABND-APPLID)
+             END-EXEC
+
+             MOVE EIBTASKN   TO ABND-TASKNO-KEY
+             MOVE EIBTRNID   TO ABND-TRANID
+
+             PERFORM POPULATE-TIME-DATE2
+
+             MOVE WS-ORIG-DATE TO ABND-DATE
+             STRING WS-TIME-NOW-GRP-HH DELIMITED BY SIZE,
+                    ':' DELIMITED BY SIZE,
+                     WS-TIME-NOW-GRP-MM DELIMITED BY SIZE,
+                     ':' DELIMITED BY SIZE,
+                     WS-TIME-NOW-GRP-MM DELIMITED BY SIZE
+                     INTO ABND-TIME
+             END-STRING
+
+             MOVE WS-U-TIME   TO ABND-UTIME-KEY
+             MOVE 'HNCS'      TO ABND-CODE
+
+             EXEC CICS ASSIGN PROGRAM(ABND-PROGRAM)
+             END-EXEC
+
+             MOVE SQLCODE-DISPLAY    TO ABND-SQLCODE
+
+             STRING 'FNAND010(3) - ACCOUNT NCS '
+                    DELIMITED BY SIZE,
+                    NCS-ACC-NO-NAME DELIMITED BY SIZE,
+                    ' Cannot be accessed and DB2 SELECT failed.'
+                    DELIMITED BY SIZE,
+                    ' EIBRESP=' DELIMITED BY SIZE,
+                    ABND-RESPCODE DELIMITED BY SIZE,
+                    ' RESP2=' DELIMITED BY SIZE,
+                    ABND-RESP2CODE DELIMITED BY SIZE
+                    INTO ABND-FREEFORM
+             END-STRING
+
+             EXEC CICS LINK PROGRAM(WS-ABEND-PGM)
+                        COMMAREA(ABNDINFO-REC)
+             END-EXEC
+
+
+             DISPLAY 'CREACC - ACCOUNT NCS ' NCS-ACC-NO-NAME
+                ' CANNOT BE ACCESSED AND DB2 SELECT FAILED. SQLCODE='
+                SQLCODE-DISPLAY
+
+             EXEC CICS ABEND
+                       ABCODE('HNCS')
+                       NODUMP
+             END-EXEC
+           ELSE
+      D      MOVE SQLCODE TO SQLCODE-DISPLAY
+      D      DISPLAY 'SELECT WAS ' SQLCODE-DISPLAY ' AND FOUND '
+      D        HV-CONTROL-VALUE-NUM
+             ADD 1 TO HV-CONTROL-VALUE-NUM GIVING
+             HV-CONTROL-VALUE-NUM
+
+             EXEC SQL
+               UPDATE CONTROL
+               SET CONTROL_VALUE_NUM = :HV-CONTROL-VALUE-NUM
+               WHERE (CONTROL_NAME = :HV-CONTROL-NAME)
+             END-EXEC
+             IF SQLCODE IS NOT EQUAL TO ZERO
+               MOVE SQLCODE TO SQLCODE-DISPLAY
+
+      *
+      *        Preserve the RESP and RESP2, then set up the
+      *        standard ABEND info before getting the applid,
+      *        date/time etc. and linking to the Abend Handler
+      *        program.
+      *
+               INITIALIZE ABNDINFO-REC
+               MOVE EIBRESP    TO ABND-RESPCODE
+               MOVE EIBRESP2   TO ABND-RESP2CODE
+      *
+      *        Get supplemental information
+      *
+               EXEC CICS ASSIGN APPLID(ABND-APPLID)
+               END-EXEC
+
+               MOVE EIBTASKN   TO ABND-TASKNO-KEY
+               MOVE EIBTRNID   TO ABND-TRANID
+
+               PERFORM POPULATE-TIME-DATE2
+
+               MOVE WS-ORIG-DATE TO ABND-DATE
+               STRING WS-TIME-NOW-GRP-HH DELIMITED BY SIZE,
+                    ':' DELIMITED BY SIZE,
+                     WS-TIME-NOW-GRP-MM DELIMITED BY SIZE,
+                     ':' DELIMITED BY SIZE,
+                     WS-TIME-NOW-GRP-MM DELIMITED BY SIZE
+                     INTO ABND-TIME
+               END-STRING
+
+               MOVE WS-U-TIME   TO ABND-UTIME-KEY
+               MOVE 'HNCS'      TO ABND-CODE
+
+               EXEC CICS ASSIGN PROGRAM(ABND-PROGRAM)
+               END-EXEC
+
+               MOVE SQLCODE-DISPLAY    TO ABND-SQLCODE
+
+               STRING 'FNAND010(4) - ACCOUNT NCS '
+                    DELIMITED BY SIZE,
+                    NCS-ACC-NO-NAME DELIMITED BY SIZE,
+                    ' Cannot be accessed and DB2 UPDATE failed.'
+                    DELIMITED BY SIZE,
+                    ' EIBRESP=' DELIMITED BY SIZE,
+                    ABND-RESPCODE DELIMITED BY SIZE,
+                    ' RESP2=' DELIMITED BY SIZE,
+                    ABND-RESP2CODE DELIMITED BY SIZE
+                    INTO ABND-FREEFORM
+               END-STRING
+
+               EXEC CICS LINK PROGRAM(WS-ABEND-PGM)
+                        COMMAREA(ABNDINFO-REC)
+               END-EXEC
+
+
+               DISPLAY 'CREACC - ACCOUNT NCS ' NCS-ACC-NO-NAME
+                  ' CANNOT BE ACCESSED AND DB2 UPDATE FAILED. SQLCODE='
+                SQLCODE-DISPLAY
+
+               EXEC CICS ABEND
+                         ABCODE('HNCS')
+                         NODUMP
+               END-EXEC
+             END-IF
+           END-IF.

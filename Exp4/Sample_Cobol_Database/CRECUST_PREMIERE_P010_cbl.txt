@@ -1,0 +1,63 @@
+       P010.
+
+           MOVE SORTCODE TO REQUIRED-SORT-CODE.
+
+
+      *
+      *    Derive the date and time
+      *
+
+           PERFORM POPULATE-TIME-DATE.
+
+      *
+      *    Perform the Asynchronous credit check
+      *
+           PERFORM CREDIT-CHECK.
+
+           IF WS-CREDIT-CHECK-ERROR = 'Y'
+              MOVE 0 TO COMM-CREDIT-SCORE
+
+              STRING WS-ORIG-DATE-DD DELIMITED BY SIZE,
+                     WS-ORIG-DATE-MM DELIMITED BY SIZE,
+                     WS-ORIG-DATE-YYYY DELIMITED BY SIZE
+                     INTO COMM-CS-REVIEW-DATE
+              END-STRING
+
+              MOVE 'N' TO COMM-SUCCESS
+              MOVE 'G' TO COMM-FAIL-CODE
+
+              DISPLAY 'WS-CREDIT-CHECK-ERROR = Y, '
+                       ' RESP='
+                       WS-CICS-RESP ' RESP2=' WS-CICS-RESP2
+              DISPLAY '   Exiting CRECUST. COMMAREA='
+                       DFHCOMMAREA
+              PERFORM GET-ME-OUT-OF-HERE
+
+           END-IF.
+
+           PERFORM DATE-OF-BIRTH-CHECK.
+
+           IF WS-DATE-OF-BIRTH-ERROR = 'Y'
+
+              MOVE 'N' TO COMM-SUCCESS
+              PERFORM GET-ME-OUT-OF-HERE
+
+           END-IF.
+
+      *
+      *    Enqueue the named counter for customer
+      *
+           PERFORM ENQ-NAMED-COUNTER.
+
+      *
+      *    Get the next CUSTOMER number from the CUSTOMER Named Counter
+      *
+           PERFORM UPD-NCS.
+
+      *
+      *    Update the datastore
+      *
+           PERFORM WRITE-CUSTOMER-VSAM.
+
+
+           PERFORM GET-ME-OUT-OF-HERE.

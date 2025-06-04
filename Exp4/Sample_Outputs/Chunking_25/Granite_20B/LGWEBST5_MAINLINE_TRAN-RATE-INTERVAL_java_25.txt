@@ -1,0 +1,50 @@
+public void mainlineTranRateInterval(String tsQpre, String wsTime) {
+    String wsTsQname = "";
+    WsOldv wsOldv = new WsOldv();
+    String wsNewv = "";
+
+    WsHhmmss wsHhmmss = new WsHhmmss();
+    wsTsQname = tsQpre + "000V";
+    TSQ jdeclTsq = new TSQ();
+    ItemHolder jdeclRecord = new ItemHolder();
+    jdeclTsq.setName(wsTsQname);
+    try {
+        jdeclTsq.readItem(1, jdeclRecord);
+    } catch (InvalidQueueIdException e) {
+        throw e;
+    } catch (InvalidSystemIdException e) {
+        throw e;
+    } catch (ItemErrorException e) {
+        throw e;
+    } catch (LengthErrorException e) {
+        throw e;
+    } catch (NoSpaceException e) {
+        throw e;
+    } catch (NotAuthorisedException e) {
+        throw e;
+    } catch (NotOpenException e) {
+        throw e;
+    }
+    jdeclTsq.delete();
+    wsHhmmss.setBytes(wsTime.getBytes());
+    hHval = Integer.parseInt(wsHhmmss.getWsHh());
+    mMval = Integer.parseInt(wsHhmmss.getWsMm());
+    sSval = Integer.parseInt(wsHhmmss.getWsSs());
+
+    wsTsQname = "";
+    wsOldv = new WsOldv();
+    nCountVal = (hHval * 3600) + (mMval * 60) + sSval;
+    wsOldv.setWsOldvhh(wsTime.substring(0, 2));
+    wsOldv.setWsOldvmm(wsTime.substring(2, 4));
+    wsOldv.setWsOldvss(wsTime.substring(4, 6));
+    oCountVal = (Integer.parseInt(wsOldv.getWsOldvhh()) * 3600) + (Integer.parseInt(wsOldv.getWsOldvmm()) * 60)
+            + Integer.parseInt(wsOldv.getWsOldvss());
+    iCountVal = nCountVal - oCountVal;
+    wsNewv = String.format("%06d", iCountVal);
+    wsTsQname = tsQpre + "000V";
+    jdeclTsq = new TSQ();
+    jdeclRecord = new ItemHolder();
+    jdeclTsq.setName(wsTsQname);
+    jdeclTsq.writeString(wsNewv);
+
+}

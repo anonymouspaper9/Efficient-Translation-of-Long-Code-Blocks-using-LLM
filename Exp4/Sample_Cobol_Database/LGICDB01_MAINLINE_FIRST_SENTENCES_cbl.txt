@@ -1,0 +1,53 @@
+       MAINLINE SECTION.                                                
+                                                                        
+      *----------------------------------------------------------------*
+      * Common code                                                    *
+      *----------------------------------------------------------------*
+      * initialize working storage variables                            
+           INITIALIZE WS-HEADER.                                        
+      * set up general variable                                         
+           MOVE EIBTRNID TO WS-TRANSID.                                 
+           MOVE EIBTRMID TO WS-TERMID.                                  
+           MOVE EIBTASKN TO WS-TASKNUM.                                 
+      *----------------------------------------------------------------*
+                                                                        
+      *----------------------------------------------------------------*
+      * Check commarea and obtain required details                     *
+      *----------------------------------------------------------------*
+      * If NO commarea received issue an ABEND                          
+           IF EIBCALEN IS EQUAL TO ZERO                                 
+               MOVE ' NO COMMAREA RECEIVED' TO EM-VARIABLE              
+               PERFORM WRITE-ERROR-MESSAGE                              
+               EXEC CICS ABEND ABCODE('LGCA') NODUMP END-EXEC           
+           END-IF                                                       
+                                                                        
+      * initialize commarea return code to zero                         
+           MOVE '00' TO CA-RETURN-CODE                                  
+           MOVE EIBCALEN TO WS-CALEN.                                   
+           SET WS-ADDR-DFHCOMMAREA TO ADDRESS OF DFHCOMMAREA.           
+                                                                        
+      * initialize DB2 host variables                                   
+           INITIALIZE DB2-IN-INTEGERS.                                  
+                                                                        
+      *----------------------------------------------------------------*
+      * Process incoming commarea                                      *
+      *----------------------------------------------------------------*
+      * check commarea length - meets minimum requirement               
+           MOVE WS-CUSTOMER-LEN        TO WS-REQUIRED-CA-LEN            
+           ADD WS-CA-HEADERTRAILER-LEN TO WS-REQUIRED-CA-LEN            
+      * if less set error return code and return to caller              
+           IF EIBCALEN IS LESS THAN WS-REQUIRED-CA-LEN                  
+             MOVE '98' TO CA-RETURN-CODE                                
+             EXEC CICS RETURN END-EXEC                                  
+           END-IF                                                       
+                                                                        
+      * Convert commarea customer number to DB2 integer format          
+           MOVE CA-CUSTOMER-NUM TO DB2-CUSTOMERNUMBER-INT               
+      * and save in error msg field incase required                     
+           MOVE CA-CUSTOMER-NUM TO EM-CUSNUM                            
+                                                                        
+      *----------------------------------------------------------------*
+      * Obtain details from DB2                                        *
+      *----------------------------------------------------------------*
+      *    Call routine to issue SQL to obtain info from DB2            
+           PERFORM GET-CUSTOMER-INFO.                                   

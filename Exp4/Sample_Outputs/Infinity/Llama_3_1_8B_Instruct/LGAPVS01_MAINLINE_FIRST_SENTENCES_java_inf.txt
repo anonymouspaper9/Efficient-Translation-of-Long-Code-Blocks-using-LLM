@@ -1,0 +1,54 @@
+public void invokeMainline(CaPolicyRequest caPolicyRequest){
+    String wfPolicyData = "";
+    WfPolicyInfo wfPolicyInfo = new WfPolicyInfo();
+    int wsCommareaLen;
+    int wsResp;
+    int wsResp2;
+    String wfRequestId = caPolicyRequest.getCaRequestId();
+    String wfPolicyNum = caPolicyRequest.getCaPolicyNum();
+    String wfCustomerNum = caPolicyRequest.getCaCustomerNum();
+    switch(wfRequestId){
+        case "C":
+            wfPolicyInfo.getWfPolicyKey().setWfBPostcode(caPolicyRequest.getCaBPostcode());
+            wfPolicyInfo.getWfPolicyKey().setWfBStatus(caPolicyRequest.getCaBStatus());
+            wfPolicyInfo.getWfPolicyKey().setWfBCustomer(caPolicyRequest.getCaBCustomer());
+            break;
+        case "E":
+            wfPolicyInfo.getWfPolicyKey().setWfEWithProfits(caPolicyRequest.getCaEWithProfits());
+            wfPolicyInfo.getWfPolicyKey().setWfEManagedFund(caPolicyRequest.getCaEManagedFund());
+            wfPolicyInfo.getWfPolicyKey().setWfELifeAssured(caPolicyRequest.getCaELifeAssured());
+            wfPolicyInfo.getWfPolicyKey().setWfEFundName(caPolicyRequest.getCaEFundName());
+            wfPolicyInfo.getWfPolicyKey().setWfEEquities(caPolicyRequest.getCaEEquities());
+            break;
+        case "H":
+            wfPolicyInfo.getWfPolicyKey().setWfHPropertyType(caPolicyRequest.getCaHPropertyType());
+            wfPolicyInfo.getWfPolicyKey().setWfHValue(caPolicyRequest.getCaHValue());
+            wfPolicyInfo.getWfPolicyKey().setWfHPostcode(caPolicyRequest.getCaHPostcode());
+            wfPolicyInfo.getWfPolicyKey().setWfHHouseName(caPolicyRequest.getCaHHouseName());
+            wfPolicyInfo.getWfPolicyKey().setWfHBedrooms(caPolicyRequest.getCaHBedrooms());
+            break;
+        case "M":
+            wfPolicyInfo.getWfPolicyKey().setWfMRegnumber(caPolicyRequest.getCaMRegnumber());
+            wfPolicyInfo.getWfPolicyKey().setWfMValue(caPolicyRequest.getCaMValue());
+            wfPolicyInfo.getWfPolicyKey().setWfMModel(caPolicyRequest.getCaMModel());
+            wfPolicyInfo.getWfPolicyKey().setWfMMake(caPolicyRequest.getCaMMake());
+            break;
+        default:
+            wfPolicyData = " ";
+    }
+    wfPolicyInfo.getWfPolicyKey().setWfPolicyNum(wfPolicyNum);
+    wfPolicyInfo.setBytes(wfPolicyData);
+    try {
+        String sql = "INSERT INTO KSDSPOLY(POLICY-INFO)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setString(1, wfPolicyInfo.getBytes());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        wsResp2 = exception.getErrorCode();
+        wsResp = 80;
+        mainlineWriteErrorMessage(dfhcommarea, wsResp, wsResp2);
+        return;
+    }
+} 

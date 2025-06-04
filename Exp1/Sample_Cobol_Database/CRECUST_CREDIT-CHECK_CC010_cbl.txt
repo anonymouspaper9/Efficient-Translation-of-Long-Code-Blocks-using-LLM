@@ -1,0 +1,499 @@
+       CC010.
+      *
+      *    Carry out the Credit Check Asynchronously
+      *
+
+
+      *
+      *    Retrieve the table of transaction IDs to use &
+      *    initiate each Asynchronous transaction
+      *
+           MOVE 'CIPCREDCHANN    ' TO WS-CHANNEL-NAME.
+           MOVE 0 TO WS-CHILD-ISSUED-CNT.
+
+           COMPUTE WS-PUT-CONT-LEN = LENGTH OF DFHCOMMAREA.
+
+           PERFORM VARYING WS-CC-CNT FROM 1 BY 1
+           UNTIL WS-CC-CNT > 5
+
+      *
+      *       Use transactions OCR1 - OCR5
+      *
+              STRING 'OCR' DELIMITED BY SIZE,
+                      WS-CC-CNT DELIMITED BY SIZE
+                 INTO WS-RUN-TRANSID
+              END-STRING
+
+              EVALUATE WS-CC-CNT
+                 WHEN 1
+                    MOVE 'CIPA            ' TO WS-PUT-CONT-NAME
+                 WHEN 2
+                    MOVE 'CIPB            ' TO WS-PUT-CONT-NAME
+                 WHEN 3
+                    MOVE 'CIPC            ' TO WS-PUT-CONT-NAME
+                 WHEN 4
+                    MOVE 'CIPD            ' TO WS-PUT-CONT-NAME
+                 WHEN 5
+                    MOVE 'CIPE            ' TO WS-PUT-CONT-NAME
+                 WHEN 6
+                    MOVE 'CIPF            ' TO WS-PUT-CONT-NAME
+                 WHEN 7
+                    MOVE 'CIPG            ' TO WS-PUT-CONT-NAME
+                 WHEN 8
+                    MOVE 'CIPH            ' TO WS-PUT-CONT-NAME
+                 WHEN 9
+                    MOVE 'CIPI            ' TO WS-PUT-CONT-NAME
+
+              END-EVALUATE
+
+      *
+      *       Pass the details of the customer into a container
+      *
+              EXEC CICS PUT CONTAINER(WS-PUT-CONT-NAME)
+                            FROM(DFHCOMMAREA)
+                            FLENGTH(WS-PUT-CONT-LEN)
+                            CHANNEL(WS-CHANNEL-NAME)
+                            RESP(WS-CICS-RESP)
+                            RESP2(WS-CICS-RESP2)
+              END-EXEC
+
+              IF WS-CICS-RESP NOT = DFHRESP(NORMAL)
+                 MOVE 'N' TO COMM-SUCCESS
+                 MOVE 'A' TO COMM-FAIL-CODE
+
+                 DISPLAY 'Unsuccessful attempt to PUT CONTAINER. '
+                         'CONTAINER=' WS-PUT-CONT-NAME 'CHANNEL='
+                         WS-CHANNEL-NAME '. FLENGTH ='
+                         WS-PUT-CONT-LEN '.'
+                 DISPLAY '    RESP=' WS-CICS-RESP ' RESP2='
+                         WS-CICS-RESP2
+
+                 PERFORM GET-ME-OUT-OF-HERE
+              END-IF
+
+      *
+      *       Issue the ASYNC transaction
+      *
+              EXEC CICS RUN TRANSID(WS-RUN-TRANSID)
+                   CHANNEL(WS-CHANNEL-NAME)
+                   CHILD(WS-ANY-CHILD-TKN)
+                   RESP(WS-CICS-RESP)
+                   RESP2(WS-CICS-RESP2)
+              END-EXEC
+
+              IF WS-CICS-RESP NOT = DFHRESP(NORMAL)
+                 MOVE 'N' TO COMM-SUCCESS
+                 MOVE 'B' TO COMM-FAIL-CODE
+
+                 DISPLAY 'Unsuccessful attempt to RUN TRANSID. '
+                         'TRANSID=' WS-RUN-TRANSID 'CHANNEL='
+                         WS-CHANNEL-NAME '. TOKEN='
+                         WS-ANY-CHILD-TKN
+                 DISPLAY '    RESP=' WS-CICS-RESP ' RESP2='
+                         WS-CICS-RESP2
+
+                 PERFORM GET-ME-OUT-OF-HERE
+              END-IF
+
+      *
+      *       Store away the CHANNEL and the TKN into an array
+      *       for later use.
+      *
+              ADD 1 TO WS-CHILD-ISSUED-CNT
+              MOVE WS-CHANNEL-NAME TO
+                 WS-CHILD-CHAN (WS-CHILD-ISSUED-CNT)
+              MOVE WS-ANY-CHILD-TKN TO
+                 WS-CHILD-TKN (WS-CHILD-ISSUED-CNT)
+
+      D       DISPLAY 'WS-CHILD-ARRAY=' WS-CHILD-ARRAY
+
+
+           END-PERFORM.
+
+      *
+      *    Having sent all of the ASYNC requests, delay for
+      *    3 seconds (to allow the request time to be processed)
+      *    and then FETCH any data
+      *
+           EXEC CICS DELAY
+              FOR SECONDS(3)
+           END-EXEC.
+
+           MOVE 'N' TO WS-FINISHED-FETCHING.
+           MOVE 0 TO WS-RETRIEVED-CNT.
+           MOVE 0 TO WS-TOTAL-CS-SCR.
+
+           PERFORM UNTIL WS-FINISHED-FETCHING = 'Y'
+
+              MOVE SPACES TO WS-ANY-CHILD-FETCH-ABCODE
+
+      *
+      *       Fetch an available reply immediately (without
+      *       waiting).
+      *
+              EXEC CICS FETCH ANY(WS-ANY-CHILD-FETCH-TKN)
+                   CHANNEL(WS-ANY-CHILD-FETCH-CHAN)
+                   NOSUSPEND
+                   COMPSTATUS(WS-CHILD-FETCH-COMPST)
+                   ABCODE(WS-ANY-CHILD-FETCH-ABCODE)
+                   RESP(WS-CICS-RESP)
+                   RESP2(WS-CICS-RESP2)
+              END-EXEC
+
+              IF WS-CICS-RESP NOT = DFHRESP(NORMAL)
+      *
+      *          Check to see if the response was NOTFINISHED
+      *          this means that not all credit agencies replied in
+      *          time (for example we asked 5 and only 4 replied in
+      *          the required time frame). So there is no more data
+      *          to retrieve (the outstanding reply remains
+      *          outstanding).
+      *
+                 IF WS-CICS-RESP = DFHRESP(NOTFINISHED) AND
+                 WS-CICS-RESP2 = 52
+
+      *
+      *             If we retrieved nothing at all then it is an
+      *             error
+      *
+                    IF WS-RETRIEVED-CNT = 0
+                       MOVE 'Y' TO WS-FINISHED-FETCHING
+                       MOVE 0 TO COMM-CREDIT-SCORE
+                       MOVE 'Y' TO WS-CREDIT-CHECK-ERROR
+
+                       STRING WS-ORIG-DATE-DD DELIMITED BY SIZE,
+                              WS-ORIG-DATE-MM DELIMITED BY SIZE,
+                              WS-ORIG-DATE-YYYY DELIMITED BY SIZE
+                              INTO COMM-CS-REVIEW-DATE
+                       END-STRING
+
+                       MOVE 'N' TO COMM-SUCCESS
+                       MOVE 'C' TO COMM-FAIL-CODE
+
+                       DISPLAY 'EXEC CICS FETCH ANY failed. RESP='
+                          WS-CICS-RESP ' RESP2=' WS-CICS-RESP2
+                       DISPLAY '   NOTFINISHED (no data) was returned'
+                       DISPLAY '   Exiting CRECUST. COMMAREA='
+                          DFHCOMMAREA
+                       PERFORM GET-ME-OUT-OF-HERE
+
+                    ELSE
+      *
+      *                If we have previously retrieved some data from
+      *                the credit checking agency/agencies then
+      *                calculate the average credit score and a
+      *                new random review date (sometime in the
+      *                next 21 days)
+      *
+                       MOVE 'Y' TO WS-FINISHED-FETCHING
+                       MOVE 'N' TO WS-CREDIT-CHECK-ERROR
+      *
+      *                Compute the average credit score from those
+      *                credit agencies that responded
+      *
+                       COMPUTE WS-ACTUAL-CS-SCR = WS-TOTAL-CS-SCR /
+                          WS-RETRIEVED-CNT
+                       MOVE WS-ACTUAL-CS-SCR TO COMM-CREDIT-SCORE
+
+      *
+      *                Get today's date
+      *
+                       MOVE FUNCTION CURRENT-DATE
+                          TO WS-CURRENT-DATE-DATA
+
+                       MOVE WS-CURRENT-DATE-DATA (1:8)
+                          TO WS-CURRENT-DATE-9
+
+                      COMPUTE WS-TODAY-INT =
+                          FUNCTION INTEGER-OF-DATE (WS-CURRENT-DATE-9)
+
+      *
+      *                Set up a random Credit Score review date
+      *                within the next 21 days.
+      *
+                       MOVE EIBTASKN           TO WS-SEED
+
+                       COMPUTE WS-REVIEW-DATE-ADD = ((21 - 1)
+                                   * FUNCTION RANDOM(WS-SEED)) + 1
+
+                       COMPUTE WS-NEW-REVIEW-DATE-INT =
+                          WS-TODAY-INT + WS-REVIEW-DATE-ADD
+
+      *
+      *                Convert the integer date back to YYYYMMDD
+      *                format
+      *
+                       COMPUTE WS-NEW-REVIEW-YYYYMMDD = FUNCTION
+                          DATE-OF-INTEGER (WS-NEW-REVIEW-DATE-INT)
+
+                       MOVE WS-NEW-REVIEW-YYYYMMDD(1:4) TO
+                          COMM-CS-REVIEW-DATE(5:4)
+                       MOVE WS-NEW-REVIEW-YYYYMMDD(5:2) TO
+                          COMM-CS-REVIEW-DATE(3:2)
+                       MOVE WS-NEW-REVIEW-YYYYMMDD(7:2) TO
+                          COMM-CS-REVIEW-DATE(1:2)
+
+                    END-IF
+                 END-IF
+      *
+      *          Check to see if the response was INVREQ
+      *          this means that the parent never had any children
+      *
+                 IF WS-CICS-RESP = DFHRESP(INVREQ) AND
+                 WS-CICS-RESP2 = 1
+
+                    MOVE 0 TO COMM-CREDIT-SCORE
+
+                    STRING WS-ORIG-DATE-DD DELIMITED BY SIZE,
+                           WS-ORIG-DATE-MM DELIMITED BY SIZE,
+                           WS-ORIG-DATE-YYYY DELIMITED BY SIZE
+                           INTO COMM-CS-REVIEW-DATE
+                    END-STRING
+
+                    MOVE 'N' TO COMM-SUCCESS
+                    MOVE 'D' TO COMM-FAIL-CODE
+
+                    DISPLAY 'EXEC CICS FETCH ANY failed. RESP='
+                       WS-CICS-RESP ' RESP2=' WS-CICS-RESP2
+                    DISPLAY '   INVREQ (no data) was returned'
+                    DISPLAY '   Exiting CRECUST. COMMAREA='
+                       DFHCOMMAREA
+                    PERFORM GET-ME-OUT-OF-HERE
+
+                 END-IF
+
+      *
+      *          Check to see if we are finished yet.
+      *
+                 IF WS-CICS-RESP = DFHRESP(NOTFND) AND
+                 WS-CICS-RESP2 = 1
+
+      *
+      *             If we retrieved nothing at all then it is an
+      *             error
+      *
+                    IF WS-RETRIEVED-CNT = 0
+                       MOVE 'Y' TO WS-FINISHED-FETCHING
+                       MOVE 0 TO COMM-CREDIT-SCORE
+
+                       STRING WS-ORIG-DATE-DD DELIMITED BY SIZE,
+                              WS-ORIG-DATE-MM DELIMITED BY SIZE,
+                              WS-ORIG-DATE-YYYY DELIMITED BY SIZE
+                              INTO COMM-CS-REVIEW-DATE
+                       END-STRING
+                       MOVE 'Y' TO WS-CREDIT-CHECK-ERROR
+
+                    ELSE
+      *
+      *                If we have previously retrieved data from the
+      *                credit checking agency/agencies then calculate
+      *                the average credit score and a new random
+      *                review date (sometime in the next 21 days)
+      *
+                       MOVE 'Y' TO WS-FINISHED-FETCHING
+                       MOVE 'N' TO WS-CREDIT-CHECK-ERROR
+      *
+      *                Compute the average credit score from those
+      *                credit agencies that responded
+      *
+                       COMPUTE WS-ACTUAL-CS-SCR = WS-TOTAL-CS-SCR /
+                          WS-RETRIEVED-CNT
+                       MOVE WS-ACTUAL-CS-SCR TO COMM-CREDIT-SCORE
+
+      *
+      *                Get today's date
+      *
+                       MOVE FUNCTION CURRENT-DATE
+                          TO WS-CURRENT-DATE-DATA
+
+                       MOVE WS-CURRENT-DATE-DATA (1:8)
+                          TO WS-CURRENT-DATE-9
+
+                      COMPUTE WS-TODAY-INT =
+                          FUNCTION INTEGER-OF-DATE (WS-CURRENT-DATE-9)
+      *
+      *                Set up a random Credit Score review date
+      *                within the next 21 days.
+      *
+                       MOVE EIBTASKN           TO WS-SEED
+
+                       COMPUTE WS-REVIEW-DATE-ADD = ((21 - 1)
+                                   * FUNCTION RANDOM(WS-SEED)) + 1
+
+                       COMPUTE WS-NEW-REVIEW-DATE-INT =
+                          WS-TODAY-INT + WS-REVIEW-DATE-ADD
+
+      *
+      *                Convert the integer date back to YYYYMMDD
+      *                format
+      *
+                       COMPUTE WS-NEW-REVIEW-YYYYMMDD = FUNCTION
+                          DATE-OF-INTEGER (WS-NEW-REVIEW-DATE-INT)
+
+                       MOVE WS-NEW-REVIEW-YYYYMMDD(1:4) TO
+                          COMM-CS-REVIEW-DATE(5:4)
+                       MOVE WS-NEW-REVIEW-YYYYMMDD(5:2) TO
+                          COMM-CS-REVIEW-DATE(3:2)
+                       MOVE WS-NEW-REVIEW-YYYYMMDD(7:2) TO
+                          COMM-CS-REVIEW-DATE(1:2)
+
+                    END-IF
+                 END-IF
+              ELSE
+
+      *       If it is a NORMAL RESPONSE code we need to check
+      *       the COMP-STATUS
+      *
+
+                 EVALUATE WS-CHILD-FETCH-COMPST
+
+                    WHEN DFHVALUE(NORMAL)
+      *
+      *                Set up the correct container name
+      *
+                       EVALUATE WS-ANY-CHILD-FETCH-TKN
+
+                          WHEN WS-CHILD-TKN(1)
+                             MOVE 'CIPA            '
+                                TO WS-CONTAINER-NAME
+                          WHEN WS-CHILD-TKN(2)
+                             MOVE 'CIPB            '
+                                TO WS-CONTAINER-NAME
+                          WHEN WS-CHILD-TKN(3)
+                             MOVE 'CIPC            '
+                                TO WS-CONTAINER-NAME
+                          WHEN WS-CHILD-TKN(4)
+                             MOVE 'CIPD            '
+                                TO WS-CONTAINER-NAME
+                          WHEN WS-CHILD-TKN(5)
+                             MOVE 'CIPE            '
+                                TO WS-CONTAINER-NAME
+                          WHEN WS-CHILD-TKN(6)
+                             MOVE 'CIPF            '
+                                TO WS-CONTAINER-NAME
+                          WHEN WS-CHILD-TKN(7)
+                             MOVE 'CIPG            '
+                                TO WS-CONTAINER-NAME
+                          WHEN WS-CHILD-TKN(8)
+                             MOVE 'CIPH            '
+                                TO WS-CONTAINER-NAME
+                          WHEN WS-CHILD-TKN(9)
+                             MOVE 'CIPI            '
+                                TO WS-CONTAINER-NAME
+                       END-EVALUATE
+
+                       MOVE 261 TO WS-CHILD-CONTAINER-LEN
+
+                       EXEC CICS GET CONTAINER(WS-CONTAINER-NAME)
+                            CHANNEL(WS-ANY-CHILD-FETCH-CHAN)
+                            INTO(WS-CHILD-DATA)
+                            FLENGTH(WS-CHILD-CONTAINER-LEN)
+                            RESP(WS-CICS-RESP)
+                            RESP2(WS-CICS-RESP2)
+                       END-EXEC
+
+                       IF WS-CICS-RESP NOT = DFHRESP(NORMAL)
+                          MOVE 0 TO COMM-CREDIT-SCORE
+
+                          STRING WS-ORIG-DATE-DD DELIMITED BY SIZE,
+                                 WS-ORIG-DATE-MM DELIMITED BY SIZE,
+                                 WS-ORIG-DATE-YYYY DELIMITED BY SIZE
+                                 INTO COMM-CS-REVIEW-DATE
+                          END-STRING
+
+                          MOVE 'N' TO COMM-SUCCESS
+                          MOVE 'E' TO COMM-FAIL-CODE
+
+                          DISPLAY 'EXEC CICS FETCH ANY worked, '
+                             'but GET CONTAINER failed.'
+                             ' CONTAINER='  WS-CONTAINER-NAME
+                             ' CHANNEL=' WS-ANY-CHILD-FETCH-CHAN
+                             ' RESP='
+                             WS-CICS-RESP ' RESP2=' WS-CICS-RESP2
+
+                          DISPLAY '   Exiting CRECUST. COMMAREA='
+                             DFHCOMMAREA
+                          PERFORM GET-ME-OUT-OF-HERE
+                       END-IF
+
+      *
+      *                If the GET CONTAINER was successful
+      *
+                       COMPUTE WS-RETRIEVED-CNT =
+                          WS-RETRIEVED-CNT + 1
+                       COMPUTE WS-TOTAL-CS-SCR =
+                          WS-TOTAL-CS-SCR + WS-CHILD-DATA-CREDIT-SCORE
+
+                    WHEN DFHVALUE(ABEND)
+      *
+      *                You are here because the completion status from
+      *                the FETCH ANY is ABEND, so deal with that.
+      *
+                       MOVE 0 TO COMM-CREDIT-SCORE
+
+                       STRING WS-ORIG-DATE-DD DELIMITED BY SIZE,
+                              WS-ORIG-DATE-MM DELIMITED BY SIZE,
+                              WS-ORIG-DATE-YYYY DELIMITED BY SIZE
+                              INTO COMM-CS-REVIEW-DATE
+                       END-STRING
+
+                       MOVE 'N' TO COMM-SUCCESS
+                       MOVE 'F' TO COMM-FAIL-CODE
+
+                       PERFORM GET-ME-OUT-OF-HERE
+
+
+                    WHEN DFHVALUE(SECERROR)
+      *
+      *                The completion status from the FETCH ANY is
+      *                SECERROR
+      *
+                       MOVE 0 TO COMM-CREDIT-SCORE
+
+                       STRING WS-ORIG-DATE-DD DELIMITED BY SIZE,
+                              WS-ORIG-DATE-MM DELIMITED BY SIZE,
+                              WS-ORIG-DATE-YYYY DELIMITED BY SIZE
+                              INTO COMM-CS-REVIEW-DATE
+                       END-STRING
+
+                       MOVE 'N' TO COMM-SUCCESS
+                       MOVE 'G' TO COMM-FAIL-CODE
+
+                       DISPLAY 'EXEC CICS FETCH ANY worked, '
+                          'but COMP-STATUS = SECERROR.'
+                          ' RESP='
+                          WS-CICS-RESP ' RESP2=' WS-CICS-RESP2
+                       DISPLAY '   Exiting CRECUST. COMMAREA='
+                          DFHCOMMAREA
+                       PERFORM GET-ME-OUT-OF-HERE
+
+
+                    WHEN OTHER
+      *
+      *                This catches any other completion status values
+      *                from the FETCH ANY.
+      *
+                       MOVE 0 TO COMM-CREDIT-SCORE
+
+                       STRING WS-ORIG-DATE-DD DELIMITED BY SIZE,
+                              WS-ORIG-DATE-MM DELIMITED BY SIZE,
+                              WS-ORIG-DATE-YYYY DELIMITED BY SIZE
+                              INTO COMM-CS-REVIEW-DATE
+                       END-STRING
+
+                       MOVE 'N' TO COMM-SUCCESS
+                       MOVE 'H' TO COMM-FAIL-CODE
+
+                       DISPLAY 'EXEC CICS FETCH ANY worked, '
+                          'but COMP-STATUS IS UNKNOWN.'
+                          ' RESP='
+                          WS-CICS-RESP ' RESP2=' WS-CICS-RESP2
+                       DISPLAY '   Exiting CRECUST. COMMAREA='
+                          DFHCOMMAREA
+                       PERFORM GET-ME-OUT-OF-HERE
+
+                 END-EVALUATE
+
+              END-IF
+
+           END-PERFORM.

@@ -1,0 +1,140 @@
+```java
+public void cc010(String wsChannelName, ArrayList<WsChildDetails> wsChildDetails, Dfhcommarea dfhcommarea) {
+    int wsActualCsScr = 0;
+    String wsAnyChildFetchAbcode = "";
+    String wsAnyChildFetchChan = "";
+    String wsAnyChildFetchTkn = "";
+    String wsAnyChildTkn = "";
+    int wsCcCnt = 0;
+    int wsChildContainerLen = 0;
+    WsChildDataDobGroup wsChildDataDobGroup = new WsChildDataDobGroup();
+    int wsChildFetchCompst;
+    int wsChildIssuedCnt = 0;
+    String wsContainerName = "";
+    int wsCurrentDate9 = 0;
+    WsCurrentDateData wsCurrentDateData = new WsCurrentDateData();
+    char wsFinishedFetching = 'N';
+    int wsNewReviewDateInt = 0;
+    int wsNewReviewYyyymmdd = 0;
+    WsOrigDateGrp wsOrigDateGrp = new WsOrigDateGrp();
+    int wsPutContLen = 0;
+    String wsPutContName = "";
+    int wsRetrievedCnt = 0;
+    int wsReviewDateAdd = 0;
+    String wsRunTransid = "";
+    long wsSeed;
+    int wsTodayInt = 0;
+    int wsTotalCsScr = 0;
+
+    // Set channel name
+    this.wsChannelName = wsChannelName;
+
+    // Set container name for each child
+    for (int i = 1; i <= 9; i++) {
+        switch (i) {
+            case 1:
+                this.wsPutContName = "CIPA";
+                break;
+            case 2:
+                this.wsPutContName = "CIPB";
+                break;
+            case 3:
+                this.wsPutContName = "CIPC";
+                break;
+            case 4:
+                this.wsPutContName = "CIPD";
+                break;
+            case 5:
+                this.wsPutContName = "CIPE";
+                break;
+            case 6:
+                this.wsPutContName = "CIPF";
+                break;
+            case 7:
+                this.wsPutContName = "CIPG";
+                break;
+            case 8:
+                this.wsPutContName = "CIPH";
+                break;
+            case 9:
+                this.wsPutContName = "CIPI";
+                break;
+        }
+        wsChildDetails.get(i - 1).setWsChildChan(wsChannelName);
+        wsChildDetails.get(i - 1).setWsChildTkn(wsPutContName);
+    }
+
+    // Perform CICS PUT for each child container
+    for (int i = 1; i <= 9; i++) {
+        try {
+            // Set container length
+            wsChildContainerLen = this.wsPutContName.length();
+
+            // Execute CICS PUT
+            JdbcConnection.connection.createStatement()
+                    .executeUpdate("CICS PUT CHANNEL(" + wsChildDetails.get(i - 1).getWsChildChan() + ") CONTAINER(" + wsChildDetails.get(i - 1).getWsChildTkn() + ") FLENGTH(" + wsChildContainerLen + ") FROM(DFHCOMMAREA) RESP(" + wsCicsResp + ") RESP2(" + wsCicsResp2 + ")");
+
+            // Check CICS response
+            if (!wsCicsResp.equals("NORMAL")) {
+                wsFinishedFetching = 'N';
+                wsCreditCheckError = 'Y';
+                String[] origDate = new String[3];
+                origDate[0] = String.valueOf(wsOrigDateGrp.getWsOrigDateDd());
+                origDate[1] = String.valueOf(wsOrigDateGrp.getWsOrigDateMm());
+                origDate[2] = String.valueOf(wsOrigDateGrp.getWsOrigDateYyyy());
+                dfhcommarea.setCommCsReviewDate(origDate);
+                dfhcommarea.setCommFailCode('A');
+                dfhcommarea.setCommSuccess('N');
+                System.out.println("Unsuccessful attempt to PUT CONTAINER. CONTAINER=" + wsChildDetails.get(i - 1).getWsChildTkn() + " CHANNEL=" + wsChildDetails.get(i - 1).getWsChildChan() + ". FLENGTH =" + wsChildContainerLen + ".");
+                System.out.println("    RESP=" + wsCicsResp + " RESP2=" + wsCicsResp2);
+                getMeOutOfHereGmofh010();
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+            return;
+        }
+    }
+
+    // Perform CICS RUN for each child
+    for (int i = 1; i <= 9; i++) {
+        try {
+            // Execute CICS RUN
+            JdbcConnection.connection.createStatement()
+                    .executeUpdate("CICS RUN CHANNEL(" + wsChildDetails.get(i - 1).getWsChildChan() + ") CHILD(" + wsChildDetails.get(i - 1).getWsChildTkn() + ") TRANSID(" + wsRunTransid + ")");
+
+            // Check CICS response
+            if (!wsCicsResp.equals("NORMAL")) {
+                wsFinishedFetching = 'N';
+                wsCreditCheckError = 'B';
+                System.out.println("Unsuccessful attempt to RUN TRANSID. TRANSID=" + wsRunTransid + " CHANNEL=" + wsChildDetails.get(i - 1).getWsChildChan() + ". TOKEN=" + wsChildDetails.get(i - 1).getWsChildTkn());
+                System.out.println("    RESP=" + wsCicsResp + " RESP2=" + wsCicsResp2);
+                getMeOutOfHereGmofh010();
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+            return;
+        }
+    }
+
+    // Increment child issued count
+    for (int i = 1; i <= 9; i++) {
+        wsChildIssuedCnt++;
+        wsChildDetails.get(i - 1).setWsChildIssuedCnt(wsChildIssuedCnt);
+    }
+
+    // Fetch children data
+    while (!wsFinishedFetching.equals('Y')) {
+        try {
+            // Fetch any child
+            ResultSet rs = JdbcConnection.connection.createStatement().executeQuery("CICS FETCH ANY NOUSPEND ABCODE(" + wsAnyChildFetchAbcode + ") ANY(" + wsAnyChildFetchTkn + ") CHANNEL(" + wsAnyChildFetchChan + ") COMPSTATUS(" + wsChildFetchCompst + ") RESP(" + wsCicsResp + ") RESP2(" + wsCicsResp2 + ")");
+
+            // Check CICS response
+            if (!wsCicsResp.equals("NORMAL")) {
+                if (wsCicsResp.equals("NOTFINISHED") && wsCicsResp2 == 52) {
+                    if (wsRetrievedCnt == 0) {
+                        wsFinishedFetching = 'Y';
+                        wsCreditCheckError = 'Y';
+                        String[] origDate = new String[3];
+                        origDate[0] = String.valueOf(wsOrigDateGrp.getWsOrigDateDd());
+                        origDate[1] = String.valueOf(wsOrigDateGrp.getWsOrigDateMm());
+                        origDate[2] = String.valueOf(wsOrigDateGrp.getWsOrigDateY

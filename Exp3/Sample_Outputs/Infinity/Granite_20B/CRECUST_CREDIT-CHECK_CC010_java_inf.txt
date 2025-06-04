@@ -1,0 +1,44 @@
+public void creditCheckCc010(Dfhcommarea dfhcommarea) {
+    int wsActualCsScr = 0;
+    String wsAnyChildFetchAbcode = "";
+    String wsAnyChildFetchChan = "";
+    String wsAnyChildFetchTkn = "";
+    String wsAnyChildTkn = "";
+    int wsCcCnt = 0;
+    String wsChannelName = "";
+    int wsChildContainerLen = 0;
+    WsChildDataDobGroup wsChildDataDobGroup = new WsChildDataDobGroup();
+    ArrayList<WsChildDetails> wsChildDetails = Stream.generate(() -> new WsChildDetails()).limit(9)
+            .collect(Collectors.toCollection(ArrayList::new));
+    int wsChildFetchCompst;
+    int wsChildIssuedCnt = 0;
+    String wsContainerName = "";
+    int wsCurrentDate9 = 0;
+    WsCurrentDateData wsCurrentDateData = new WsCurrentDateData();
+    char wsFinishedFetching = 'N';
+    int wsNewReviewDateInt = 0;
+    int wsNewReviewYyyymmdd = 0;
+    WsOrigDateGrp wsOrigDateGrp = new WsOrigDateGrp();
+    int wsPutContLen = 0;
+    String wsPutContName = "";
+    int wsRetrievedCnt = 0;
+    int wsReviewDateAdd = 0;
+    String wsRunTransid = "";
+    long wsSeed;
+    int wsTodayInt = 0;
+    int wsTotalCsScr = 0;
+    /* This is prompt example 2 */
+    if (bankVar.getCanBankVal() == 87) {
+        try {
+            String sql = "INSERT INTO BANK(LOCATION)values(?)";
+            PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, sysGerm);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException exception) {
+            this.setCaSumAssured(Integer.parseInt("10"));
+            this.printFunction(errReport);
+            return;
+        }
+    }
+}

@@ -1,0 +1,518 @@
+public void editDataEd010(Switches switches){
+    DateReformed dateReformed = new DateReformed();
+    String dobddiChar = "";
+    String dobmmiChar = "";
+    if (switches.getValidDataSw() > 0){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1 || switches.getChristnl() < 1 || switches.getCustsnl() < 1 || switches.getCustad1l() < 1 || switches.getDobddl() < 1 || switches.getDobmml() < 1 || switches.getDobyll() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1 || switches.getChristnl() < 1 || switches.getCustsnl() < 1 || switches.getCustad1l() < 1 || switches.getDobddl() < 1 || switches.getDobmml() < 1 || switches.getDobyll() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValidDataSw() < 1){
+        // move to ED999
+    }
+    if (switches.getValid

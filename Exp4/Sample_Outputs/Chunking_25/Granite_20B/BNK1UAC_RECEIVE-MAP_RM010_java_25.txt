@@ -1,0 +1,17 @@
+public void receiveMapRm010() {
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+
+    try {
+        HttpRequest jdeclHttpRequest = HttpRequest.getHttpRequestInstance();
+        jdeclHttpRequest.setNoServerConvert();
+        jdeclHttpRequest.setCharacterset("ISO-8859-1");
+        jdeclHttpRequest.setMap("BNK1UA");
+        jdeclHttpRequest.setMapset("BNK1UAM");
+        jdeclHttpRequest.receive(bnk1uai);
+    } catch (Exception e) {
+        // TODO: Empty block may need to be addressed
+
+    }
+
+}

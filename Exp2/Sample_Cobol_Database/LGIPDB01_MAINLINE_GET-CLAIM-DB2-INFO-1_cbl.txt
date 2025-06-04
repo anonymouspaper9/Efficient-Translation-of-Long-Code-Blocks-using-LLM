@@ -1,0 +1,70 @@
+       GET-Claim-DB2-INFO-1.                                            
+                                                                        
+           MOVE ' SELECT Claim ' TO EM-SQLREQ                           
+                                                                        
+           EXEC SQL                                                     
+             SELECT                                                     
+                   POLICY.CustomerNumber,                               
+                   ClaimNumber,                                         
+                   CLAIM.PolicyNumber,                                  
+                   ClaimDate,                                           
+                   Paid,                                                
+                   Value,                                               
+                   Cause,                                               
+                   Observations                                         
+             INTO  :DB2-Customernum-int,                                
+                   :DB2-Claimnum-int,                                   
+                   :DB2-POLICYNUM-INT,                                  
+                   :DB2-C-Date,                                         
+                   :DB2-C-Paid-Int,                                     
+                   :DB2-C-Value-Int,                                    
+                   :DB2-C-Cause,                                        
+                   :DB2-C-Observations                                  
+             FROM  POLICY,CLAIM                                         
+             WHERE ( POLICY.POLICYNUMBER =                              
+                        CLAIM.POLICYNUMBER   AND                        
+                     CLAIM.ClaimNumber =                                
+                        :DB2-ClaimNum-INT             )                 
+           END-EXEC                                                     
+                                                                        
+           IF SQLCODE = 0                                               
+      *      Select was successful                                      
+                                                                        
+      *      Calculate size of commarea required to return all data     
+             ADD WS-CA-HEADERTRAILER-LEN TO WS-REQUIRED-CA-LEN          
+             ADD WS-FULL-CLAIM-LEN       TO WS-REQUIRED-CA-LEN          
+                                                                        
+      *      if commarea received is not large enough ...               
+      *        set error return code and return to caller               
+             IF EIBCALEN IS LESS THAN WS-REQUIRED-CA-LEN                
+               MOVE '98' TO CA-RETURN-CODE                              
+               EXEC CICS RETURN END-EXEC                                
+             ELSE                                                       
+               MOVE DB2-Customernum-int      TO CA-CUSTOMER-NUM         
+               MOVE DB2-PolicyNum-int        TO CA-POLICY-NUM           
+               MOVE DB2-Claimnum-int         TO DB2-C-Num               
+               MOVE DB2-C-Paid-Int           TO DB2-C-Paid              
+               MOVE DB2-C-Value-Int          TO DB2-C-Value             
+      *                                                                 
+               MOVE DB2-POLICY-COMMON  TO CA-POLICY-COMMON              
+               MOVE DB2-Claim          TO CA-Claim(1:WS-COMM-LEN)       
+             END-IF                                                     
+                                                                        
+      *      Mark the end of the policy data                            
+             MOVE 'FINAL' TO CA-C-FILLER(1:5)                           
+                                                                        
+           ELSE                                                         
+      *      Non-zero SQLCODE from first SQL FETCH statement            
+             IF SQLCODE EQUAL 100                                       
+      *        No rows found - invalid customer / policy number         
+               MOVE '01' TO CA-RETURN-CODE                              
+             ELSE                                                       
+      *        something has gone wrong                                 
+               MOVE '90' TO CA-RETURN-CODE                              
+      *        Write error message to TD QUEUE(CSMT)                    
+               PERFORM WRITE-ERROR-MESSAGE                              
+             END-IF                                                     
+           END-IF.                                                      
+                                                                        
+                                                                        
+           EXIT.                                                        

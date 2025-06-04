@@ -1,0 +1,61 @@
+public void receiveMapRm010() {
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+
+    try {
+        HttpRequest jdeclHttpRequest = HttpRequest.getHttpRequestInstance();
+        jdeclHttpRequest.setNoServerConvert();
+        jdeclHttpRequest.setCharacterset("IBM037");
+        jdeclHttpRequest.setMap("BNK1DA");
+        jdeclHttpRequest.setMapset("BNK1DAM");
+        jdeclHttpRequest.receive(bnk1dai);
+    } catch (Exception e) {
+
+        abndinfoRec = new AbndinfoRec();
+        String wsAbendPgm = "ABNDPROC";
+        WsFailInfo wsFailInfo = new WsFailInfo();
+
+        abndinfoRec = new AbndinfoRec();
+        wsTimeNowGrp = new WsTimeNowGrp();
+        abndinfoRec.setAbndRespcode(eibresp);
+        abndinfoRec.setAbndResp2Code(eibresp2);
+        abndinfoRec.setAbndApplid(eibtrnid);
+        abndinfoRec.setAbndTasknoKey(eibtaskn);
+        abndinfoRec.setAbndTranid(eibtrnid);
+        this.populateTimeDate();
+        abndinfoRec.setAbndDate(this.getWsOrigDate());
+        String jdeclVar1 = String.valueOf(wsTimeNowGrp.getWsTimeNowGrpHh()) + ":"
+                + String.valueOf(wsTimeNowGrp.getWsTimeNowGrpMm()) + ":"
+                + String.valueOf(wsTimeNowGrp.getWsTimeNowGrpMm());
+        abndinfoRec.setAbndTime(jdeclVar1);
+        abndinfoRec.setAbndUtimeKey(this.getWsUTime());
+        abndinfoRec.setAbndCode("HBNK");
+
+        Task jdeclCurrent_Program = Task.getTask();
+        abndinfoRec.setAbndProgram(jdeclCurrent_Program.getProgramName());
+        abndinfoRec.setAbndSqlcode(0);
+        jdeclVar1 = "RM010 - RECEIVE MAP FAIL." + "EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2="
+                + abndinfoRec.getAbndResp2Code();
+        abndinfoRec.setAbndFreeform(jdeclVar1);
+        Task jdeclTask = Task.getTask();
+        Channel jdeclChannelObj = jdeclTask.getCurrentChannel();
+        Container jdeclCommareaContainer = jdeclChannelObj.createContainer("DFHCOMMAREA");
+        byte[] jdeclCommareaByteArray = jdeclCommareaContainer.getNoConvert(0, jdeclCommareaContainer.getLength());
+        String jdeclCcsid = System.getProperty("com.ibm.cics.jvmserver.local.ccsid");
+        byte[] jdeclInputByteDataArray = abndinfoRec.getBytes(jdeclCcsid);
+        System.arraycopy(jdeclInputByteDataArray, 0, jdeclCommareaByteArray, 0, jdeclInputByteDataArray.length);
+        jdeclChannelObj.put(jdeclCommareaContainer);
+        Program jdeclProgObj = new Program();
+        jdeclProgObj.setName(wsAbendPgm);
+        jdeclProgObj.link(jdeclCommareaByteArray);
+        abndinfoRec.setAbndSqlcode(jdeclProgObj.getReturnCode());
+        abndinfoRec.setAbndRespcode(jdeclProgObj.getReturnCode());
+        abndinfoRec.setAbndResp2Code(jdeclProgObj.getAbendCode());
+        wsFailInfo.setWsCicsFailMsg("BNK1DAC - RM010 - RECEIVE MAP FAIL ");
+        wsFailInfo.setWsCicsRespDisp(abndinfoRec.getAbndRespcode());
+        wsFailInfo.setWsCicsResp2Disp(abndinfoRec.getAbndResp2Code());
+        Task.getTask().abend(wsFailInfo.getWsCicsFailMsg());
+
+    }
+
+}

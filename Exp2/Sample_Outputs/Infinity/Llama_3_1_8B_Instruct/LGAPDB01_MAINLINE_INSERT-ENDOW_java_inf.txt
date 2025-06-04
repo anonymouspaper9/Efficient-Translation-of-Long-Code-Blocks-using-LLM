@@ -1,0 +1,53 @@
+public void mainlineInsertEndow(CaEndowment caEndowment, int db2PolicynumInt, ErrorMsg errorMsg, int wsRequiredCaLen){
+    Db2InIntegers db2InIntegers = new Db2InIntegers();
+    WsVaryField wsVaryField = new WsVaryField();
+    int wsVaryLen = wsVaryField.getWsVaryLen();
+    String wsVaryField = wsVaryField.getBytes();
+    String emSqlreq = errorMsg.getEmVariable().getEmSqlreq();
+    int db2ETermSint = db2InIntegers.getDb2ETermSint();
+    int db2ESumassuredInt = db2InIntegers.getDb2ESumassuredInt();
+    String caEWithprofits = caEndowment.getEndowment().getWithprofits();
+    int caETerm = caEndowment.getEndowment().getTerm();
+    int caESumassured = caEndowment.getEndowment().getSumassured();
+    String caEPaddingdata = caEndowment.getEndowment().getPaddingdata();
+    String caEManagedfund = caEndowment.getEndowment().getManagedfund();
+    String caELifeassured = caEndowment.getEndowment().getLifeassured();
+    String caEFundname = caEndowment.getEndowment().getFundname();
+    String caEEquities = caEndowment.getEndowment().getEquities();
+    if (wsVaryLen > 0) {
+        String sql = "INSERT INTO ENDOWMENT(POLICYNUMBER, WITHPROFITS, EQUITIES, MANAGEDFUND, FUNDNAME, TERM, SUMASSURED, LIFEASSURED, PADDINGDATA)values(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, db2PolicynumInt);
+        ps.setString(2, caEWithprofits);
+        ps.setString(3, caEEquities);
+        ps.setString(4, caEManagedfund);
+        ps.setString(5, caEFundname);
+        ps.setInt(6, caETerm);
+        ps.setInt(7, caESumassured);
+        ps.setString(8, caELifeassured);
+        ps.setString(9, caEPaddingdata);
+        ps.executeUpdate();
+        ps.close();
+    } else {
+        String sql = "INSERT INTO ENDOWMENT(POLICYNUMBER, WITHPROFITS, EQUITIES, MANAGEDFUND, FUNDNAME, TERM, SUMASSURED, LIFEASSURED)values(?, ?, ?, ?, ?, ?, ?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, db2PolicynumInt);
+        ps.setString(2, caEWithprofits);
+        ps.setString(3, caEEquities);
+        ps.setString(4, caEManagedfund);
+        ps.setString(5, caEFundname);
+        ps.setInt(6, caETerm);
+        ps.setInt(7, caESumassured);
+        ps.setString(8, caELifeassured);
+        ps.executeUpdate();
+        ps.close();
+    }
+    if (JdbcConnection.connection.getErrorCode() != 0) {
+        caEndowment.setCaReturnCode(90);
+        mainlineWriteErrorMessage(dfhcommarea, errorMsg);
+        JdbcConnection.connection.commit();
+        JdbcConnection.connection.rollback();
+        JdbcConnection.connection.close();
+        System.exit(0);
+    }
+} 

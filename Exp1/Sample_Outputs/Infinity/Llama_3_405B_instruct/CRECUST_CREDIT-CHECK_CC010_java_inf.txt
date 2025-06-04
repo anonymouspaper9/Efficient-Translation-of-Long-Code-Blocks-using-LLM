@@ -1,0 +1,155 @@
+public void creditCheckCc010(Dfhcommarea dfhcommarea){
+    int wsActualCsScr = 0;
+    String wsAnyChildFetchAbcode = "";
+    String wsAnyChildFetchChan = "";
+    String wsAnyChildFetchTkn = "";
+    String wsAnyChildTkn = "";
+    int wsCcCnt = 0;
+    String wsChannelName = "";
+    int wsChildContainerLen = 0;
+    WsChildDataDobGroup wsChildDataDobGroup = new WsChildDataDobGroup();
+    ArrayList<WsChildDetails> wsChildDetails = Stream.generate(() -> new WsChildDetails()).limit(9).collect(Collectors.toCollection(ArrayList::new));
+    int wsChildFetchCompst;
+    int wsChildIssuedCnt = 0;
+    String wsContainerName = "";
+    int wsCurrentDate9 = 0;
+    WsCurrentDateData wsCurrentDateData = new WsCurrentDateData();
+    char wsFinishedFetching = 'N';
+    int wsNewReviewDateInt = 0;
+    int wsNewReviewYyyymmdd = 0;
+    WsOrigDateGrp wsOrigDateGrp = new WsOrigDateGrp();
+    int wsPutContLen = 0;
+    String wsPutContName = "";
+    int wsRetrievedCnt = 0;
+    int wsReviewDateAdd = 0;
+    String wsRunTransid = "";
+    long wsSeed;
+    int wsTodayInt = 0;
+    int wsTotalCsScr = 0;
+    wsChannelName = "CIPCREDCHANN    ";
+    wsChildIssuedCnt = 0;
+    wsPutContLen = dfhcommarea.getBytes().length;
+    for (wsCcCnt = 1; wsCcCnt <= 5; wsCcCnt++) {
+        wsRunTransid = "OCR" + wsCcCnt;
+        switch (wsCcCnt) {
+            case 1:
+                wsPutContName = "CIPA            ";
+                break;
+            case 2:
+                wsPutContName = "CIPB            ";
+                break;
+            case 3:
+                wsPutContName = "CIPC            ";
+                break;
+            case 4:
+                wsPutContName = "CIPD            ";
+                break;
+            case 5:
+                wsPutContName = "CIPE            ";
+                break;
+            case 6:
+                wsPutContName = "CIPF            ";
+                break;
+            case 7:
+                wsPutContName = "CIPG            ";
+                break;
+            case 8:
+                wsPutContName = "CIPH            ";
+                break;
+            case 9:
+                wsPutContName = "CIPI            ";
+                break;
+        }
+        try {
+            // PUT CONTAINER
+            // CHANNEL(WS-CHANNEL-NAME)
+            // CONTAINER(WS-PUT-CONT-NAME)
+            // FLENGTH(WS-PUT-CONT-LEN)
+            // FROM(DFHCOMMAREA)
+            // RESP(WS-CICS-RESP)
+            // RESP2(WS-CICS-RESP2)
+            // END-EXEC
+            // Java equivalent code
+            // Assume that the CICS API is available in Java
+            // and the necessary imports are done
+            // For demonstration purposes, assume that the API is available
+            // and the necessary imports are done
+            CicsApi.putContainer(wsChannelName, wsPutContName, wsPutContLen, dfhcommarea.getBytes());
+            // RUN TRANSID
+            // CHANNEL(WS-CHANNEL-NAME)
+            // CHILD(WS-ANY-CHILD-TKN)
+            // RESP(WS-CICS-RESP)
+            // RESP2(WS-CICS-RESP2)
+            // TRANSID(WS-RUN-TRANSID)
+            // END-EXEC
+            // Java equivalent code
+            // Assume that the CICS API is available in Java
+            // and the necessary imports are done
+            // For demonstration purposes, assume that the API is available
+            // and the necessary imports are done
+            CicsApi.runTransid(wsChannelName, wsAnyChildTkn, wsRunTransid);
+            wsChildIssuedCnt++;
+            wsChildDetails.get(wsChildIssuedCnt - 1).setWsChildChan(wsChannelName);
+            wsChildDetails.get(wsChildIssuedCnt - 1).setWsChildTkn(wsAnyChildTkn);
+        } catch (Exception e) {
+            // Handle exception
+        }
+    }
+    try {
+        // DELAY FOR 3 SECONDS
+        // END-EXEC
+        // Java equivalent code
+        // Assume that the CICS API is available in Java
+        // and the necessary imports are done
+        // For demonstration purposes, assume that the API is available
+        // and the necessary imports are done
+        CicsApi.delay(3);
+    } catch (Exception e) {
+        // Handle exception
+    }
+    wsFinishedFetching = 'N';
+    wsRetrievedCnt = 0;
+    wsTotalCsScr = 0;
+    while (wsFinishedFetching == 'N') {
+        try {
+            // FETCH ANY
+            // NOSUSPEND
+            // ABCODE(WS-ANY-CHILD-FETCH-ABCODE)
+            // ANY(WS-ANY-CHILD-FETCH-TKN)
+            // CHANNEL(WS-ANY-CHILD-FETCH-CHAN)
+            // COMPSTATUS(WS-CHILD-FETCH-COMPST)
+            // RESP(WS-CICS-RESP)
+            // RESP2(WS-CICS-RESP2)
+            // END-EXEC
+            // Java equivalent code
+            // Assume that the CICS API is available in Java
+            // and the necessary imports are done
+            // For demonstration purposes, assume that the API is available
+            // and the necessary imports are done
+            CicsApi.fetchAny(wsAnyChildFetchAbcode, wsAnyChildFetchTkn, wsAnyChildFetchChan);
+            if (wsCicsResp != 0) {
+                // Handle error
+            } else {
+                // GET CONTAINER
+                // CHANNEL(WS-ANY-CHILD-FETCH-CHAN)
+                // CONTAINER(WS-CONTAINER-NAME)
+                // DATE(WS-CURRENT-DATE-9)
+                // FLENGTH(WS-CHILD-CONTAINER-LEN)
+                // INTO(WS-CHILD-DATA)
+                // RESP(WS-CICS-RESP)
+                // RESP2(WS-CICS-RESP2)
+                // END-EXEC
+                // Java equivalent code
+                // Assume that the CICS API is available in Java
+                // and the necessary imports are done
+                // For demonstration purposes, assume that the API is available
+                // and the necessary imports are done
+                CicsApi.getContainer(wsAnyChildFetchChan, wsContainerName, wsCurrentDate9, wsChildContainerLen, wsChildData.getBytes());
+                wsRetrievedCnt++;
+                wsTotalCsScr += wsChildDataDobGroup.getWsChildDataCreditScore();
+            }
+        } catch (Exception e) {
+            // Handle exception
+        }
+    }
+}

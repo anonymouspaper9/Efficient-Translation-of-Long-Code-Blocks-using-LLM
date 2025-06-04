@@ -1,0 +1,48 @@
+public void mainlineInsertPolicy(CaPolicyRequest caPolicyRequest, Db2InIntegers db2InIntegers, int db2PolicynumInt,
+        ErrorMsg errorMsg, Policy policy) {
+
+    db2InIntegers.setDb2BrokeridInt(caPolicyRequest.getPolicy().getBrokerid());
+    db2InIntegers.setDb2PaymentInt(caPolicyRequest.getPolicy().getPayment());
+    errorMsg.getEmVariable().setEmSqlreq(" INSERT POLICY");
+    try {
+        String sql = "INSERT INTO POLICY(CUSTOMERNUMBER, ISSUEDATE, EXPIRYDATE, POLICYTYPE, LASTCHANGED, BROKERID, BROKERSREFERENCE, PAYMENT)values(?, ?, ?, ?, ?, ?, ?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, db2InIntegers.getDb2CustomernumInt());
+        ps.setString(2, caPolicyRequest.getPolicy().getIssuedate());
+        ps.setString(3, caPolicyRequest.getPolicy().getExpirydate());
+        ps.setString(4, policy.getPolicytype());
+        ps.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
+        ps.setInt(6, db2InIntegers.getDb2BrokeridInt());
+        ps.setString(7, caPolicyRequest.getPolicy().getBrokersreference());
+        ps.setInt(8, db2InIntegers.getDb2PaymentInt());
+        ps.executeUpdate();
+        ps.close();
+    } catch (SQLException exception) {
+        System.out.println(exception);
+    }
+
+    try {
+        ResultSet rs = JdbcConnection.connection.createStatement()
+                .executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        db2PolicynumInt = rs.getInt(1);
+    } catch (SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+    caPolicyRequest.getPolicy().setPolicynumber(db2PolicynumInt);
+    errorMsg.getEmVariable().setEmPolnum(caPolicyRequest.getPolicy().getPolicynumber().toString());
+    try {
+        String sql = "SELECT LASTCHANGED FROM POLICY WHERE POLICYNUMBER = ?";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, db2PolicynumInt);
+        ResultSet rs = ps.executeQuery();
+        rs.next();
+        caPolicyRequest.getPolicy().setLastchanged(rs.getString(1));
+        ps.close();
+    } catch (SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+
+}

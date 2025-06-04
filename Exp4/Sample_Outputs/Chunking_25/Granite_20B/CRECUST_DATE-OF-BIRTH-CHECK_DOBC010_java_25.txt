@@ -1,0 +1,51 @@
+public void dateOfBirthCheckDobc010(CommDobGroup7 commDobGroup) {
+    DateOfBirthFormat dateOfBirthFormat = new DateOfBirthFormat();
+    DateOfBirthForCeedays dateOfBirthForCeedays = new DateOfBirthForCeedays();
+    Fc fc = new Fc();
+
+    String wsTodaySeconds = "";
+    WsTodayGregorian wsTodayGregorian = new WsTodayGregorian();
+    fc = new Fc();
+    if (commDobGroup.getCommBirthYear() < 1601) {
+        this.setWsDateOfBirthError('Y');
+        commDobGroup.setCommFailCode('O');
+        return;
+    }
+    dateOfBirthForCeedays.setCeedaysYear(commDobGroup.getCommBirthYear());
+    dateOfBirthForCeedays.setCeedaysMonth(commDobGroup.getCommBirthMonth());
+    dateOfBirthForCeedays.setCeedaysDay(commDobGroup.getCommBirthDay());
+    try {
+        wsDateOfBirthLillian = Ceedays.getLilianDay(dateOfBirthForCeedays, dateOfBirthFormat);
+    } catch (Exception exception) {
+        this.setWsDateOfBirthError('Y');
+        commDobGroup.setCommFailCode('Z');
+        System.out.println("CEEDAYS failed, FORMAT LENGTH 10 with msg "
+                + ((Case1ConditionId) (fc.getConditionTokenValue())).getMsgNo() + " for date YYYYMMDD"
+                + dateOfBirthForCeedays);
+        return;
+    }
+
+    try {
+        LocalDateTime jdeclOrigin = LocalDateTime.of(1582, 10, 14, 0, 0, 0, 0);
+        LocalDateTime jdeclNow = LocalDateTime.now();
+        wsTodayLillian = (int) jdeclOrigin.until(jdeclNow, ChronoUnit.DAYS);
+        wsTodaySeconds = jdeclOrigin.until(jdeclNow, ChronoUnit.SECONDS) + "";
+    } catch (Exception e) {
+        this.setWsDateOfBirthError('Y');
+        System.out.println("CEEDLOCT failed with msg " + e.getMessage());
+    }
+    if (this.getWsDateOfBirthError() != 'Y') {
+        wsCustomerAge = wsTodayGregorian.getWsTodayGYear() - commDobGroup.getCommBirthYear();
+        if (wsCustomerAge > 150) {
+            this.setWsDateOfBirthError('Y');
+            commDobGroup.setCommFailCode('O');
+        }
+    }
+    if (this.getWsDateOfBirthError() != 'Y') {
+        if (wsTodayLillian < wsDateOfBirthLillian) {
+            this.setWsDateOfBirthError('Y');
+            commDobGroup.setCommFailCode('Y');
+        }
+    }
+
+}

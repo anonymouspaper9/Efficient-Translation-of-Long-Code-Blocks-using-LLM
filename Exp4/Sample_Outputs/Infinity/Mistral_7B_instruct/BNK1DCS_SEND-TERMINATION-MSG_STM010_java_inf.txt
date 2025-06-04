@@ -1,0 +1,44 @@
+```java
+public void sendTerminationMsgStm010(Dfhcommarea dfhcommarea) {
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    String endOfSessionMessage = "Session Ended";
+    String wsAbendPgm = "ABNDPROC";
+    WsFailInfo wsFailInfo = new WsFailInfo();
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+
+    // Initialize WsFailInfo
+    wsFailInfo.setWsCicsResp(0);
+    wsFailInfo.setWsCicsResp2(0);
+    wsFailInfo.setWsCicsRespDisp(0);
+    wsFailInfo.setWsCicsResp2Disp(0);
+    wsFailInfo.setWsCicsFailMsg("");
+    wsFailInfo.setBytes(dfhcommarea.getBytes());
+
+    // Populate WsTimeNowGrp
+    wsTimeNowGrp.setWsTimeNowGrpHh(LocalDateTime.now().getHour());
+    wsTimeNowGrp.setWsTimeNowGrpMm(LocalDateTime.now().getMinute());
+
+    // Set values in AbndinfoRec
+    abndinfoRec.setAbndUtimeKey(System.currentTimeMillis());
+    abndinfoRec.setAbndTranid("").getBytes();
+    abndinfoRec.setAbndTime(String.format("%02d:%02d", wsTimeNowGrp.getWsTimeNowGrpHh(), wsTimeNowGrp.getWsTimeNowGrpMm()));
+    abndinfoRec.setAbndTasknoKey(0);
+    abndinfoRec.setAbndSqlcode(0);
+    abndinfoRec.setAbndRespcode(0);
+    abndinfoRec.setAbndResp2Code(0);
+    abndinfoRec.setAbndProgram(wsAbendPgm);
+    abndinfoRec.setAbndFreeform(endOfSessionMessage + " EIBRESP=" + wsFailInfo.getWsCicsResp() + " RESP2=" + wsFailInfo.getWsCicsResp2());
+    abndinfoRec.setAbndDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+    abndinfoRec.setAbndCode("HBNK");
+
+    // CICS operations are not directly supported in Java, so we will simulate the behavior
+    if (wsFailInfo.getWsCicsResp() != 0) {
+        abndinfoRec.setAbndSqlcode(10); // Simulate SQL error
+        // Perform error handling
+        // ...
+    }
+
+    // Link to the ABEND program
+    // ...
+}
+```

@@ -1,0 +1,31 @@
+public void invokeMainline(Dfhcommarea dfhcommarea) {
+    Db2InIntegers db2InIntegers = new Db2InIntegers();
+    Db2Policy db2Policy = new Db2Policy();
+    ErrorMsg errorMsg = new ErrorMsg();
+    String lgupvs01 = "LGUPVS01";
+    WsHeader wsHeader = new WsHeader();
+    wsHeader.setWsTransid(Task.getTask().getTransactionName());
+    wsHeader.setWsTermid(Task.getTask().getSTARTCODE());
+    wsHeader.setWsTasknum(Task.getTask().getTaskNumber());
+    wsHeader.setWsRetry(' ');
+    db2Policy.setBytes(new byte[225]);
+    db2InIntegers.setBytes(new byte[225]);
+    if (dfhcommarea.getEibcalen() == 0) {
+        errorMsg.getEmVariable().setEmVariable(" NO COMMAREA RECEIVED");
+        mainlineWriteErrorMessage(dfhcommarea, errorMsg);
+        Task.getTask().abend("LGCA");
+    }
+    dfhcommarea.setCaReturnCode(0);
+    wsHeader.setWsCalen(dfhcommarea.getEibcalen());
+    wsHeader.setWsAddrDfhcommarea(dfhcommarea.getEibdfhcommarea());
+    db2InIntegers.setDb2CustomernumInt(dfhcommarea.getCaCustomerNum());
+    db2InIntegers.setDb2PolicynumInt(((CaPolicyRequest) (dfhcommarea)).getPolicy().getPolicynumber());
+    db2InIntegers.setBytes(db2InIntegers.toByteString().getBytes(ZFile.DEFAULT_EBCDIC_CODE_PAGE));
+    db2Policy.setBytes(db2Policy.toByteString().getBytes(ZFile.DEFAULT_EBCDIC_CODE_PAGE));
+    mainlineUpdatePolicyDb2Info(((CaPolicyRequest) (dfhcommarea)), db2InIntegers, errorMsg);
+    Object jdeclByteArray = dfhcommarea.toByteString().getBytes(ZFile.DEFAULT_EBCDIC_CODE_PAGE);
+    Program jdeclProgram = new Program();
+    Charset jdeclCharSet = Charset.forName(System.getProperty("com.ibm.cics.jvmserver.local.ccsid"));
+    jdeclProgram.setName(lgupvs01);
+    jdeclProgram.link(jdeclByteArray, jdeclCharSet);
+}

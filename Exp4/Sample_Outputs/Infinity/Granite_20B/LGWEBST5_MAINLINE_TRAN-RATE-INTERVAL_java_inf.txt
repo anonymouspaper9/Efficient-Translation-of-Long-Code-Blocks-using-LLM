@@ -1,0 +1,89 @@
+public void mainlineTranRateInterval(String tsQpre, String wsTime) {
+    int hHval;
+    int mMval;
+    int sSval;
+    WsHhmmss wsHhmmss = new WsHhmmss();
+    String wsNewv = "";
+    WsOldv wsOldv = new WsOldv();
+    int wsResp;
+    String wsTsQname = "";
+    wsOldv.setBytes(tsQpre + "000V");
+    wsTsQname = wsOldv.getWsOldv();
+    try {
+        TSQ jdeclTsq = new TSQ();
+        ItemHolder jdeclBuffer = new ItemHolder();
+        jdeclTsq.setName(wsTsQname);
+        jdeclTsq.readItem(1, jdeclBuffer);
+        wsOldv.setBytes(jdeclBuffer.getStringValue());
+    } catch (InvalidQueueIdException e) {
+        throw e;
+        /* STATEMENT BLOCK 1 */
+    } catch (InvalidTSQIdException e) {
+        throw e;
+    } catch (ItemErrorException e) {
+        throw e;
+    } catch (LengthErrorException e) {
+        throw e;
+    } catch (NoSpaceException e) {
+        throw e;
+    } catch (NotAuthorisedException e) {
+        throw e;
+    } catch (NotOpenException e) {
+        throw e;
+    }
+    wsHhmmss.setBytes(wsTime);
+    wsHhmmss.setWsSs(wsHhmmss.getWsSs());
+    wsHhmmss.setWsMm(wsHhmmss.getWsMm());
+    wsHhmmss.setWsHh(wsHhmmss.getWsHh());
+    int nCountVal = (hHval * 3600) + (mMval * 60) + sSval;
+    wsOldv.setBytes(tsQpre + "000V");
+    wsTsQname = wsOldv.getWsOldv();
+    try {
+        TSQ jdeclTsq = new TSQ();
+        jdeclTsq.setName(wsTsQname);
+        jdeclTsq.delete();
+    } catch (InvalidQueueIdException e) {
+        throw e;
+        /* STATEMENT BLOCK 1 */
+    } catch (InvalidTSQIdException e) {
+        throw e;
+    } catch (TSQBusyException e) {
+        throw e;
+    } catch (TSQErrorException e) {
+        throw e;
+    } catch (NotAuthorisedException e) {
+        throw e;
+    } catch (NotOpenException e) {
+        throw e;
+    }
+    wsHhmmss.setWsSs(wsHhmmss.getWsSs());
+    wsHhmmss.setWsMm(wsHhmmss.getWsMm());
+    wsHhmmss.setWsHh(wsHhmmss.getWsHh());
+    int oCountVal = (hHval * 3600) + (mMval * 60) + sSval;
+    int iCountVal = nCountVal - oCountVal;
+    wsNewv = Integer.toString(iCountVal);
+    wsOldv.setBytes(tsQpre + "000V");
+    wsTsQname = wsOldv.getWsOldv();
+    try {
+        TSQ jdeclTsq = new TSQ();
+        jdeclTsq.setName(wsTsQname);
+        jdeclTsq.writeString(wsNewv);
+    } catch (InvalidQueueIdException e) {
+        throw e;
+        /* STATEMENT BLOCK 1 */
+    } catch (InvalidTSQIdException e) {
+        throw e;
+    } catch (TSQBusyException e) {
+        throw e;
+    } catch (TSQErrorException e) {
+        throw e;
+    } catch (NotAuthorisedException e) {
+        throw e;
+    } catch (NotOpenException e) {
+        throw e;
+    }
+    StartRequest jdeclStartRequest = new StartRequest();
+    jdeclStartRequest.setTransId("SSST");
+    jdeclStartRequest.setTime(StartRequestUtils.intervalFromNow(0, 1, 0));
+    jdeclStartRequest.issue();
+}

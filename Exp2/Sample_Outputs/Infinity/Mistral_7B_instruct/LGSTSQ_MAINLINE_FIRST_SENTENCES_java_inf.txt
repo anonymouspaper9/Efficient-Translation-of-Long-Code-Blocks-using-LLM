@@ -1,0 +1,122 @@
+
+```java
+public void invokeMainline(Dfhcommarea dfhcommarea) {
+    Filler1372 filler1372 = new Filler1372();
+    Filler1375 filler1375 = new Filler1375();
+    Stsq stsq = new Stsq();
+    String stdqName = "CSMT";
+    String tempo = "";
+    WriteMsg writeMsg = new WriteMsg();
+    char wsFlag = ' ';
+    String wsInvokeprog = "";
+    String wsPrinsysid = "";
+    WsRecv wsRecv = new WsRecv();
+    int wsRecvLen = 80;
+    int wsResp;
+    String wsStartcode = "";
+
+    // Assign CICS responses
+    CicsResponse wsRespResponse = new CicsResponse();
+    CicsResponse wsStartcodeResponse = new CicsResponse();
+    CicsResponse wsPrinsysidResponse = new CicsResponse();
+    CicsResponse wsInvokeprogResponse = new CicsResponse();
+
+    // Assign CICS assignments
+    CicsAssign wsAssign = new CicsAssign();
+    CicsAssign wsStartcodeAssign = new CicsAssign();
+    CicsAssign wsPrinsysidAssign = new CicsAssign();
+    CicsAssign wsInvokeprogAssign = new CicsAssign();
+
+    // Assign CICS writeQ
+    CicsWriteQ cicsWriteQ = new CicsWriteQ();
+    CicsWriteQ cicsWriteTS = new CicsWriteQ();
+
+    // Assign CICS send
+    CicsSend cicsSend = new CicsSend();
+
+    // Assign COMMA-DATA
+    String commaData = dfhcommarea.getCommaData();
+
+    // Assign WRITE-MSG
+    writeMsg.setBytes(commaData.getBytes());
+
+    // Assign WS-RECV-LEN
+    wsRecv.setBytes(commaData.getBytes());
+
+    // Assign WS-RECV
+    wsRecv.setWsRecvData(commaData);
+
+    // Assign WS-RESP
+    wsResp = wsRespResponse.getResponse();
+
+    // Assign WS-STARTCODE
+    wsStartcode = wsStartcodeResponse.getResponse();
+
+    // Assign WS-PRINSYSID
+    wsPrinsysid = wsPrinsysidResponse.getResponse();
+
+    // Assign WS-INVOKEPROG
+    wsInvokeprog = wsInvokeprogResponse.getResponse();
+
+    // Assign WS-FLAG
+    if (!wsInvokeprog.equals("")) {
+        wsFlag = 'C';
+        writeMsg.setWriteMsgMsg(commaData.substring(0, 2) + "C" + commaData.substring(3));
+        wsRecvLen -= 5;
+    } else {
+        wsRecv.setBytes(commaData.getBytes());
+        wsFlag = 'R';
+        writeMsg.setWriteMsgMsg(commaData.substring(0, commaData.indexOf(",")));
+        wsRecvLen -= commaData.indexOf(",") + 1;
+    }
+
+    // Assign STSQ-NAME
+    stsq.setStsqName(stdqName);
+
+    // Assign WRITE-MSG-SYSID
+    writeMsg.setWriteMsgSysid("GENAERRS");
+
+    // Check if WRITE-MSG-MSG starts with "Q="
+    if (writeMsg.getWriteMsgMsg().substring(0, 2).equals("Q=")) {
+        String stsqExt = writeMsg.getWriteMsgMsg().substring(3, 7);
+        String writeMsgRest = writeMsg.getWriteMsgMsg().substring(7);
+        writeMsg.setWriteMsgMsg(writeMsgRest);
+        stsq.setStsqExt(stsqExt);
+        wsRecvLen -= 7;
+    }
+
+    // Add 5 to WS-RECV-LEN
+    wsRecvLen += 5;
+
+    // Assign CICS WRITEQ TD
+    wsAssign.setFrom(writeMsg);
+    wsAssign.setLength(wsRecvLen);
+    wsAssign.setQueue(stsq);
+    wsAssign.setResponse(wsRespResponse);
+    wsAssign.execute();
+
+    // Assign CICS WRITEQ TS
+    cicsWriteTS.setFrom(writeMsg);
+    cicsWriteTS.setLength(wsRecvLen);
+    cicsWriteTS.setQueue(stsq);
+    cicsWriteTS.setResponse(wsRespResponse);
+    cicsWriteTS.setNosuspend(true);
+    cicsWriteTS.execute();
+
+    // If WS-FLAG is 'R' then assign CICS SEND
+    if (wsFlag == 'R') {
+        cicsSend.setText(commaData.substring(0, commaData.indexOf(",")));
+        cicsSend.setWait(true);
+        cicsSend.setErase(true);
+        cicsSend.setFreekb(true);
+        cicsSend.setFrom(filler1372);
+        cicsSend.setLength(1);
+        cicsSend.execute();
+    }
+
+    // Assign CICS RETURN
+    CicsReturn cicsReturn = new CicsReturn();
+    cicsReturn.execute();
+}
+```
+

@@ -1,0 +1,70 @@
+       INSERT-COMMERCIAL.                                               
+                                                                        
+           MOVE CA-B-FirePeril       To DB2-B-FirePeril-Int             
+           MOVE CA-B-FirePremium     To DB2-B-FirePremium-Int           
+           MOVE CA-B-CrimePeril      To DB2-B-CrimePeril-Int            
+           MOVE CA-B-CrimePremium    To DB2-B-CrimePremium-Int          
+           MOVE CA-B-FloodPeril      To DB2-B-FloodPeril-Int            
+           MOVE CA-B-FloodPremium    To DB2-B-FloodPremium-Int          
+           MOVE CA-B-WeatherPeril    To DB2-B-WeatherPeril-Int          
+           MOVE CA-B-WeatherPremium  To DB2-B-WeatherPremium-Int        
+           MOVE CA-B-Status          To DB2-B-Status-Int                
+                                                                        
+           MOVE ' INSERT COMMER' TO EM-SQLREQ                           
+           EXEC SQL                                                     
+             INSERT INTO COMMERCIAL                                     
+                       (                                                
+                         PolicyNumber,                                  
+                         RequestDate,                                   
+                         StartDate,                                     
+                         RenewalDate,                                   
+                         Address,                                       
+                         Zipcode,                                       
+                         LatitudeN,                                     
+                         LongitudeW,                                    
+                         Customer,                                      
+                         PropertyType,                                  
+                         FirePeril,                                     
+                         FirePremium,                                   
+                         CrimePeril,                                    
+                         CrimePremium,                                  
+                         FloodPeril,                                    
+                         FloodPremium,                                  
+                         WeatherPeril,                                  
+                         WeatherPremium,                                
+                         Status,                                        
+                         RejectionReason                                
+                                             )                          
+                VALUES (                                                
+                         :DB2-POLICYNUM-INT,                            
+                         :CA-LASTCHANGED,                               
+                         :CA-ISSUE-DATE,                                
+                         :CA-EXPIRY-DATE,                               
+                         :CA-B-Address,                                 
+                         :CA-B-Postcode,                                
+                         :CA-B-Latitude,                                
+                         :CA-B-Longitude,                               
+                         :CA-B-Customer,                                
+                         :CA-B-PropType,                                
+                         :DB2-B-FirePeril-Int,                          
+                         :DB2-B-FirePremium-Int,                        
+                         :DB2-B-CrimePeril-Int,                         
+                         :DB2-B-CrimePremium-Int,                       
+                         :DB2-B-FloodPeril-Int,                         
+                         :DB2-B-FloodPremium-Int,                       
+                         :DB2-B-WeatherPeril-Int,                       
+                         :DB2-B-WeatherPremium-Int,                     
+                         :DB2-B-Status-Int,                             
+                         :CA-B-RejectReason                             
+                                             )                          
+           END-EXEC                                                     
+                                                                        
+           IF SQLCODE NOT EQUAL 0                                       
+             MOVE '90' TO CA-RETURN-CODE                                
+             PERFORM WRITE-ERROR-MESSAGE                                
+      *      Issue Abend to cause backout of update to Policy table     
+             EXEC CICS ABEND ABCODE('LGSQ') NODUMP END-EXEC             
+             EXEC CICS RETURN END-EXEC                                  
+           END-IF.                                                      
+                                                                        
+           EXIT.                                                        

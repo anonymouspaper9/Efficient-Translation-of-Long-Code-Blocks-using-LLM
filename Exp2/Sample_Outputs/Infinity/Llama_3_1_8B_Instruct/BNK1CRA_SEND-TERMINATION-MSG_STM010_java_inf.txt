@@ -1,0 +1,28 @@
+public void sendTerminationMsgStm010(){
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    String endOfSessionMessage = "Session Ended";
+    String wsAbendPgm = "ABNDPROC";
+    WsFailInfo wsFailInfo = new WsFailInfo();
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+    try {
+        CICSConnection cicsConnection = CICSConnection.getConnection();
+        cicsConnection.sendText(endOfSessionMessage);
+    } catch (CICSException e) {
+        abndinfoRec.setAbndRespcode(e.getRespCode());
+        abndinfoRec.setAbndResp2Code(e.getResp2Code());
+        abndinfoRec.setAbndSqlcode(e.getSqlCode());
+        abndinfoRec.setAbndProgram(wsAbendPgm);
+        abndinfoRec.setAbndFreeform("STM010 - SEND TEXT FAIL.");
+        abndinfoRec.setAbndDate(getCurrentDate());
+        abndinfoRec.setAbndTime(getCurrentTime());
+        abndinfoRec.setAbndUtimeKey(getCurrentUTime());
+        abndinfoRec.setAbndTasknoKey(getCurrentTaskNo());
+        abndinfoRec.setAbndTranid("STM010");
+        abndinfoRec.setAbndCode("HBNK");
+        abndinfoRec.setAbndApplid("ABND-APPLID");
+        wsFailInfo.setWsCicsRespDisp(abndinfoRec.getAbndRespcode());
+        wsFailInfo.setWsCicsResp2Disp(abndinfoRec.getAbndResp2Code());
+        wsFailInfo.setWsCicsFailMsg("BNK1CRA - STM010 - SEND TEXT FAIL");
+        abendThisTaskAtt010(wsFailInfo);
+    }
+}

@@ -1,0 +1,1136 @@
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+       MAINLINE SECTION.                                                
+           INITIALIZE WS-HEADER.                                        
+           MOVE EIBTRNID TO WS-TRANSID.                                 
+           MOVE EIBTRMID TO WS-TERMID.                                  
+           MOVE EIBTASKN TO WS-TASKNUM.                                 
+           MOVE EIBCALEN TO WS-CALEN.                                   
+           MOVE 'GENA'  To TSQpre                                       
+           EXEC CICS ASKTIME
+                ABSTIME(WS-ABSTIME)
+           END-EXEC                                                     
+           EXEC CICS FORMATTIME
+                ABSTIME(WS-ABSTIME)
+                MMDDYYYY(WS-DATE)
+                TIME(WS-TIME)
+           END-EXEC                                                     
+           Perform Tran-Rate-Interval                                   
+           EXEC CICS QUERY
+                COUNTER(GENAcount)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Move CountVal  To GENAcount-V                                
+           Move GENAcount-V  To S3                                      
+           String TSQpre,                                               
+                  'X05V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S3           To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           EXEC CICS QUERY
+                COUNTER(GENACNT100)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Move CountVal  To CountSuccess                               
+           Move CountVal  To CountInq                                   
+           Move CountVal  To GENACNT100-V                               
+           Move GENACNT100-V To S3                                      
+           String TSQpre,                                               
+                  '100V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S3           To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           EXEC CICS QUERY
+                COUNTER(GENACNT199)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Move CountVal  To CountErrors                                
+           Move CountVal  To GENACNT199-V                               
+           Move GENACNT199-V To S4                                      
+           EXEC CICS QUERY
+                COUNTER(GENACNT200)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Compute CountSuccess = CountSuccess + CountVal               
+           Move CountVal  To CountAdd                                   
+           Move CountVal  To GENACNT200-V                               
+           Move GENACNT200-V To S5                                      
+           String TSQpre,                                               
+                  '200V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S5           To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           EXEC CICS QUERY
+                COUNTER(GENACNT299)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Compute CountErrors  = CountErrors + CountVal                
+           Move CountVal  To GENACNT299-V                               
+           Move GENACNT299-V To S6                                      
+           EXEC CICS QUERY
+                COUNTER(GENACNT300)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Compute CountSuccess = CountSuccess + CountVal               
+           Move CountVal  To GENACNT300-V                               
+           Compute CountInq = CountInq + CountVal                       
+           Move GENACNT300-V To S7                                      
+           String TSQpre,                                               
+                  '300V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S7           To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           EXEC CICS QUERY
+                COUNTER(GENACNT399)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Compute CountErrors  = CountErrors + CountVal                
+           Move CountVal  To GENACNT399-V                               
+           Move GENACNT399-V To S8                                      
+           EXEC CICS QUERY
+                COUNTER(GENACNT400)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Compute CountSuccess = CountSuccess + CountVal               
+           Move CountVal  To GENACNT400-V                               
+           Compute CountAdd = CountAdd + CountVal                       
+           Move GENACNT400-V To S9                                      
+           String TSQpre,                                               
+                  '400V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S9           To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           EXEC CICS QUERY
+                COUNTER(GENACNT499)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Compute CountErrors  = CountErrors + CountVal                
+           Move CountVal  To GENACNT499-V                               
+           Move GENACNT499-V To S10                                     
+           EXEC CICS QUERY
+                COUNTER(GENACNT500)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Compute CountSuccess = CountSuccess + CountVal               
+           Move CountVal  To GENACNT500-V                               
+           Move CountVal  To CountDel                                   
+           Move GENACNT500-V To S11                                     
+           String TSQpre,                                               
+                  '500V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S11          To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           EXEC CICS QUERY
+                COUNTER(GENACNT599)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Compute CountErrors  = CountErrors + CountVal                
+           Move CountVal  To GENACNT599-V                               
+           Move GENACNT599-V To S12                                     
+           EXEC CICS QUERY
+                COUNTER(GENACNT600)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Compute CountSuccess = CountSuccess + CountVal               
+           Move CountVal  To GENACNT600-V                               
+           Move CountVal  To CountUpd                                   
+           Move GENACNT600-V To S13                                     
+           String TSQpre,                                               
+                  '600V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S13          To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           EXEC CICS QUERY
+                COUNTER(GENACNT699)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Compute CountErrors  = CountErrors + CountVal                
+           Move CountVal  To GENACNT699-V                               
+           Move GENACNT699-V To S14                                     
+           EXEC CICS QUERY
+                COUNTER(GENACNT700)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Compute CountSuccess = CountSuccess + CountVal               
+           Move CountVal  To GENACNT700-V                               
+           Compute CountInq = CountInq + CountVal                       
+           Move GENACNT700-V To S15                                     
+           String TSQpre,                                               
+                  '700V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S15          To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           EXEC CICS QUERY
+                COUNTER(GENACNT799)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Compute CountErrors  = CountErrors + CountVal                
+           Move CountVal  To GENACNT799-V                               
+           Move GENACNT799-V To S16                                     
+           EXEC CICS QUERY
+                COUNTER(GENACNT800)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Compute CountSuccess = CountSuccess + CountVal               
+           Move CountVal  To GENACNT800-V                               
+           Compute CountAdd = CountAdd + CountVal                       
+           Move GENACNT800-V To S17                                     
+           String TSQpre,                                               
+                  '800V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S17          To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           EXEC CICS QUERY
+                COUNTER(GENACNT899)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Compute CountErrors  = CountErrors + CountVal                
+           Move CountVal  To GENACNT899-V                               
+           Move GENACNT899-V To S18                                     
+           EXEC CICS QUERY
+                COUNTER(GENACNT900)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Compute CountSuccess = CountSuccess + CountVal               
+           Move CountVal  To GENACNT900-V                               
+           Compute CountDel = CountDel + CountVal                       
+           Move GENACNT900-V To S19                                     
+           String TSQpre,                                               
+                  '900V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S19          To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           EXEC CICS QUERY
+                COUNTER(GENACNT999)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Compute CountErrors  = CountErrors + CountVal                
+           Move CountVal  To GENACNT999-V                               
+           Move GENACNT999-V To S20                                     
+           EXEC CICS QUERY
+                COUNTER(GENACNTA00)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Compute CountSuccess = CountSuccess + CountVal               
+           Move CountVal  To GENACNTA00-V                               
+           Compute CountUpd = CountUpd + CountVal                       
+           Move GENACNTA00-V To S21                                     
+           String TSQpre,                                               
+                  'A00V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S21          To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           EXEC CICS QUERY
+                COUNTER(GENACNTA99)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Compute CountErrors  = CountErrors + CountVal                
+           Move CountVal  To GENACNTA99-V                               
+           Move GENACNTA99-V To S22                                     
+           EXEC CICS QUERY
+                COUNTER(GENACNTB00)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Compute CountSuccess = CountSuccess + CountVal               
+           Move CountVal  To GENACNTB00-V                               
+           Compute CountInq = CountInq + CountVal                       
+           Move GENACNTB00-V To S23                                     
+           String TSQpre,                                               
+                  'B00V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S23          To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           EXEC CICS QUERY
+                COUNTER(GENACNTB99)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Compute CountErrors  = CountErrors + CountVal                
+           Move CountVal  To GENACNTB99-V                               
+           Move GENACNTB99-V To S24                                     
+           EXEC CICS QUERY
+                COUNTER(GENACNTC00)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Compute CountSuccess = CountSuccess + CountVal               
+           Move CountVal  To GENACNTC00-V                               
+           Compute CountAdd = CountAdd + CountVal                       
+           Move GENACNTC00-V To S25                                     
+           String TSQpre,                                               
+                  'C00V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S25          To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           EXEC CICS QUERY
+                COUNTER(GENACNTC99)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Compute CountErrors  = CountErrors + CountVal                
+           Move CountVal  To GENACNTC99-V                               
+           Move GENACNTC99-V To S26                                     
+           EXEC CICS QUERY
+                COUNTER(GENACNTD00)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Compute CountSuccess = CountSuccess + CountVal               
+           Move CountVal  To GENACNTD00-V                               
+           Compute CountDel = CountDel + CountVal                       
+           Move GENACNTD00-V To S27                                     
+           String TSQpre,                                               
+                  'D00V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S27          To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           EXEC CICS QUERY
+                COUNTER(GENACNTD99)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Compute CountErrors  = CountErrors + CountVal                
+           Move CountVal  To GENACNTD99-V                               
+           Move GENACNTD99-V To S28                                     
+           EXEC CICS QUERY
+                COUNTER(GENACNTE00)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Compute CountSuccess = CountSuccess + CountVal               
+           Move CountVal  To GENACNTE00-V                               
+           Compute CountUpd = CountUpd + CountVal                       
+           Move GENACNTE00-V To S29                                     
+           String TSQpre,                                               
+                  'E00V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S29          To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           EXEC CICS QUERY
+                COUNTER(GENACNTE99)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Compute CountErrors  = CountErrors + CountVal                
+           Move CountVal  To GENACNTE99-V                               
+           Move GENACNTE99-V To S30                                     
+           EXEC CICS QUERY
+                COUNTER(GENACNTF00)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Compute CountSuccess = CountSuccess + CountVal               
+           Move CountVal  To GENACNTF00-V                               
+           Compute CountInq = CountInq + CountVal                       
+           Move GENACNTF00-V To S31                                     
+           String TSQpre,                                               
+                  'F00V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S31          To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           EXEC CICS QUERY
+                COUNTER(GENACNTF99)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Compute CountErrors  = CountErrors + CountVal                
+           Move CountVal  To GENACNTF99-V                               
+           Move GENACNTF99-V To S32                                     
+           EXEC CICS QUERY
+                COUNTER(GENACNTG00)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Compute CountSuccess = CountSuccess + CountVal               
+           Move CountVal  To GENACNTG00-V                               
+           Compute CountAdd = CountAdd + CountVal                       
+           Move GENACNTG00-V To S33                                     
+           String TSQpre,                                               
+                  'G00V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S33          To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           EXEC CICS QUERY
+                COUNTER(GENACNTG99)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Compute CountErrors  = CountErrors + CountVal                
+           Move CountVal  To GENACNTG99-V                               
+           Move GENACNTG99-V To S34                                     
+           EXEC CICS QUERY
+                COUNTER(GENACNTH00)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Compute CountSuccess = CountSuccess + CountVal               
+           Move CountVal  To GENACNTH00-V                               
+           Compute CountDel = CountDel + CountVal                       
+           Move GENACNTH00-V To S35                                     
+           String TSQpre,                                               
+                  'H00V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S35          To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           EXEC CICS QUERY
+                COUNTER(GENACNTH99)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Compute CountErrors  = CountErrors + CountVal                
+           Move CountVal  To GENACNTH99-V                               
+           Move GENACNTH99-V To S36                                     
+           EXEC CICS QUERY
+                COUNTER(GENACNTI99)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(CountVal)
+           END-EXEC.                                                    
+           Move CountVal  To GENACNTI99-V                               
+           Move GENACNTI99-V To S37                                     
+           Move CountSuccess To GENAsucces-V                            
+           Move Counterrors  To GENAerrors-V                            
+           Move GENAsucces-V To S38                                     
+           Move GENAerrors-V To S39                                     
+           String TSQpre,                                               
+                  'X00V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move S38          To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           String TSQpre,                                               
+                  'X01V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move CountInq     To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           String TSQpre,                                               
+                  'X02V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move CountAdd     To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           String TSQpre,                                               
+                  'X03V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move CountUpd     To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           String TSQpre,                                               
+                  'X04V' Delimited By Spaces                            
+                  Into WS-TSQname                                       
+           Move CountDel     To NRateVal                                
+           Perform Tran-Rate-Counts                                     
+           EXEC CICS ASSIGN
+                APPLID(WS-APPLID)
+           END-EXEC.                                                    
+           Move WS-APPLID To S1.                                        
+           EXEC CICS RETURN
+           END-EXEC.                                                    
+
+## Variable Map:
+WS-TSQname gettermapping wsTsQname
+WS-TSQname settermapping wsTsQname = val
+WS-TSQname PIC X(8) JavaType String
+WS-TRANSID gettermapping wsHeader.getWsTransid()
+WS-TRANSID settermapping wsHeader.setWsTransid(val)
+WS-TRANSID PIC X(4) JavaType String
+WS-TIME gettermapping wsTime
+WS-TIME settermapping wsTime = val
+WS-TIME PIC X(8) JavaType String
+WS-TERMID gettermapping wsHeader.getWsTermid()
+WS-TERMID settermapping wsHeader.setWsTermid(val)
+WS-TERMID PIC X(4) JavaType String
+WS-TASKNUM gettermapping wsHeader.getWsTasknum()
+WS-TASKNUM settermapping wsHeader.setWsTasknum(val)
+WS-TASKNUM PIC 9(7) JavaType int
+WS-RESP gettermapping wsResp
+WS-RESP settermapping wsResp = val
+WS-RESP PIC S9(8) JavaType int
+WS-HEADER gettermapping wsHeader.getBytes()
+WS-HEADER settermapping wsHeader.setBytes(val)
+WS-HEADER GROUP JavaType WsHeader
+WS-DATE gettermapping wsDate
+WS-DATE settermapping wsDate = val
+WS-DATE PIC X(10) JavaType String
+WS-CALEN gettermapping wsHeader.getWsCalen()
+WS-CALEN settermapping wsHeader.setWsCalen(val)
+WS-CALEN PIC 9(7) JavaType int
+WS-APPLID gettermapping wsApplid
+WS-APPLID settermapping wsApplid = val
+WS-APPLID PIC X(8) JavaType String
+WS-ABSTIME gettermapping wsAbstime
+WS-ABSTIME settermapping wsAbstime = val
+WS-ABSTIME PIC S9(8) JavaType int
+TSQpre gettermapping tsQpre
+TSQpre settermapping tsQpre = val
+TSQpre PIC X(4) JavaType String
+S9 gettermapping symbList.getS9()
+S9 settermapping symbList.setS9(val)
+S9 PIC X(9) JavaType String
+S8 gettermapping symbList.getS8()
+S8 settermapping symbList.setS8(val)
+S8 PIC Z(8)9 JavaType int
+S7 gettermapping symbList.getS7()
+S7 settermapping symbList.setS7(val)
+S7 PIC X(9) JavaType String
+S6 gettermapping symbList.getS6()
+S6 settermapping symbList.setS6(val)
+S6 PIC Z(8)9 JavaType int
+S5 gettermapping symbList.getS5()
+S5 settermapping symbList.setS5(val)
+S5 PIC X(9) JavaType String
+S4 gettermapping symbList.getS4()
+S4 settermapping symbList.setS4(val)
+S4 PIC Z(8)9 JavaType int
+S39 gettermapping symbList.getS39()
+S39 settermapping symbList.setS39(val)
+S39 PIC Z(9)9 JavaType long
+S38 gettermapping symbList.getS38()
+S38 settermapping symbList.setS38(val)
+S38 PIC Z(9)9 JavaType long
+S37 gettermapping symbList.getS37()
+S37 settermapping symbList.setS37(val)
+S37 PIC Z(9)9 JavaType long
+S36 gettermapping symbList.getS36()
+S36 settermapping symbList.setS36(val)
+S36 PIC Z(8)9 JavaType int
+S35 gettermapping symbList.getS35()
+S35 settermapping symbList.setS35(val)
+S35 PIC X(9) JavaType String
+S34 gettermapping symbList.getS34()
+S34 settermapping symbList.setS34(val)
+S34 PIC Z(8)9 JavaType int
+S33 gettermapping symbList.getS33()
+S33 settermapping symbList.setS33(val)
+S33 PIC X(9) JavaType String
+S32 gettermapping symbList.getS32()
+S32 settermapping symbList.setS32(val)
+S32 PIC Z(8)9 JavaType int
+S31 gettermapping symbList.getS31()
+S31 settermapping symbList.setS31(val)
+S31 PIC X(9) JavaType String
+S30 gettermapping symbList.getS30()
+S30 settermapping symbList.setS30(val)
+S30 PIC Z(8)9 JavaType int
+S3 gettermapping symbList.getS3()
+S3 settermapping symbList.setS3(val)
+S3 PIC X(9) JavaType String
+S29 gettermapping symbList.getS29()
+S29 settermapping symbList.setS29(val)
+S29 PIC X(9) JavaType String
+S28 gettermapping symbList.getS28()
+S28 settermapping symbList.setS28(val)
+S28 PIC Z(8)9 JavaType int
+S27 gettermapping symbList.getS27()
+S27 settermapping symbList.setS27(val)
+S27 PIC X(9) JavaType String
+S26 gettermapping symbList.getS26()
+S26 settermapping symbList.setS26(val)
+S26 PIC Z(8)9 JavaType int
+S25 gettermapping symbList.getS25()
+S25 settermapping symbList.setS25(val)
+S25 PIC X(9) JavaType String
+S24 gettermapping symbList.getS24()
+S24 settermapping symbList.setS24(val)
+S24 PIC Z(8)9 JavaType int
+S23 gettermapping symbList.getS23()
+S23 settermapping symbList.setS23(val)
+S23 PIC X(9) JavaType String
+S22 gettermapping symbList.getS22()
+S22 settermapping symbList.setS22(val)
+S22 PIC Z(8)9 JavaType int
+S21 gettermapping symbList.getS21()
+S21 settermapping symbList.setS21(val)
+S21 PIC X(9) JavaType String
+S20 gettermapping symbList.getS20()
+S20 settermapping symbList.setS20(val)
+S20 PIC Z(8)9 JavaType int
+S19 gettermapping symbList.getS19()
+S19 settermapping symbList.setS19(val)
+S19 PIC X(9) JavaType String
+S18 gettermapping symbList.getS18()
+S18 settermapping symbList.setS18(val)
+S18 PIC Z(8)9 JavaType int
+S17 gettermapping symbList.getS17()
+S17 settermapping symbList.setS17(val)
+S17 PIC X(9) JavaType String
+S16 gettermapping symbList.getS16()
+S16 settermapping symbList.setS16(val)
+S16 PIC Z(8)9 JavaType int
+S15 gettermapping symbList.getS15()
+S15 settermapping symbList.setS15(val)
+S15 PIC X(9) JavaType String
+S14 gettermapping symbList.getS14()
+S14 settermapping symbList.setS14(val)
+S14 PIC Z(8)9 JavaType int
+S13 gettermapping symbList.getS13()
+S13 settermapping symbList.setS13(val)
+S13 PIC X(9) JavaType String
+S12 gettermapping symbList.getS12()
+S12 settermapping symbList.setS12(val)
+S12 PIC Z(8)9 JavaType int
+S11 gettermapping symbList.getS11()
+S11 settermapping symbList.setS11(val)
+S11 PIC X(9) JavaType String
+S10 gettermapping symbList.getS10()
+S10 settermapping symbList.setS10(val)
+S10 PIC Z(8)9 JavaType int
+S1 gettermapping symbList.getS1()
+S1 settermapping symbList.setS1(val)
+S1 PIC X(8) JavaType String
+NRateVal gettermapping nRateVal
+NRateVal settermapping nRateVal = val
+NRateVal PIC 9(9) JavaType int
+GENAsucces-V gettermapping genAsuccesV
+GENAsucces-V settermapping genAsuccesV = val
+GENAsucces-V PIC 9(9) JavaType int
+GENApool gettermapping genApool
+GENApool settermapping genApool = val
+GENApool PIC X(8) JavaType String
+GENAerrors-V gettermapping genAerrorsV
+GENAerrors-V settermapping genAerrorsV = val
+GENAerrors-V PIC 9(9) JavaType int
+GENAcount gettermapping genAcount
+GENAcount settermapping genAcount = val
+GENAcount PIC X(16) JavaType String
+GENACount-V gettermapping genaCountV
+GENACount-V settermapping genaCountV = val
+GENACount-V PIC 9(9) JavaType int
+GENACNTI99-V gettermapping genacnti99V
+GENACNTI99-V settermapping genacnti99V = val
+GENACNTI99-V PIC 9(9) JavaType int
+GENACNTI99 gettermapping genacnti99
+GENACNTI99 settermapping genacnti99 = val
+GENACNTI99 PIC X(16) JavaType String
+GENACNTH99-V gettermapping genacnth99V
+GENACNTH99-V settermapping genacnth99V = val
+GENACNTH99-V PIC 9(9) JavaType int
+GENACNTH99 gettermapping genacnth99
+GENACNTH99 settermapping genacnth99 = val
+GENACNTH99 PIC X(32) JavaType String
+GENACNTH00-V gettermapping genacnth00V
+GENACNTH00-V settermapping genacnth00V = val
+GENACNTH00-V PIC 9(9) JavaType int
+GENACNTH00 gettermapping genacnth00
+GENACNTH00 settermapping genacnth00 = val
+GENACNTH00 PIC X(16) JavaType String
+GENACNTG99-V gettermapping genacntg99V
+GENACNTG99-V settermapping genacntg99V = val
+GENACNTG99-V PIC 9(9) JavaType int
+GENACNTG99 gettermapping genacntg99
+GENACNTG99 settermapping genacntg99 = val
+GENACNTG99 PIC X(32) JavaType String
+GENACNTG00-V gettermapping genacntg00V
+GENACNTG00-V settermapping genacntg00V = val
+GENACNTG00-V PIC 9(9) JavaType int
+GENACNTG00 gettermapping genacntg00
+GENACNTG00 settermapping genacntg00 = val
+GENACNTG00 PIC X(16) JavaType String
+GENACNTF99-V gettermapping genacntf99V
+GENACNTF99-V settermapping genacntf99V = val
+GENACNTF99-V PIC 9(9) JavaType int
+GENACNTF99 gettermapping genacntf99
+GENACNTF99 settermapping genacntf99 = val
+GENACNTF99 PIC X(32) JavaType String
+GENACNTF00-V gettermapping genacntf00V
+GENACNTF00-V settermapping genacntf00V = val
+GENACNTF00-V PIC 9(9) JavaType int
+GENACNTF00 gettermapping genacntf00
+GENACNTF00 settermapping genacntf00 = val
+GENACNTF00 PIC X(16) JavaType String
+GENACNTE99-V gettermapping genacnte99V
+GENACNTE99-V settermapping genacnte99V = val
+GENACNTE99-V PIC 9(9) JavaType int
+GENACNTE99 gettermapping genacnte99
+GENACNTE99 settermapping genacnte99 = val
+GENACNTE99 PIC X(32) JavaType String
+GENACNTE00-V gettermapping genacnte00V
+GENACNTE00-V settermapping genacnte00V = val
+GENACNTE00-V PIC 9(9) JavaType int
+GENACNTE00 gettermapping genacnte00
+GENACNTE00 settermapping genacnte00 = val
+GENACNTE00 PIC X(16) JavaType String
+GENACNTD99-V gettermapping genacntd99V
+GENACNTD99-V settermapping genacntd99V = val
+GENACNTD99-V PIC 9(9) JavaType int
+GENACNTD99 gettermapping genacntd99
+GENACNTD99 settermapping genacntd99 = val
+GENACNTD99 PIC X(32) JavaType String
+GENACNTD00-V gettermapping genacntd00V
+GENACNTD00-V settermapping genacntd00V = val
+GENACNTD00-V PIC 9(9) JavaType int
+GENACNTD00 gettermapping genacntd00
+GENACNTD00 settermapping genacntd00 = val
+GENACNTD00 PIC X(16) JavaType String
+GENACNTC99-V gettermapping genacntc99V
+GENACNTC99-V settermapping genacntc99V = val
+GENACNTC99-V PIC 9(9) JavaType int
+GENACNTC99 gettermapping genacntc99
+GENACNTC99 settermapping genacntc99 = val
+GENACNTC99 PIC X(32) JavaType String
+GENACNTC00-V gettermapping genacntc00V
+GENACNTC00-V settermapping genacntc00V = val
+GENACNTC00-V PIC 9(9) JavaType int
+GENACNTC00 gettermapping genacntc00
+GENACNTC00 settermapping genacntc00 = val
+GENACNTC00 PIC X(16) JavaType String
+GENACNTB99-V gettermapping genacntb99V
+GENACNTB99-V settermapping genacntb99V = val
+GENACNTB99-V PIC 9(9) JavaType int
+GENACNTB99 gettermapping genacntb99
+GENACNTB99 settermapping genacntb99 = val
+GENACNTB99 PIC X(32) JavaType String
+GENACNTB00-V gettermapping genacntb00V
+GENACNTB00-V settermapping genacntb00V = val
+GENACNTB00-V PIC 9(9) JavaType int
+GENACNTB00 gettermapping genacntb00
+GENACNTB00 settermapping genacntb00 = val
+GENACNTB00 PIC X(16) JavaType String
+GENACNTA99-V gettermapping genacnta99V
+GENACNTA99-V settermapping genacnta99V = val
+GENACNTA99-V PIC 9(9) JavaType int
+GENACNTA99 gettermapping genacnta99
+GENACNTA99 settermapping genacnta99 = val
+GENACNTA99 PIC X(32) JavaType String
+GENACNTA00-V gettermapping genacnta00V
+GENACNTA00-V settermapping genacnta00V = val
+GENACNTA00-V PIC 9(9) JavaType int
+GENACNTA00 gettermapping genacnta00
+GENACNTA00 settermapping genacnta00 = val
+GENACNTA00 PIC X(16) JavaType String
+GENACNT999-V gettermapping genacnt999V
+GENACNT999-V settermapping genacnt999V = val
+GENACNT999-V PIC 9(9) JavaType int
+GENACNT999 gettermapping genacnt999
+GENACNT999 settermapping genacnt999 = val
+GENACNT999 PIC X(32) JavaType String
+GENACNT900-V gettermapping genacnt900V
+GENACNT900-V settermapping genacnt900V = val
+GENACNT900-V PIC 9(9) JavaType int
+GENACNT900 gettermapping genacnt900
+GENACNT900 settermapping genacnt900 = val
+GENACNT900 PIC X(16) JavaType String
+GENACNT899-V gettermapping genacnt899V
+GENACNT899-V settermapping genacnt899V = val
+GENACNT899-V PIC 9(9) JavaType int
+GENACNT899 gettermapping genacnt899
+GENACNT899 settermapping genacnt899 = val
+GENACNT899 PIC X(32) JavaType String
+GENACNT800-V gettermapping genacnt800V
+GENACNT800-V settermapping genacnt800V = val
+GENACNT800-V PIC 9(9) JavaType int
+GENACNT800 gettermapping genacnt800
+GENACNT800 settermapping genacnt800 = val
+GENACNT800 PIC X(16) JavaType String
+GENACNT799-V gettermapping genacnt799V
+GENACNT799-V settermapping genacnt799V = val
+GENACNT799-V PIC 9(9) JavaType int
+GENACNT799 gettermapping genacnt799
+GENACNT799 settermapping genacnt799 = val
+GENACNT799 PIC X(32) JavaType String
+GENACNT700-V gettermapping genacnt700V
+GENACNT700-V settermapping genacnt700V = val
+GENACNT700-V PIC 9(9) JavaType int
+GENACNT700 gettermapping genacnt700
+GENACNT700 settermapping genacnt700 = val
+GENACNT700 PIC X(16) JavaType String
+GENACNT699-V gettermapping genacnt699V
+GENACNT699-V settermapping genacnt699V = val
+GENACNT699-V PIC 9(9) JavaType int
+GENACNT699 gettermapping genacnt699
+GENACNT699 settermapping genacnt699 = val
+GENACNT699 PIC X(32) JavaType String
+GENACNT600-V gettermapping genacnt600V
+GENACNT600-V settermapping genacnt600V = val
+GENACNT600-V PIC 9(9) JavaType int
+GENACNT600 gettermapping genacnt600
+GENACNT600 settermapping genacnt600 = val
+GENACNT600 PIC X(16) JavaType String
+GENACNT599-V gettermapping genacnt599V
+GENACNT599-V settermapping genacnt599V = val
+GENACNT599-V PIC 9(9) JavaType int
+GENACNT599 gettermapping genacnt599
+GENACNT599 settermapping genacnt599 = val
+GENACNT599 PIC X(32) JavaType String
+GENACNT500-V gettermapping genacnt500V
+GENACNT500-V settermapping genacnt500V = val
+GENACNT500-V PIC 9(9) JavaType int
+GENACNT500 gettermapping genacnt500
+GENACNT500 settermapping genacnt500 = val
+GENACNT500 PIC X(16) JavaType String
+GENACNT499-V gettermapping genacnt499V
+GENACNT499-V settermapping genacnt499V = val
+GENACNT499-V PIC 9(9) JavaType int
+GENACNT499 gettermapping genacnt499
+GENACNT499 settermapping genacnt499 = val
+GENACNT499 PIC X(32) JavaType String
+GENACNT400-V gettermapping genacnt400V
+GENACNT400-V settermapping genacnt400V = val
+GENACNT400-V PIC 9(9) JavaType int
+GENACNT400 gettermapping genacnt400
+GENACNT400 settermapping genacnt400 = val
+GENACNT400 PIC X(16) JavaType String
+GENACNT399-V gettermapping genacnt399V
+GENACNT399-V settermapping genacnt399V = val
+GENACNT399-V PIC 9(9) JavaType int
+GENACNT399 gettermapping genacnt399
+GENACNT399 settermapping genacnt399 = val
+GENACNT399 PIC X(32) JavaType String
+GENACNT300-V gettermapping genacnt300V
+GENACNT300-V settermapping genacnt300V = val
+GENACNT300-V PIC 9(9) JavaType int
+GENACNT300 gettermapping genacnt300
+GENACNT300 settermapping genacnt300 = val
+GENACNT300 PIC X(16) JavaType String
+GENACNT299-V gettermapping genacnt299V
+GENACNT299-V settermapping genacnt299V = val
+GENACNT299-V PIC 9(9) JavaType int
+GENACNT299 gettermapping genacnt299
+GENACNT299 settermapping genacnt299 = val
+GENACNT299 PIC X(32) JavaType String
+GENACNT200-V gettermapping genacnt200V
+GENACNT200-V settermapping genacnt200V = val
+GENACNT200-V PIC 9(9) JavaType int
+GENACNT200 gettermapping genacnt200
+GENACNT200 settermapping genacnt200 = val
+GENACNT200 PIC X(16) JavaType String
+GENACNT199-V gettermapping genacnt199V
+GENACNT199-V settermapping genacnt199V = val
+GENACNT199-V PIC 9(9) JavaType int
+GENACNT199 gettermapping genacnt199
+GENACNT199 settermapping genacnt199 = val
+GENACNT199 PIC X(32) JavaType String
+GENACNT100-V gettermapping genacnt100V
+GENACNT100-V settermapping genacnt100V = val
+GENACNT100-V PIC 9(9) JavaType int
+GENACNT100 gettermapping genacnt100
+GENACNT100 settermapping genacnt100 = val
+GENACNT100 PIC X(16) JavaType String
+CountVal gettermapping countVal
+CountVal settermapping countVal = val
+CountVal PIC S9(8) JavaType int
+CountUpd gettermapping countUpd
+CountUpd settermapping countUpd = val
+CountUpd PIC S9(8) JavaType int
+CountSuccess gettermapping countSuccess
+CountSuccess settermapping countSuccess = val
+CountSuccess PIC S9(9) JavaType int
+CountInq gettermapping countInq
+CountInq settermapping countInq = val
+CountInq PIC S9(8) JavaType int
+CountErrors gettermapping countErrors
+CountErrors settermapping countErrors = val
+CountErrors PIC S9(8) JavaType int
+CountDel gettermapping countDel
+CountDel settermapping countDel = val
+CountDel PIC S9(8) JavaType int
+CountAdd gettermapping countAdd
+CountAdd settermapping countAdd = val
+CountAdd PIC S9(8) JavaType int
+MAINLINE_Tran-Rate-Interval, mainlineTranRateInterval(tsQpre, wsTime)
+MAINLINE_Tran-Rate-Counts, mainlineTranRateCounts(nRateVal, wsTsQname)
+
+## Class Map:
+public void invokeMainline(){
+    int countAdd;
+    int countDel;
+    int countErrors;
+    int countInq;
+    int countSuccess;
+    int countUpd;
+    int countVal;
+    String genAcount = "GENACUSTNUM";
+    int genAerrorsV;
+    String genApool = "GENA";
+    int genAsuccesV;
+    int genaCountV;
+    String genacnt100 = "GENA01ICUS00";
+    int genacnt100V;
+    String genacnt199 = "GENA01ICUS99";
+    int genacnt199V;
+    String genacnt200 = "GENA01ACUS00";
+    int genacnt200V;
+    String genacnt299 = "GENA01ACUS99";
+    int genacnt299V;
+    String genacnt300 = "GENA01IMOT00";
+    int genacnt300V;
+    String genacnt399 = "GENA01IMOT99";
+    int genacnt399V;
+    String genacnt400 = "GENA01AMOT00";
+    int genacnt400V;
+    String genacnt499 = "GENA01AMOT99";
+    int genacnt499V;
+    String genacnt500 = "GENA01DMOT00";
+    int genacnt500V;
+    String genacnt599 = "GENA01DMOT99";
+    int genacnt599V;
+    String genacnt600 = "GENA01UMOT00";
+    int genacnt600V;
+    String genacnt699 = "GENA01UMOT99";
+    int genacnt699V;
+    String genacnt700 = "GENA01IEND00";
+    int genacnt700V;
+    String genacnt799 = "GENA01IEND99";
+    int genacnt799V;
+    String genacnt800 = "GENA01AEND00";
+    int genacnt800V;
+    String genacnt899 = "GENA01AEND99";
+    int genacnt899V;
+    String genacnt900 = "GENA01DEND00";
+    int genacnt900V;
+    String genacnt999 = "GENA01DEND99";
+    int genacnt999V;
+    String genacnta00 = "GENA01UEND00";
+    int genacnta00V;
+    String genacnta99 = "GENA01UEND99";
+    int genacnta99V;
+    String genacntb00 = "GENA01IHOU00";
+    int genacntb00V;
+    String genacntb99 = "GENA01IHOU99";
+    int genacntb99V;
+    String genacntc00 = "GENA01AHOU00";
+    int genacntc00V;
+    String genacntc99 = "GENA01AHOU99";
+    int genacntc99V;
+    String genacntd00 = "GENA01DHOU00";
+    int genacntd00V;
+    String genacntd99 = "GENA01DHOU99";
+    int genacntd99V;
+    String genacnte00 = "GENA01UHOU00";
+    int genacnte00V;
+    String genacnte99 = "GENA01UHOU99";
+    int genacnte99V;
+    String genacntf00 = "GENA01ICOM00";
+    int genacntf00V;
+    String genacntf99 = "GENA01ICOM99";
+    int genacntf99V;
+    String genacntg00 = "GENA01ACOM00";
+    int genacntg00V;
+    String genacntg99 = "GENA01ACOM99";
+    int genacntg99V;
+    String genacnth00 = "GENA01DCOM00";
+    int genacnth00V;
+    String genacnth99 = "GENA01DCOM99";
+    int genacnth99V;
+    String genacnti99 = "GENAOTHER   ";
+    int genacnti99V;
+    int nRateVal;
+    SymbList symbList = new SymbList();
+    String tsQpre = "";
+    int wsAbstime = 0;
+    String wsApplid = "";
+    String wsDate = "";
+    WsHeader wsHeader = new WsHeader();
+    int wsResp;
+    String wsTime = "";
+    String wsTsQname = "";
+}
+
+
+Output:

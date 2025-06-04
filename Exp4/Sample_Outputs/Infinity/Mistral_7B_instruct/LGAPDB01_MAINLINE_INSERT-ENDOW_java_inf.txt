@@ -1,0 +1,38 @@
+
+```java
+public void mainlineInsertEndow(CaEndowment caEndowment, int db2PolicynumInt, ErrorMsg errorMsg, int wsRequiredCaLen) {
+    Db2InIntegers db2InIntegers = new Db2InIntegers();
+    WsVaryField wsVaryField = new WsVaryField();
+
+    int wsVaryLen = wsRequiredCaLen;
+    byte[] wsVaryFieldBytes = new byte[wsVaryLen];
+
+    if (wsVaryLen > 0) {
+        System.arraycopy(caEndowment.getEndowment().getPaddingdata().getBytes(), 0, wsVaryFieldBytes, 0, wsVaryLen);
+    }
+
+    String sql = "INSERT INTO ENDOWMENT (POLICYNUMBER, WITHPROFITS, EQUITIES, MANAGEDFUND, FUNDNAME, TERM, SUMASSURED, LIFEASSURED, PADDINGDATA) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+    ps.setInt(1, db2PolicynumInt);
+    ps.setString(2, caEndowment.getEndowment().getWithprofits());
+    ps.setString(3, caEndowment.getEndowment().getEquities());
+    ps.setString(4, caEndowment.getEndowment().getManagedfund());
+    ps.setString(5, caEndowment.getEndowment().getFundname());
+    ps.setInt(6, caEndowment.getEndowment().getTerm());
+    ps.setInt(7, caEndowment.getEndowment().getSumassured());
+    ps.setString(8, caEndowment.getEndowment().getLifeassured());
+    if (wsVaryLen > 0) {
+        ps.setBytes(9, wsVaryFieldBytes);
+    } else {
+        ps.setString(9, "");
+    }
+    ps.executeUpdate();
+    ps.close();
+
+    if (ps.getUpdateCount() == 0) {
+        int caReturnCode = 90;
+        mainlineWriteErrorMessage(dfhcommarea, errorMsg);
+        throw new RuntimeException("Failed to insert endowment");
+    }
+}
+```

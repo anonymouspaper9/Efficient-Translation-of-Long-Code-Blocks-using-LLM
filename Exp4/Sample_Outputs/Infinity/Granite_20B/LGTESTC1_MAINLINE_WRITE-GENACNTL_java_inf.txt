@@ -1,0 +1,39 @@
+public void mainlineWriteGenacntl(CommArea commArea) {
+    int f24 = 24;
+    ReadMsg readMsg = new ReadMsg();
+    String stsqName = "GENACNTL";
+    String writeMsgE = "**** GENAPP CNTL";
+    String writeMsgH = "HIGH CUSTOMER=";
+    long writeMsgHigh;
+    String writeMsgL = "LOW CUSTOMER=";
+    long writeMsgLow;
+    char wsFlagTsqh = ' ';
+    int wsResp;
+    TSQ jdeclTsq = new TSQ();
+    ItemHolder jdeclBuffer = new ItemHolder();
+    jdeclTsq.setName(stsqName);
+    jdeclTsq.setSysId(Region.getSYSID());
+    wsFlagTsqh = 'Y';
+    int wsItemCount = 1;
+    jdeclTsq.readItem(wsItemCount, jdeclBuffer);
+    readMsg.setBytes(jdeclBuffer.getStringValue());
+    while (wsResp == 0) {
+        jdeclTsq.readNextItem(jdeclBuffer);
+        readMsg.setBytes(jdeclBuffer.getStringValue());
+        wsItemCount = wsItemCount + 1;
+        if (readMsg.getReadMsgMsg().substring(0, 13).equals("HIGH CUSTOMER")) {
+            writeMsgHigh = commArea.getCaCustomerNum();
+            wsFlagTsqh = ' ';
+            jdeclTsq.rewriteItem(wsItemCount, writeMsgH + writeMsgHigh);
+            wsResp = 99;
+        }
+    }
+    if (wsFlagTsqh == 'Y') {
+        jdeclTsq.writeItem(wsItemCount, writeMsgE);
+        writeMsgLow = commArea.getCaCustomerNum();
+        writeMsgHigh = commArea.getCaCustomerNum();
+        jdeclTsq.writeItem(wsItemCount, writeMsgL + writeMsgLow);
+        jdeclTsq.writeItem(wsItemCount, writeMsgH + writeMsgHigh);
+    }
+    jdeclTsq.delete();
+}

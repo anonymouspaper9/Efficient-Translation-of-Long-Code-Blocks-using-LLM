@@ -1,0 +1,151 @@
+
+```java
+public void invokeMainline(Dfhcommarea dfhcommarea) {
+    String wsCommarea = new String(dfhcommarea.getCommaData().getBytes());
+    String wsSysid = dfhcommarea.getSysid();
+    String wsStartcode = dfhcommarea.getStartcode();
+    int wsResp;
+    int wsRecvLen = dfhcommarea.getCommaData().getLength();
+    byte[] wsRecvBytes = dfhcommarea.getCommaData().getBytes();
+    WsRecv wsRecv = new WsRecv(wsRecvBytes);
+    String wsInvokeprog = new String(dfhcommarea.getInvokeprog());
+    char wsFlag = dfhcommarea.getFlag();
+
+    if (wsStartcode.substring(0, 1).equals("D") || !wsInvokeprog.equals("") ) {
+        wsFlag = 'C';
+        wsCommarea = COMMA_DATA_TEXT;
+        wsRecvLen = 11;
+        wsRecvLen -= 1;
+    } else {
+        wsRecv = dfhcommarea.getCommaData();
+        wsFlag = 'R';
+        wsCommarea = wsRecv.getCommaDataText();
+        wsRecvLen -= 6;
+    }
+
+    byte[] caAreaBytes = new byte[64];
+    CaArea caArea = new CaArea(caAreaBytes);
+
+    if (wsFlag == 'R') {
+        try {
+            JdbcConnection.connection.createStatement().executeUpdate("UPDATE KSDSPOLY SET CA_AREA = '" + wsCommarea + "' WHERE PART-KEY_TYPE = '" + wsCommarea.charAt(0) + "' AND PART-KEY_NUM = " + Long.parseLong(wsCommarea.substring(1, wsRecvLen + 1)));
+        } catch (SQLException e) {
+            System.out.println(e);
+            return;
+        }
+    }
+
+    caArea.setCaPolicyType(wsCommarea.charAt(0));
+    caArea.setCaArea(caAreaBytes);
+
+    if (!caArea.getCaPolicyType().equals(wsCommarea.charAt(0)) || wsResp != DFHRESP.NORMAL) {
+        WriteMsg writeMsg = new WriteMsg();
+        writeMsg.setWriteMsgText("Policy Bad=");
+        writeMsg.setWriteMsgCustNum(13);
+        writeMsg.setWriteMsgPolNum(13);
+        writeMsg.setWriteMsgKey(caArea.getBytes());
+        try {
+            JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO WRITE_MSG VALUES (" + writeMsg.getWriteMsgText() + ", " + writeMsg.getWriteMsgCustNum() + ", " + writeMsg.getWriteMsgPolNum() + ", " + writeMsg.getWriteMsgKey() + ")");
+        } catch (SQLException e) {
+            System.out.println(e);
+            return;
+        }
+    } else {
+        writeMsg.setWriteMsgKey(caArea.getBytes());
+    }
+
+    if (wsFlag == 'R') {
+        try {
+            JdbcConnection.connection.createStatement().executeUpdate("UPDATE KSDSPOLY SET CA_AREA = '" + writeMsg.getWriteMsgKey() + "' WHERE PART-KEY_TYPE = '" + writeMsg.getWriteMsgKey().charAt(0) + "' AND PART-KEY_NUM = " + Long.parseLong(writeMsg.getWriteMsgKey().substring(1, writeMsg.getWriteMsgKey().length())));
+        } catch (SQLException e) {
+            System.out.println(e);
+            return;
+        }
+    }
+
+    try {
+        JdbcConnection.connection.createStatement().executeUpdate("SEND TEXT '" + writeMsg.getWriteMsgText() + "' WAIT ERASE FREEKB FROM(" + writeMsg.getWriteMsgKey() + ") LENGTH(80)");
+    } catch (SQLException e) {
+        System.out.println(e);
+        return;
+    }
+}
+```
+
+
+```java
+public class WriteMsg {
+    private byte[] writeMsgKey;
+    private String writeMsgText;
+    private int writeMsgCustNum;
+    private int writeMsgPolNum;
+
+    // getters and setters
+}
+```
+
+The `CaArea` class should have the following structure:
+
+```java
+public class CaArea {
+    private byte[] caArea;
+    private char caPolicyType;
+
+    // getters and setters
+}
+```
+
+The `WsRecv` class should have the following structure:
+
+```java
+public class WsRecv {
+    private byte[] wsRecvData;
+    private String commaDataText;
+    private byte[] commaDataKey;
+
+    // getters and setters
+}
+```
+
+The `PartKey` class should have the following structure:
+
+```java
+public class PartKey {
+    private byte[] partKey;
+    private char partKeyType;
+    private long partKeyNum;
+
+    // getters and setters
+}
+```
+
+The `CommaData` class should have the following structure:
+
+```java
+public class CommaData {
+    private byte[] commaData;
+    private String commaDataText;
+    private byte[] commaDataKey;
+
+    // getters and setters
+}
+```
+
+The `WriteMsgKey` class should have the following structure:
+
+```java
+public class WriteMsgKey {
+    private byte[] writeMsgKey;
+
+    // getters and setters
+}
+```
+
+The `DFHRESP` class should have the following structure:
+
+```java
+public class DFHRESP {
+    public static final int NORMAL = 0;
+    // other constants as needed
+}
+```

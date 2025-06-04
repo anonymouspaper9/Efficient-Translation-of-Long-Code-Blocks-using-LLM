@@ -1,0 +1,327 @@
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+       INSERT-COMMERCIAL.                                               
+           MOVE CA-B-FirePeril       To DB2-B-FirePeril-Int             
+           MOVE CA-B-FirePremium     To DB2-B-FirePremium-Int           
+           MOVE CA-B-CrimePeril      To DB2-B-CrimePeril-Int            
+           MOVE CA-B-CrimePremium    To DB2-B-CrimePremium-Int          
+           MOVE CA-B-FloodPeril      To DB2-B-FloodPeril-Int            
+           MOVE CA-B-FloodPremium    To DB2-B-FloodPremium-Int          
+           MOVE CA-B-WeatherPeril    To DB2-B-WeatherPeril-Int          
+           MOVE CA-B-WeatherPremium  To DB2-B-WeatherPremium-Int        
+           MOVE CA-B-Status          To DB2-B-Status-Int                
+           MOVE ' INSERT COMMER' TO EM-SQLREQ                           
+           EXEC SQL                                                     
+             INSERT INTO COMMERCIAL                                     
+                       (                                                
+                         PolicyNumber,                                  
+                         RequestDate,                                   
+                         StartDate,                                     
+                         RenewalDate,                                   
+                         Address,                                       
+                         Zipcode,                                       
+                         LatitudeN,                                     
+                         LongitudeW,                                    
+                         Customer,                                      
+                         PropertyType,                                  
+                         FirePeril,                                     
+                         FirePremium,                                   
+                         CrimePeril,                                    
+                         CrimePremium,                                  
+                         FloodPeril,                                    
+                         FloodPremium,                                  
+                         WeatherPeril,                                  
+                         WeatherPremium,                                
+                         Status,                                        
+                         RejectionReason                                
+                                             )                          
+                VALUES (                                                
+                         :DB2-POLICYNUM-INT,                            
+                         :CA-LASTCHANGED,                               
+                         :CA-ISSUE-DATE,                                
+                         :CA-EXPIRY-DATE,                               
+                         :CA-B-Address,                                 
+                         :CA-B-Postcode,                                
+                         :CA-B-Latitude,                                
+                         :CA-B-Longitude,                               
+                         :CA-B-Customer,                                
+                         :CA-B-PropType,                                
+                         :DB2-B-FirePeril-Int,                          
+                         :DB2-B-FirePremium-Int,                        
+                         :DB2-B-CrimePeril-Int,                         
+                         :DB2-B-CrimePremium-Int,                       
+                         :DB2-B-FloodPeril-Int,                         
+                         :DB2-B-FloodPremium-Int,                       
+                         :DB2-B-WeatherPeril-Int,                       
+                         :DB2-B-WeatherPremium-Int,                     
+                         :DB2-B-Status-Int,                             
+                         :CA-B-RejectReason                             
+                                             )                          
+           END-EXEC                                                     
+           IF SQLCODE NOT EQUAL 0                                       
+             MOVE '90' TO CA-RETURN-CODE                                
+             PERFORM WRITE-ERROR-MESSAGE                                
+             EXEC CICS ABEND
+                  NODUMP
+                  ABCODE('LGSQ')
+             END-EXEC             
+             EXEC CICS RETURN
+             END-EXEC                                  
+           END-IF.                                                      
+           EXIT.                                                        
+
+## Variable Map:
+EM-SQLREQ gettermapping errorMsg.getEmVariable().getEmSqlreq()
+EM-SQLREQ settermapping errorMsg.getEmVariable().setEmSqlreq(val)
+EM-SQLREQ PIC X(16) JavaType String
+DB2-POLICYNUM-INT gettermapping db2PolicynumInt
+DB2-POLICYNUM-INT settermapping db2PolicynumInt = val
+DB2-POLICYNUM-INT PIC S9(9) JavaType int
+DB2-B-WeatherPremium-Int gettermapping db2InIntegers.getDb2BWeatherPremiumInt()
+DB2-B-WeatherPremium-Int settermapping db2InIntegers.setDb2BWeatherPremiumInt(val)
+DB2-B-WeatherPremium-Int PIC S9(9) JavaType int
+DB2-B-WeatherPeril-Int gettermapping db2InIntegers.getDb2BWeatherPerilInt()
+DB2-B-WeatherPeril-Int settermapping db2InIntegers.setDb2BWeatherPerilInt(val)
+DB2-B-WeatherPeril-Int PIC S9(4) JavaType int
+DB2-B-Status-Int gettermapping db2InIntegers.getDb2BStatusInt()
+DB2-B-Status-Int settermapping db2InIntegers.setDb2BStatusInt(val)
+DB2-B-Status-Int PIC S9(4) JavaType int
+DB2-B-FloodPremium-Int gettermapping db2InIntegers.getDb2BFloodPremiumInt()
+DB2-B-FloodPremium-Int settermapping db2InIntegers.setDb2BFloodPremiumInt(val)
+DB2-B-FloodPremium-Int PIC S9(9) JavaType int
+DB2-B-FloodPeril-Int gettermapping db2InIntegers.getDb2BFloodPerilInt()
+DB2-B-FloodPeril-Int settermapping db2InIntegers.setDb2BFloodPerilInt(val)
+DB2-B-FloodPeril-Int PIC S9(4) JavaType int
+DB2-B-FirePremium-Int gettermapping db2InIntegers.getDb2BFirePremiumInt()
+DB2-B-FirePremium-Int settermapping db2InIntegers.setDb2BFirePremiumInt(val)
+DB2-B-FirePremium-Int PIC S9(9) JavaType int
+DB2-B-FirePeril-Int gettermapping db2InIntegers.getDb2BFirePerilInt()
+DB2-B-FirePeril-Int settermapping db2InIntegers.setDb2BFirePerilInt(val)
+DB2-B-FirePeril-Int PIC S9(4) JavaType int
+DB2-B-CrimePremium-Int gettermapping db2InIntegers.getDb2BCrimePremiumInt()
+DB2-B-CrimePremium-Int settermapping db2InIntegers.setDb2BCrimePremiumInt(val)
+DB2-B-CrimePremium-Int PIC S9(9) JavaType int
+DB2-B-CrimePeril-Int gettermapping db2InIntegers.getDb2BCrimePerilInt()
+DB2-B-CrimePeril-Int settermapping db2InIntegers.setDb2BCrimePerilInt(val)
+DB2-B-CrimePeril-Int PIC S9(4) JavaType int
+CA-RETURN-CODE gettermapping caCommercial.getCaReturnCode()
+CA-RETURN-CODE settermapping caCommercial.setCaReturnCode(val)
+CA-RETURN-CODE PIC 9(2) JavaType int
+CA-LASTCHANGED gettermapping caCommercial.getPolicy().getLastchanged()
+CA-LASTCHANGED settermapping caCommercial.getPolicy().setLastchanged(val)
+CA-LASTCHANGED PIC X(26) JavaType Date
+CA-ISSUE-DATE gettermapping caCommercial.getPolicy().getIssuedate()
+CA-ISSUE-DATE settermapping caCommercial.getPolicy().setIssuedate(val)
+CA-ISSUE-DATE PIC X(10) JavaType Date
+CA-EXPIRY-DATE gettermapping caCommercial.getPolicy().getExpirydate()
+CA-EXPIRY-DATE settermapping caCommercial.getPolicy().setExpirydate(val)
+CA-EXPIRY-DATE PIC X(10) JavaType Date
+CA-B-WeatherPremium gettermapping caCommercial.getCommercial().getWeatherpremium()
+CA-B-WeatherPremium settermapping caCommercial.getCommercial().setWeatherpremium(val)
+CA-B-WeatherPremium PIC 9(8) JavaType int
+CA-B-WeatherPeril gettermapping caCommercial.getCommercial().getWeatherperil()
+CA-B-WeatherPeril settermapping caCommercial.getCommercial().setWeatherperil(val)
+CA-B-WeatherPeril PIC 9(4) JavaType int
+CA-B-Status gettermapping caCommercial.getCommercial().getStatus()
+CA-B-Status settermapping caCommercial.getCommercial().setStatus(val)
+CA-B-Status PIC 9(4) JavaType int
+CA-B-RejectReason gettermapping caCommercial.getCommercial().getRejectionreason()
+CA-B-RejectReason settermapping caCommercial.getCommercial().setRejectionreason(val)
+CA-B-RejectReason PIC X(255) JavaType String
+CA-B-PropType gettermapping caCommercial.getCommercial().getPropertytype()
+CA-B-PropType settermapping caCommercial.getCommercial().setPropertytype(val)
+CA-B-PropType PIC X(255) JavaType String
+CA-B-Postcode gettermapping caCommercial.getCommercial().getZipcode()
+CA-B-Postcode settermapping caCommercial.getCommercial().setZipcode(val)
+CA-B-Postcode PIC X(8) JavaType String
+CA-B-Longitude gettermapping caCommercial.getCommercial().getLongitudew()
+CA-B-Longitude settermapping caCommercial.getCommercial().setLongitudew(val)
+CA-B-Longitude PIC X(11) JavaType String
+CA-B-Latitude gettermapping caCommercial.getCommercial().getLatituden()
+CA-B-Latitude settermapping caCommercial.getCommercial().setLatituden(val)
+CA-B-Latitude PIC X(11) JavaType String
+CA-B-FloodPremium gettermapping caCommercial.getCommercial().getFloodpremium()
+CA-B-FloodPremium settermapping caCommercial.getCommercial().setFloodpremium(val)
+CA-B-FloodPremium PIC 9(8) JavaType int
+CA-B-FloodPeril gettermapping caCommercial.getCommercial().getFloodperil()
+CA-B-FloodPeril settermapping caCommercial.getCommercial().setFloodperil(val)
+CA-B-FloodPeril PIC 9(4) JavaType int
+CA-B-FirePremium gettermapping caCommercial.getCommercial().getFirepremium()
+CA-B-FirePremium settermapping caCommercial.getCommercial().setFirepremium(val)
+CA-B-FirePremium PIC 9(8) JavaType int
+CA-B-FirePeril gettermapping caCommercial.getCommercial().getFireperil()
+CA-B-FirePeril settermapping caCommercial.getCommercial().setFireperil(val)
+CA-B-FirePeril PIC 9(4) JavaType int
+CA-B-Customer gettermapping caCommercial.getCommercial().getCustomer()
+CA-B-Customer settermapping caCommercial.getCommercial().setCustomer(val)
+CA-B-Customer PIC X(255) JavaType String
+CA-B-CrimePremium gettermapping caCommercial.getCommercial().getCrimepremium()
+CA-B-CrimePremium settermapping caCommercial.getCommercial().setCrimepremium(val)
+CA-B-CrimePremium PIC 9(8) JavaType int
+CA-B-CrimePeril gettermapping caCommercial.getCommercial().getCrimeperil()
+CA-B-CrimePeril settermapping caCommercial.getCommercial().setCrimeperil(val)
+CA-B-CrimePeril PIC 9(4) JavaType int
+CA-B-Address gettermapping caCommercial.getCommercial().getAddress()
+CA-B-Address settermapping caCommercial.getCommercial().setAddress(val)
+CA-B-Address PIC X(255) JavaType String
+MAINLINE_WRITE-ERROR-MESSAGE, mainlineWriteErrorMessage(dfhcommarea, errorMsg)
+
+## Class Map:
+public void mainlineInsertCommercial(CaCommercial caCommercial, int db2PolicynumInt, ErrorMsg errorMsg){
+    Db2InIntegers db2InIntegers = new Db2InIntegers();
+}
+
+
+Output:

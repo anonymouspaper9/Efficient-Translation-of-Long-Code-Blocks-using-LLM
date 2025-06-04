@@ -1,0 +1,54 @@
+       GET-Commercial-DB2-INFO-3-Cur.                                   
+                                                                        
+           Set Address Of DFHCOMMAREA To ICOM-Pointer                   
+                                                                        
+           EXEC SQL                                                     
+             Fetch Cust_Cursor                                          
+             INTO                                                       
+                   :DB2-CUSTOMERNUM-INT,                                
+                   :DB2-POLICYNUM-INT,                                  
+                   :DB2-LASTCHANGED,                                    
+                   :DB2-ISSUEDATE,                                      
+                   :DB2-EXPIRYDATE,                                     
+                   :DB2-B-Address,                                      
+                   :DB2-B-Postcode,                                     
+                   :DB2-B-Latitude,                                     
+                   :DB2-B-Longitude,                                    
+                   :DB2-B-Customer,                                     
+                   :DB2-B-PropType,                                     
+                   :DB2-B-FirePeril-Int,                                
+                   :DB2-B-FirePremium-Int,                              
+                   :DB2-B-CrimePeril-Int,                               
+                   :DB2-B-CrimePremium-Int,                             
+                   :DB2-B-FloodPeril-Int,                               
+                   :DB2-B-FloodPremium-Int,                             
+                   :DB2-B-WeatherPeril-Int,                             
+                   :DB2-B-WeatherPremium-Int,                           
+                   :DB2-B-Status-Int,                                   
+                   :DB2-B-RejectReason                                  
+           END-EXEC                                                     
+                                                                        
+           If SQLCODE = 0                                               
+             MOVE DB2-B-FirePeril-Int      TO DB2-B-FirePeril           
+             MOVE DB2-B-FirePremium-Int    TO DB2-B-FirePremium         
+             MOVE DB2-B-CrimePeril-Int     TO DB2-B-CrimePeril          
+             MOVE DB2-B-CrimePremium-Int   TO DB2-B-CrimePremium        
+             MOVE DB2-B-FloodPeril-Int     TO DB2-B-FloodPeril          
+             MOVE DB2-B-FloodPremium-Int   TO DB2-B-FloodPremium        
+             MOVE DB2-B-WeatherPeril-Int   TO DB2-B-WeatherPeril        
+             MOVE DB2-B-WeatherPremium-Int TO DB2-B-WeatherPremium      
+             MOVE DB2-B-Status-Int         TO DB2-B-Status              
+             MOVE DB2-CustomerNum-Int      TO CA-CUSTOMER-NUM           
+             MOVE DB2-PolicyNum-Int        TO CA-POLICY-NUM             
+             MOVE DB2-POLICY-COMMON        TO CA-POLICY-COMMON          
+             MOVE DB2-COMMERCIAL     TO CA-COMMERCIAL(1:WS-COMM-LEN)    
+                                                                        
+             Add 1 To ICOM-Record-Count                                 
+             Set icom-pointer to address of CA-B-FILLER                 
+             If ICOM-Record-Count > 20                                  
+               Move 17 To SQLCODE                                       
+             End-If                                                     
+           End-If                                                       
+                                                                        
+                                                                        
+           EXIT.                                                        

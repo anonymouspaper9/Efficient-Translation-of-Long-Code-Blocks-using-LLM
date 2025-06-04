@@ -1,0 +1,407 @@
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+           DISPLAY "SNIPPET-1"
+           PERFORM UPD-NCS.
+           PERFORM WRITE-CUSTOMER-VSAM.
+           PERFORM GET-ME-OUT-OF-HERE.
+
+## Variable Map:
+
+
+
+## Class Map:
+public void premiereP010(Dfhcommarea dfhcommarea){
+}
+
+
+Output:
+=====================
+
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+           MOVE SORTCODE TO REQUIRED-SORT-CODE.
+           PERFORM POPULATE-TIME-DATE.
+           PERFORM CREDIT-CHECK.
+           IF WS-CREDIT-CHECK-ERROR = 'Y'
+              MOVE 0 TO COMM-CREDIT-SCORE
+              STRING WS-ORIG-DATE-DD DELIMITED BY SIZE,
+                     WS-ORIG-DATE-MM DELIMITED BY SIZE,
+                     WS-ORIG-DATE-YYYY DELIMITED BY SIZE
+                     INTO COMM-CS-REVIEW-DATE
+              END-STRING
+              MOVE 'N' TO COMM-SUCCESS
+              MOVE 'G' TO COMM-FAIL-CODE
+              DISPLAY 'WS-CREDIT-CHECK-ERROR = Y, '
+                       ' RESP='
+                       WS-CICS-RESP ' RESP2=' WS-CICS-RESP2
+              DISPLAY '   Exiting CRECUST. COMMAREA='
+                       DFHCOMMAREA
+              PERFORM GET-ME-OUT-OF-HERE
+           END-IF.
+           PERFORM DATE-OF-BIRTH-CHECK.
+           IF WS-DATE-OF-BIRTH-ERROR = 'Y'
+              MOVE 'N' TO COMM-SUCCESS
+              PERFORM GET-ME-OUT-OF-HERE
+           END-IF.
+           PERFORM ENQ-NAMED-COUNTER.
+
+## Variable Map:
+WS-ORIG-DATE-YYYY gettermapping wsOrigDateGrp.getWsOrigDateYyyy()
+WS-ORIG-DATE-YYYY settermapping wsOrigDateGrp.setWsOrigDateYyyy(val)
+WS-ORIG-DATE-YYYY PIC 9999 JavaType int
+WS-ORIG-DATE-MM gettermapping wsOrigDateGrp.getWsOrigDateMm()
+WS-ORIG-DATE-MM settermapping wsOrigDateGrp.setWsOrigDateMm(val)
+WS-ORIG-DATE-MM PIC 99 JavaType int
+WS-ORIG-DATE-DD gettermapping wsOrigDateGrp.getWsOrigDateDd()
+WS-ORIG-DATE-DD settermapping wsOrigDateGrp.setWsOrigDateDd(val)
+WS-ORIG-DATE-DD PIC 99 JavaType int
+WS-DATE-OF-BIRTH-ERROR gettermapping this.getWsDateOfBirthError()
+WS-DATE-OF-BIRTH-ERROR settermapping this.setWsDateOfBirthError(val)
+WS-DATE-OF-BIRTH-ERROR PIC X JavaType char
+WS-CREDIT-CHECK-ERROR gettermapping this.getWsCreditCheckError()
+WS-CREDIT-CHECK-ERROR settermapping this.setWsCreditCheckError(val)
+WS-CREDIT-CHECK-ERROR PIC X JavaType char
+WS-CICS-RESP2 gettermapping this.getWsCicsResp2()
+WS-CICS-RESP2 settermapping this.setWsCicsResp2(val)
+WS-CICS-RESP2 PIC S9(8) JavaType int
+WS-CICS-RESP gettermapping this.getWsCicsResp()
+WS-CICS-RESP settermapping this.setWsCicsResp(val)
+WS-CICS-RESP PIC S9(8) JavaType int
+SORTCODE gettermapping sortcode
+SORTCODE settermapping sortcode = val
+SORTCODE PIC 9(6) JavaType int
+REQUIRED-SORT-CODE gettermapping requiredSortCode
+REQUIRED-SORT-CODE settermapping requiredSortCode = val
+REQUIRED-SORT-CODE PIC 9(6) JavaType int
+DFHCOMMAREA gettermapping dfhcommarea.getBytes()
+DFHCOMMAREA settermapping dfhcommarea.setBytes(val)
+DFHCOMMAREA GROUP JavaType Dfhcommarea
+COMM-SUCCESS gettermapping dfhcommarea.getCommSuccess()
+COMM-SUCCESS settermapping dfhcommarea.setCommSuccess(val)
+COMM-SUCCESS PIC X JavaType char
+COMM-FAIL-CODE gettermapping dfhcommarea.getCommFailCode()
+COMM-FAIL-CODE settermapping dfhcommarea.setCommFailCode(val)
+COMM-FAIL-CODE PIC X JavaType char
+COMM-CS-REVIEW-DATE gettermapping this.getCommCsReviewDate()
+COMM-CS-REVIEW-DATE settermapping this.setCommCsReviewDate(val)
+COMM-CS-REVIEW-DATE PIC 9(8) JavaType int
+COMM-CREDIT-SCORE gettermapping dfhcommarea.getCommCreditScore()
+COMM-CREDIT-SCORE settermapping dfhcommarea.setCommCreditScore(val)
+COMM-CREDIT-SCORE PIC 999 JavaType int
+
+
+## Class Map:
+public void premiereP010(Dfhcommarea dfhcommarea){
+    int sortcode = 987654;
+    WsOrigDateGrp wsOrigDateGrp = new WsOrigDateGrp();
+    int requiredSortCode = 0;
+}
+
+
+Output:
+=====================
+

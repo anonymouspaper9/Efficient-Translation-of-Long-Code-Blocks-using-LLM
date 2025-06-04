@@ -1,0 +1,304 @@
+       A010.
+           MOVE 'Starting BANKDATA'
+             to TIMESTAMP-FUNCTION
+           perform TIMESTAMP
+
+      *
+      * Initialise the arrays
+      *
+      D    DISPLAY 'About to initialise arrays'.
+           PERFORM INITIALISE-ARRAYS.
+
+
+      *
+      * Get the parameters
+      *
+           UNSTRING PARM(1:PARM-LENGTH)
+                    DELIMITED BY SPACE OR ','
+                    INTO START-KEY
+                         END-KEY
+                         STEP-KEY
+                         RANDOM-SEED.
+
+
+      D    DISPLAY 'INPUT PARMS ARE: START-KEY=' START-KEY
+      D             ' END-KEY=' END-KEY ' STEP-KEY=' STEP-KEY
+      D             ' RANDOM-SEED=' RANDOM-SEED '
+
+           IF END-KEY < START-KEY
+             MOVE 12 TO RETURN-CODE
+             DISPLAY 'Final customer number cannot be smaller than '
+               'first customer number'
+             GOBACK
+           END-IF
+           IF step-key = zero
+             MOVE 12 TO RETURN-CODE
+             DISPLAY 'Gap between customers cannot be zero'
+             GOBACK
+           END-IF
+
+      *
+      * Get today's date and store it as an INTEGER
+      *
+           PERFORM GET-TODAYS-DATE.
+
+      *
+      * Delete the DB2 TABLE contents that match the SortCode
+      *
+      D    DISPLAY 'About to delete DB2 rows'.
+
+           PERFORM DELETE-DB2-ROWS.
+      D    DISPLAY 'Back from delete DB2 rows'.
+      *
+      * Initialise the random seed
+      *
+      *    MOVE FUNCTION CURRENT-DATE TO RDATE.
+
+
+      D    DISPLAY 'RANDOM SEED IS ' RANDOM-SEED-NUMERIC
+           COMPUTE FORENAMES-PTR = FORENAMES-CNT *
+                                   FUNCTION RANDOM(RANDOM-SEED-NUMERIC).
+      D    DISPLAY 'FORENAMES-PTR IS ' FORENAMES-PTR.
+           COMPUTE INITIALS-PTR =  INITIALS-CNT *
+                                   FUNCTION RANDOM.
+      D    DISPLAY 'INITIALS-PTR IS ' INITIALS-PTR
+           COMPUTE SURNAMES-PTR  =  SURNAMES-CNT *
+                                   FUNCTION RANDOM.
+           COMPUTE TOWN-PTR  =  TOWN-COUNT *
+                                   FUNCTION RANDOM.
+           COMPUTE STREET-NAME-R-PTR =  STREET-NAME-R-CNT *
+                                   FUNCTION RANDOM.
+           COMPUTE STREET-NAME-T-PTR =  STREET-NAME-T-CNT *
+                                   FUNCTION RANDOM.
+           COMPUTE ACCOUNT-TYPES-PTR = ACCOUNT-TYPES-COUNT *
+                                   FUNCTION RANDOM.
+
+      *
+      * Open the files
+      *
+
+           OPEN OUTPUT CUSTOMER-FILE.
+           IF CUSTOMER-VSAM-STATUS NOT EQUAL '00' THEN
+               DISPLAY 'Error opening CUSTOMER file, status='
+                       CUSTOMER-VSAM-STATUS
+               MOVE 12 TO RETURN-CODE
+               PERFORM PROGRAM-DONE
+           END-IF.
+
+
+      *
+      * Populate the CUSTOMER file
+      *
+           MOVE 'Populating Customer + Account files'
+             to TIMESTAMP-FUNCTION
+           perform TIMESTAMP
+           MOVE ZERO TO COMMIT-COUNT
+           MOVE ZERO TO LAST-CUSTOMER-NUMBER NUMBER-OF-CUSTOMERS
+           MOVE ZERO TO LAST-ACCOUNT-NUMBER NUMBER-OF-ACCOUNTS
+           PERFORM TEST BEFORE
+                   VARYING NEXT-KEY FROM START-KEY BY STEP-KEY
+                     UNTIL NEXT-KEY > END-KEY
+
+               INITIALIZE CUSTOMER-RECORD IN CUSTOMER-RECORD-STRUCTURE
+
+               SET CUSTOMER-EYECATCHER-VALUE TO TRUE
+
+               MOVE NEXT-KEY TO CUSTOMER-NUMBER
+               MOVE NEXT-KEY TO LAST-CUSTOMER-NUMBER
+               ADD 1 TO NUMBER-OF-CUSTOMERS GIVING NUMBER-OF-CUSTOMERS
+
+      D        DISPLAY 'Generating data for customer ' customer-number
+
+               COMPUTE TITLE-NUMBER = ((36 - 1)
+                                        * FUNCTION RANDOM) + 1
+               COMPUTE FORENAMES-PTR = ((FORENAMES-CNT - 1)
+                                        * FUNCTION RANDOM) + 1
+               COMPUTE INITIALS-PTR  = ((INITIALS-CNT - 1)
+                                        * FUNCTION RANDOM) + 1
+               COMPUTE SURNAMES-PTR  = ((SURNAMES-CNT - 1)
+                                        * FUNCTION RANDOM) + 1
+               COMPUTE HOUSE-NUMBER  = (99
+                                        * FUNCTION RANDOM) + 1
+               COMPUTE STREET-NAME-T-PTR  = ((STREET-NAME-T-CNT - 1)
+                                        * FUNCTION RANDOM) + 1
+               COMPUTE STREET-NAME-R-PTR  = ((STREET-NAME-R-CNT - 1)
+                                        * FUNCTION RANDOM) + 1
+               COMPUTE TOWN-PTR           = ((TOWN-COUNT - 1)
+                                        * FUNCTION RANDOM) + 1
+
+               MOVE SPACES TO CUSTOMER-NAME
+
+               STRING TITLE-WORD(TITLE-NUMBER) DELIMITED BY SPACE
+               ' '  DELIMITED BY SIZE
+               FORENAME(FORENAMES-PTR) DELIMITED BY SPACE
+               ' '  DELIMITED BY SIZE
+               INITIAL-CHARACTER(INITIALS-PTR) DELIMITED BY SPACE
+               ' '  DELIMITED BY SIZE
+               SURNAME(SURNAMES-PTR) DELIMITED BY SIZE
+               INTO CUSTOMER-NAME
+
+               MOVE SPACES TO CUSTOMER-ADDRESS
+               STRING
+               HOUSE-NUMBER DELIMITED BY SIZE
+               ' ' DELIMITED BY SIZE
+               STREET-NAME-TREE(STREET-NAME-T-PTR)
+               DELIMITED BY SPACE
+               ' ' DELIMITED BY SIZE
+               STREET-NAME-ROAD(STREET-NAME-R-PTR)
+               DELIMITED BY SPACE
+               ', ' DELIMITED BY SIZE
+               TOWN(TOWN-PTR)
+               DELIMITED BY SPACE
+               INTO CUSTOMER-ADDRESS
+
+               COMPUTE CUSTOMER-BIRTH-DAY =  ((28 - 1)
+                                        * FUNCTION RANDOM) + 1
+               COMPUTE CUSTOMER-BIRTH-MONTH =  ((12 - 1)
+                                        * FUNCTION RANDOM) + 1
+               COMPUTE CUSTOMER-BIRTH-YEAR =  ((2000 - 1900)
+                                        * FUNCTION RANDOM) + 1900
+
+               MOVE SORTCODE TO
+                  CUSTOMER-SORTCODE
+
+
+               COMPUTE CUSTOMER-CREDIT-SCORE = ((999 - 1)
+                                        * FUNCTION RANDOM) + 1
+
+      *
+      *        Generate the random credit score review date. This
+      *        should be a date between 1 and 21 days from today
+      *
+
+               COMPUTE WS-REVIEW-DATE-ADD = ((21 - 1)
+                                        * FUNCTION RANDOM) + 1
+
+               COMPUTE WS-NEW-REVIEW-DATE-INT =
+                  WS-TODAY-INT + WS-REVIEW-DATE-ADD
+
+      *
+      *        Convert the integer date back to YYYYMMDD format
+      *        and store on the CUSTOMER record
+      *
+               COMPUTE WS-NEW-REVIEW-YYYYMMDD = FUNCTION
+                  DATE-OF-INTEGER (WS-NEW-REVIEW-DATE-INT)
+
+               MOVE WS-NEW-REVIEW-YYYYMMDD(1:4) TO
+                  CUSTOMER-CS-REVIEW-YEAR
+               MOVE WS-NEW-REVIEW-YYYYMMDD(5:2) TO
+                  CUSTOMER-CS-REVIEW-MONTH
+               MOVE WS-NEW-REVIEW-YYYYMMDD(7:2) TO
+                  CUSTOMER-CS-REVIEW-DAY
+
+               WRITE CUSTOMER-RECORD-STRUCTURE
+
+               IF CUSTOMER-VSAM-STATUS NOT EQUAL '00' THEN
+                   DISPLAY 'Error writing to VSAM file, status='
+                           CUSTOMER-VSAM-STATUS
+                   MOVE 12 TO RETURN-CODE
+                   PERFORM PROGRAM-DONE
+               END-IF
+      *
+      * Having written out to the CUSTOMER datastore we now need to
+      * use some of this information to populate related data on
+      * on the ACCOUNT datastore.
+      *
+
+               PERFORM DEFINE-ACC
+
+               ADD 1 TO COMMIT-COUNT GIVING COMMIT-COUNT
+               IF COMMIT-COUNT > 1000
+      D          DISPLAY 'Commit every 1,000 records or so'
+                 EXEC SQL
+                  COMMIT WORK
+                 END-EXEC
+                 MOVE ZERO TO COMMIT-COUNT
+               END-IF
+           END-PERFORM
+
+           MOVE '000000' TO CUSTOMER-CONTROL-SORTCODE
+           MOVE '9999999999' TO CUSTOMER-CONTROL-NUMBER
+           SET CUSTOMER-CONTROL-EYECATCHER-V TO TRUE
+      D    DISPLAY 'ABOUT TO WRITE CUSTOMER-CONTROL-RECORD'
+           MOVE CUSTOMER-CONTROL-RECORD
+             TO CUSTOMER-RECORD IN CUSTOMER-RECORD-STRUCTURE
+           WRITE CUSTOMER-RECORD-STRUCTURE
+           IF CUSTOMER-VSAM-STATUS NOT EQUAL '00' THEN
+                   DISPLAY 'Error writing CUSTOMER-CONTROL-RECORD file'
+                   ', status=' CUSTOMER-VSAM-STATUS
+                   MOVE 12 TO RETURN-CODE
+                   PERFORM PROGRAM-DONE
+           END-IF.
+      * We need to store 2 values in DB2
+      * <<sortcode>>-ACCOUNT-LAST
+      * <<sortcode>>-ACCOUNT-COUNT
+
+
+           MOVE SPACES TO HV-CONTROL-NAME
+           MOVE LAST-ACCOUNT-NUMBER TO HV-CONTROL-VALUE-NUM
+           MOVE SPACES TO HV-CONTROL-VALUE-STR
+           STRING SORTCODE DELIMITED BY SIZE
+           '-' DELIMITED BY SIZE
+           'ACCOUNT-LAST' DELIMITED BY SIZE
+           INTO HV-CONTROL-NAME
+           EXEC SQL
+              INSERT INTO CONTROL
+                      (CONTROL_NAME,
+                       CONTROL_VALUE_NUM,
+                       CONTROL_VALUE_STR
+                      )
+              VALUES (:HV-CONTROL-NAME,
+                      :HV-CONTROL-VALUE-NUM,
+                      :HV-CONTROL-VALUE-STR
+                     )
+           END-EXEC.
+
+           IF SQLCODE IS NOT EQUAL TO ZERO
+             MOVE SQLCODE TO WS-SQLCODE-DISPLAY
+             DISPLAY 'Error inserting last account control record '
+             ws-sqlcode-display
+             '.'
+             HV-CONTROL-NAME,
+             ','
+             HV-CONTROL-VALUE-NUM
+           END-IF
+
+           MOVE SPACES TO HV-CONTROL-NAME
+           MOVE NUMBER-OF-ACCOUNTS TO HV-CONTROL-VALUE-NUM
+           MOVE SPACES TO HV-CONTROL-VALUE-STR
+           STRING SORTCODE DELIMITED BY SIZE
+           '-' DELIMITED BY SIZE
+           'ACCOUNT-COUNT' DELIMITED BY SIZE
+           INTO HV-CONTROL-NAME
+           EXEC SQL
+              INSERT INTO CONTROL
+                      (CONTROL_NAME,
+                       CONTROL_VALUE_NUM,
+                       CONTROL_VALUE_STR
+                      )
+              VALUES (:HV-CONTROL-NAME,
+                      :HV-CONTROL-VALUE-NUM,
+                      :HV-CONTROL-VALUE-STR
+                     )
+           END-EXEC.
+
+           IF SQLCODE IS NOT EQUAL TO ZERO
+             MOVE SQLCODE TO WS-SQLCODE-DISPLAY
+             DISPLAY 'Error inserting account count control record '
+             ws-sqlcode-display
+             '.'
+             HV-CONTROL-NAME,
+             ','
+             HV-CONTROL-VALUE-NUM
+           END-IF
+
+
+
+      *
+      *** Close the files
+      *
+           CLOSE CUSTOMER-FILE.
+
+           MOVE 'Finishing BANKDATA'
+             to TIMESTAMP-FUNCTION
+           perform TIMESTAMP.

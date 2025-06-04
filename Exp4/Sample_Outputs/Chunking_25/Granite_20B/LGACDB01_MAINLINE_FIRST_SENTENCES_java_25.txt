@@ -1,0 +1,8 @@
+public void invokeMainline(Dfhcommarea dfhcommarea) {
+    Cdb2Area cdb2Area = new Cdb2Area();
+    String lgacvs01 = "LGACVS01";
+    int wsCaHeaderLen = 18;
+    int wsRequiredCaLen = 0;
+    int wsCustomerLen = 72;
+
+}

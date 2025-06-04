@@ -1,0 +1,49 @@
+public void invokeMainline(Dfhcommarea dfhcommarea) {
+    ErrorMsg errorMsg = new ErrorMsg();
+    int wsCaHeaderLen = 28;
+    Db2InIntegers db2InIntegers = new Db2InIntegers();
+
+    String lgdpvs01 = "LGDPVS01";
+
+    WsHeader wsHeader = new WsHeader();
+    wsHeader.setWsTransid(Task.getTask().getTransId());
+    wsHeader.setWsTermid(Task.getTask().getTERMId());
+    wsHeader.setWsTasknum(Task.getTask().getTaskNumber());
+    db2InIntegers.setBytes(new byte[db2InIntegers.getLen()]);
+    if (dfhcommarea.getLen() == 0) {
+        errorMsg.getEmVariable().setEmVariable(" NO COMMAREA RECEIVED");
+        this.writeErrorMessage(errorMsg);
+        Task.getTask().abend("LGCA");
+    }
+    dfhcommarea.setCaReturnCode(0);
+    wsHeader.setWsCalen(dfhcommarea.getLen());
+    wsHeader.setWsAddrDfhcommarea(dfhcommarea.getByteArray());
+
+    errorMsg = new ErrorMsg();
+    db2InIntegers = new Db2InIntegers();
+    if (dfhcommarea.getEibcalen() < wsCaHeaderLen) {
+        dfhcommarea.setCaReturnCode(98);
+        return;
+    }
+    db2InIntegers.setDb2CustomernumInt(dfhcommarea.getCaCustomerNum());
+    db2InIntegers.setDb2PolicynumInt(((CaPolicyRequest) (dfhcommarea)).getPolicy().getPolicynumber());
+    errorMsg.getEmVariable().setEmCusnum(String.valueOf(dfhcommarea.getCaCustomerNum()));
+    errorMsg.getEmVariable()
+            .setEmPolnum(String.valueOf(((CaPolicyRequest) (dfhcommarea)).getPolicy().getPolicynumber()));
+
+    if (dfhcommarea.getCaRequestId() != "01DEND" && dfhcommarea.getCaRequestId() != "01DHOU"
+            && dfhcommarea.getCaRequestId() != "01DCOM" && dfhcommarea.getCaRequestId() != "01DMOT") {
+        dfhcommarea.setCaReturnCode(99);
+    } else {
+        deletePolicyDb2Info();
+        byte[] jdeclCommareaByteArray = new byte[9000];
+        Program jdeclProgram = new Program();
+        Charset jdeclCharSet = Charset.forName(System.getProperty("com.ibm.cics.jvmserver.local.ccsid"));
+        byte[] jdeclInqBytes = dfhcommarea.getBytes();
+        System.arraycopy(jdeclInqBytes, 0, jdeclCommareaByteArray, 0, jdeclInqBytes.length);
+        jdeclProgram.setName(lgdpvs01);
+        jdeclProgram.link(jdeclCommareaByteArray);
+        dfhcommarea.setBytes(jdeclCommareaByteArray);
+    }
+
+}

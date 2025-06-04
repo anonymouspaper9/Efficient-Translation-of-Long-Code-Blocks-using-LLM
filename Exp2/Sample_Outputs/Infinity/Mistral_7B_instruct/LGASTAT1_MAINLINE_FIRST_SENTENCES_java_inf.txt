@@ -1,0 +1,109 @@
+
+```java
+public void invokeMainline(Dfhcommarea dfhcommarea) {
+    WsHeader wsHeader = new WsHeader();
+    WsQarea wsQarea = new WsQarea();
+    String wsChaNname1 = "DFHEP.DATA.00001";
+    String wsChaNname2 = "DFHEP.DATA.00002";
+    String wsDataRc = "";
+    String wsDataReq = "";
+    String wsDate = "";
+    String wsTime = "";
+    int wsResp;
+    String wsQname = "GENASTRT";
+
+    wsHeader.setWsTransid(dfhcommarea.getWsTransid());
+    wsHeader.setWsTermid(dfhcommarea.getWsTermid());
+    wsHeader.setWsTasknum(dfhcommarea.getWsTasknum());
+    wsHeader.setWsCalen(dfhcommarea.getWsCalen());
+
+    try {
+        // CICS GET for WS-Data-Req
+        CicsGetRequest cicsGetReq = new CicsGetRequest();
+        cicsGetReq.setContainerName(wsChaNname1);
+        cicsGetReq.setData(wsDataReq);
+        cicsGetReq.setResponse(wsResp);
+        CicsConnection cicsConnection = new CicsConnection();
+        cicsConnection.get(cicsGetReq);
+        wsDataReq = wsDataReq.trim();
+        wsHeader.setWsDataReq(wsDataReq);
+
+        // CICS GET for WS-Data-RC
+        CicsGetRequest cicsGetReq2 = new CicsGetRequest();
+        cicsGetReq2.setContainerName(wsChaNname2);
+        cicsGetReq2.setData(wsDataRc);
+        cicsGetReq2.setResponse(wsResp);
+        CicsConnection cicsConnection2 = new CicsConnection();
+        cicsConnection2.get(cicsGetReq2);
+        wsDataRc = wsDataRc.trim();
+        wsHeader.setWsDataRc(wsDataRc);
+
+        if (wsResp == DFHRESP.NORMAL) {
+            wsHeader.setWsDataReq(wsDataReq);
+            wsHeader.setWsDataRc(wsDataRc);
+        } else if (wsHeader.getWsCalen() == 0) {
+            CicsReturn cicsReturn = new CicsReturn();
+            cicsReturn.return();
+        } else {
+            String caRequestId = dfhcommarea.getCaRequestId();
+            String caReturnCode = dfhcommarea.getCaReturnCode();
+            // ... handle error
+        }
+
+        // CICS READQ
+        CicsReadQRequest cicsReadQRequest = new CicsReadQRequest();
+        cicsReadQRequest.setQueueName(wsQname);
+        cicsReadQRequest.setData(wsQarea);
+        cicsReadQRequest.setLength(wsQarea.getBytes().length);
+        cicsReadQRequest.setResponse(wsResp);
+        CicsConnection cicsConnection3 = new CicsConnection();
+        cicsConnection3.readQ(cicsReadQRequest);
+
+        if (wsResp == DFHRESP.QIDERR) {
+            CicsAskTime cicsAskTime = new CicsAskTime();
+            cicsAskTime.askTime(wsAbstime);
+            CicsFormatTime cicsFormatTime = new CicsFormatTime();
+            cicsFormatTime.formatTime(wsAbstime, wsDate, wsTime);
+            wsDate = wsDate.trim();
+            wsTime = wsTime.trim();
+
+            // CICS WRITEQ
+            CicsWriteQRequest cicsWriteQRequest = new CicsWriteQRequest();
+            cicsWriteQRequest.setQueueName(wsQname);
+            cicsWriteQRequest.setData(wsQarea);
+            cicsWriteQRequest.setLength(wsQarea.getBytes().length);
+            cicsWriteQRequest.setResponse(wsResp);
+            CicsConnection cicsConnection4 = new CicsConnection();
+            cicsConnection4.writeQ(cicsWriteQRequest);
+        }
+
+        if (wsHeader.getGenAcounter().equals("02ACUS")) {
+            wsHeader.setGenAcounter("01ACUS");
+        }
+
+        if (wsHeader.getGenAcounter().equals("02ICOM") ||
+            wsHeader.getGenAcounter().equals("03ICOM") ||
+            wsHeader.getGenAcounter().equals("05ICOM")) {
+            wsHeader.setGenAcounter("01ICOM");
+        }
+
+        if (!wsHeader.getGenAtype().equals("00")) {
+            wsHeader.setGenAtype("99");
+
+            CicsGetRequest cicsGetReq3 = new CicsGetRequest();
+            cicsGetReq3.setCounterName(wsHeader.getGenAcounter());
+            cicsGetReq3.setPoolName(genApool);
+            cicsGetReq3.setResponse(wsResp);
+            cicsGetReq3.setValue(trancount);
+            CicsConnection cicsConnection5 = new CicsConnection();
+            cicsConnection5.get(cicsGetReq3);
+            trancount = trancount;
+        }
+
+        CicsReturn cicsReturn2 = new CicsReturn();
+        cicsReturn2.return();
+    } catch (Exception e) {
+        // handle exception
+    }
+}
+```

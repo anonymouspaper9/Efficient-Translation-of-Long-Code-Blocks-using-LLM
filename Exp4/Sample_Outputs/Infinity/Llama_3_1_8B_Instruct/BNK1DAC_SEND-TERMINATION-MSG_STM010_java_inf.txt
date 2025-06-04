@@ -1,0 +1,31 @@
+public void sendTerminationMsgStm010(){
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    String endOfSessionMessage = "Session Ended";
+    String wsAbendPgm = "ABNDPROC";
+    WsFailInfo wsFailInfo = new WsFailInfo();
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+    try {
+        CICSConnection cicsConnection = CICSConnection.getConnection();
+        cicsConnection.sendText(endOfSessionMessage);
+    } catch (CICSException e) {
+        abndinfoRec.setAbndRespcode(e.getRespCode());
+        abndinfoRec.setAbndResp2Code(e.getResp2Code());
+        abndinfoRec.setAbndSqlcode(e.getSqlCode());
+        abndinfoRec.setAbndProgram(wsAbendPgm);
+        abndinfoRec.setAbndFreeform("STM010 - SEND TEXT FAIL.");
+        abndinfoRec.setAbndDate(getWsOrigDate());
+        String time = String.format("%02d:%02d:%02d", wsTimeNowGrp.getWsTimeNowGrpHh(), wsTimeNowGrp.getWsTimeNowGrpMm(), wsTimeNowGrp.getWsTimeNowGrpSs());
+        abndinfoRec.setAbndTime(time);
+        abndinfoRec.setAbndUtimeKey(getWsUTime());
+        abndinfoRec.setAbndTasknoKey(getTaskNo());
+        abndinfoRec.setAbndTranid(getTransactionId());
+        abndinfoRec.setAbndCode("HBNK");
+        abndinfoRec.setAbndApplid("ABND-APPLID");
+        abndinfoRec.setAbndSqlcode(0);
+        wsFailInfo.setWsCicsRespDisp(abndinfoRec.getAbndRespcode());
+        wsFailInfo.setWsCicsResp2Disp(abndinfoRec.getAbndResp2Code());
+        wsFailInfo.setWsCicsFailMsg("STM010 - SEND TEXT FAIL.");
+        abendThisTaskAtt010();
+    }
+} 
+

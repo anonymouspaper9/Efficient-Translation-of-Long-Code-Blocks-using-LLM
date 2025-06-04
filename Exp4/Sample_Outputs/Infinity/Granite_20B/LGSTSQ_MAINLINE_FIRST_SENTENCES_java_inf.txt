@@ -1,0 +1,68 @@
+public void invokeMainline(Dfhcommarea dfhcommarea) {
+    Filler1372 filler1372 = new Filler1372();
+    Filler1375 filler1375 = new Filler1375();
+    String stdqName = "CSMT";
+    Stsq stsq = new Stsq();
+    String tempo = "";
+    WriteMsg writeMsg = new WriteMsg();
+    char wsFlag = ' ';
+    String wsInvokeprog = "";
+    String wsPrinsysid = "";
+    WsRecv wsRecv = new WsRecv();
+    int wsRecvLen = 80;
+    int wsResp;
+    String wsStartcode = "";
+    writeMsg.setWriteMsgSysid(Region.getSYSID());
+    wsStartcode = Task.getTask().getSTARTCODE();
+    ConversationPrincipalFacility conversationPrincipalFacility;
+    Object o = Task.getTask().getPrincipalFacility();
+    if (o instanceof ConversationPrincipalFacility) {
+        conversationPrincipalFacility = (ConversationPrincipalFacility) o;
+        wsPrinsysid = conversationPrincipalFacility.getPrinSysId();
+    }
+    wsInvokeprog = Task.getTask().getInvokingProgramName();
+    if (wsInvokeprog.length() > 0) {
+        wsFlag = 'C';
+        writeMsg.setWriteMsgMsg(dfhcommarea.getCommaData());
+        wsRecvLen = dfhcommarea.getEIBcalen();
+    } else {
+        wsRecvLen = Task.getTask().getTask().getApplicationContext().getOperation();
+        byte[] jdeclCommareaByteArray = new byte[90];
+        Program jdeclProgram = new Program();
+        Charset jdeclCharSet = Charset.forName(System.getProperty("com.ibm.cics.jvmserver.local.ccsid"));
+        jdeclProgram.setName("DFH$RECEIVE");
+        jdeclProgram.setTransId("");
+        jdeclProgram.setSyncOnReturn(true);
+        jdeclProgram.setSysId("");
+        jdeclProgram.link(jdeclCommareaByteArray);
+        wsRecvLen = jdeclProgram.getReturnLength();
+        wsRecv.setBytes(jdeclCommareaByteArray);
+        writeMsg.setWriteMsgMsg(wsRecv.getWsRecvData());
+        wsRecvLen -= 5;
+    }
+    stsq.setStsqName("GENAERRS");
+    if (writeMsg.getWriteMsgMsg().substring(0, 2).equals("Q=")) {
+        stsq.setStsqExt(writeMsg.getWriteMsgMsg().substring(2, 6));
+        tempo = writeMsg.getWriteMsgMsg().substring(6);
+        writeMsg.setWriteMsgMsg(tempo);
+        wsRecvLen -= 7;
+    }
+    wsRecvLen += 5;
+    TDQ jdeclTdQueue = new TDQ();
+    jdeclTdQueue.setName(stdqName);
+    jdeclTdQueue.writeString(writeMsg.getBytes());
+    TSQ jdeclTsq = new TSQ();
+    ItemHolder jdeclBuffer = new ItemHolder();
+    jdeclTsq.setName(stsq.getStsqName());
+    jdeclTsq.setNoSuspend();
+    jdeclTsq.writeString(writeMsg.getBytes());
+    if (wsFlag == 'R') {
+        Object jdeclTask = Task.getTask();
+        HttpResponse jdeclResp = new HttpResponse();
+        jdeclResp.setNoServerConvert();
+        jdeclResp.setActionEventual();
+        jdeclResp.sendFrom(
+                new String(" ").getBytes(jdeclTask.getTask().getApplicationContext().getPlatformDefaultCharset()));
+    }
+    Task.getTask().forceAbend(null, true);
+}

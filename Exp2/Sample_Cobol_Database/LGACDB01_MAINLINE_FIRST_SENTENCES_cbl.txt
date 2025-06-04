@@ -1,0 +1,69 @@
+       MAINLINE SECTION.                                                
+                                                                        
+      *----------------------------------------------------------------*
+      * Common code                                                    *
+      *----------------------------------------------------------------*
+      * initialize working storage variables                            
+           INITIALIZE WS-HEADER.                                        
+      * set up general variable                                         
+           MOVE EIBTRNID TO WS-TRANSID.                                 
+           MOVE EIBTRMID TO WS-TERMID.                                  
+           MOVE EIBTASKN TO WS-TASKNUM.                                 
+      *----------------------------------------------------------------*
+                                                                        
+                                                                        
+      * initialize DB2 host variables                                   
+           INITIALIZE DB2-OUT-INTEGERS.                                 
+                                                                        
+      *----------------------------------------------------------------*
+      * Process incoming commarea                                      *
+      *----------------------------------------------------------------*
+      * If NO commarea received issue an ABEND                          
+           IF EIBCALEN IS EQUAL TO ZERO                                 
+               MOVE ' NO COMMAREA RECEIVED' TO EM-VARIABLE              
+               PERFORM WRITE-ERROR-MESSAGE                              
+               EXEC CICS ABEND ABCODE('LGCA') NODUMP END-EXEC           
+           END-IF                                                       
+                                                                        
+      * initialize commarea return code to zero                         
+           MOVE '00' TO CA-RETURN-CODE                                  
+           MOVE EIBCALEN TO WS-CALEN.                                   
+           SET WS-ADDR-DFHCOMMAREA TO ADDRESS OF DFHCOMMAREA.           
+                                                                        
+      * check commarea length                                           
+           ADD WS-CA-HEADER-LEN TO WS-REQUIRED-CA-LEN                   
+           ADD WS-CUSTOMER-LEN  TO WS-REQUIRED-CA-LEN                   
+                                                                        
+      * if less set error return code and return to caller              
+           IF EIBCALEN IS LESS THAN WS-REQUIRED-CA-LEN                  
+             MOVE '98' TO CA-RETURN-CODE                                
+             EXEC CICS RETURN END-EXEC                                  
+           END-IF                                                       
+                                                                        
+      * Call routine to Insert row in Customer table                   *
+           PERFORM Obtain-CUSTOMER-Number.                              
+           PERFORM INSERT-CUSTOMER.                                     
+                                                                        
+           EXEC CICS LINK Program(LGACVS01)                             
+                Commarea(DFHCOMMAREA)                                   
+                LENGTH(225)                                             
+           END-EXEC.                                                    
+                                                                        
+           MOVE DB2-CUSTOMERNUM-INT TO D2-CUSTOMER-NUM.                 
+           Move '02ACUS'     To  D2-REQUEST-ID.                         
+           move '5732fec825535eeafb8fac50fee3a8aa'                      
+                             To  D2-CUSTSECR-PASS.                      
+           Move '0000'       To  D2-CUSTSECR-COUNT.                     
+           Move 'N'          To  D2-CUSTSECR-STATE.                     
+                                                                        
+           EXEC CICS LINK Program(LGACDB02)                             
+                Commarea(CDB2AREA)                                      
+                LENGTH(32500)                                           
+           END-EXEC.                                                    
+                                                                        
+           IF CA-RETURN-CODE NOT EQUAL 0                                
+             EXEC CICS RETURN END-EXEC                                  
+           END-IF                                                       
+                                                                        
+      *    Return to caller                                             
+           EXEC CICS RETURN END-EXEC.                                   

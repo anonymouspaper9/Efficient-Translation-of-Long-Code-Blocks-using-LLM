@@ -1,0 +1,38 @@
+
+```java
+public void invokeMainline(Dfhcommarea dfhcommarea) {
+    int db2CustomernumberInt;
+    ErrorMsg errorMsg = new ErrorMsg();
+    int wsCaHeadertrailerLen = 18;
+    int wsCustomerLen = 72;
+    WsHeader wsHeader = new WsHeader();
+    int wsRequiredCaLen = 0;
+
+    if (dfhcommarea.getCaCalen() == 0) {
+        byte[] errorMessage = "NO COMMAREA RECEIVED".getBytes();
+        errorMsg.setEmVariable(errorMessage);
+        mainlineWriteErrorMessage(dfhcommarea, errorMsg);
+        CICS.abend("LGCA", "NODUMP");
+        return;
+    }
+
+    wsHeader.setWsTransid(dfhcommarea.getCaTrnsid());
+    wsHeader.setWsTermid(dfhcommarea.getCaTrmsid());
+    wsHeader.setWsTasknum(dfhcommarea.getCaTasknum());
+
+    wsRequiredCaLen = wsCustomerLen + wsCaHeadertrailerLen;
+    if (dfhcommarea.getCaCalen() < wsRequiredCaLen) {
+        dfhcommarea.setCaReturnCode(98);
+        CICS.returnStatement();
+        return;
+    }
+
+    db2CustomernumberInt = dfhcommarea.getCaCustomerNum();
+    wsHeader.setBytes(dfhcommarea.getWsAddrDfhcommarea());
+    wsHeader.setWsCalen(dfhcommarea.getCaCalen());
+    wsHeader.setWsCustomerLen(wsCustomerLen);
+    wsHeader.setWsCaHeadertrailerLen(wsCaHeadertrailerLen);
+
+    mainlineGetCustomerInfo(caCustomerRequest, db2CustomernumberInt, errorMsg);
+}
+```

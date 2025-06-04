@@ -1,0 +1,75 @@
+public void invokeMainline(Dfhcommarea dfhcommarea) {
+    CaArea caArea = new CaArea();
+    WriteMsg writeMsg = new WriteMsg();
+    int f64 = 64;
+    int f11 = 11;
+    PartKey partKey = new PartKey();
+
+    char wsFlag = ' ';
+
+    WsRecv wsRecv = new WsRecv();
+    String wsStartcode = "";
+    String wsSysid = "";
+    String wsInvokeprog = "";
+    wsSysid = Region.getSYSID();
+    wsStartcode = Task.getTask().getSTARTCODE();
+    wsInvokeprog = Task.getTask().getInvokingProgramName();
+
+    int wsRecvLen = 80;
+    wsStartcode = "";
+    wsInvokeprog = "";
+    String wsCommarea = "";
+    wsStartcode = Task.getTask().getSTARTCODE();
+    if (wsStartcode.charAt(0) == 'D' || wsInvokeprog != "") {
+        wsFlag = 'C';
+        wsCommarea = dfhcommarea.getCommaData().toString();
+        wsRecvLen = dfhcommarea.getLen();
+        wsRecvLen = 11;
+        wsRecvLen = wsRecvLen - 1;
+    } else {
+        wsRecvLen = Task.getTask().getRECEIVE(wsRecv.getBytes(), wsRecvLen);
+        wsFlag = 'R';
+        wsCommarea = wsRecv.getWsRecvData();
+        wsRecvLen = wsRecvLen - 6;
+    }
+    caArea.setBytes(new byte[0]);
+    partKey.setPartKeyType(wsCommarea.charAt(0));
+    partKey.setPartKeyNum(Long.parseLong(wsCommarea.substring(1, wsRecvLen + 1)));
+
+    caArea = new CaArea();
+    writeMsg = new WriteMsg();
+    partKey = new PartKey();
+    try {
+        KeyedFile jdeclKeyedFile = new KeyedFile();
+        jdeclKeyedFile.setName("KSDSPOLY");
+        KeyedFileBrowse jdeclKeyFileBrowse = jdeclKeyedFile.startBrowse(partKey.getBytes(), SearchType.GTEQ);
+        caArea = new CaArea();
+        KeyHolder jdeclKeyHolder = new KeyHolder();
+        RecordHolder jdeclRecordHolder = new RecordHolder();
+        jdeclKeyFileBrowse.next(jdeclRecordHolder, jdeclKeyHolder);
+        caArea.setBytes(jdeclRecordHolder.getValue());
+        partKey.setBytes(jdeclKeyHolder.getValue());
+        if (caArea.getCaPolicyType() != partKey.getPartKeyType() || wsResp != 0) {
+            writeMsg.getWriteMsgKey().setWriteMsgCustNum(13);
+            writeMsg.getWriteMsgKey().setWriteMsgPolNum(13);
+            writeMsg.setWriteMsgText("Policy Bad=");
+        } else {
+            writeMsg.getWriteMsgKey().setBytes(caArea.getBytes());
+        }
+    } catch (Exception e) {
+        throw e;
+    }
+
+    if (wsFlag == 'R') {
+        TerminalPrincipalFacility jdeclTerm;
+        Object jdeclO = Task.getTask().getPrincipalFacility();
+        if (jdeclO instanceof TerminalPrincipalFacility) {
+            jdeclTerm = (TerminalPrincipalFacility) jdeclO;
+            jdeclTerm.sendText(writeMsg.getWriteMsgText());
+        }
+    } else {
+        dfhcommarea.getCommaData().setCommaDataText(writeMsg.getWriteMsgText());
+        dfhcommarea.getCommaData().setCommaDataKey(writeMsg.getWriteMsgKey().getBytes());
+    }
+
+}

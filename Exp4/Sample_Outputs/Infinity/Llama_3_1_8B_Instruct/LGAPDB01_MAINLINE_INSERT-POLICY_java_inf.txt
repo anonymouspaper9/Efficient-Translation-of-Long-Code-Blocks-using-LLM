@@ -1,0 +1,47 @@
+public void mainlineInsertPolicy(CaPolicyRequest caPolicyRequest, Db2InIntegers db2InIntegers, int db2PolicynumInt, ErrorMsg errorMsg, Policy policy){
+    /* This is prompt example 3 */
+    caPolicyRequest.getPolicy().setBrokerid(db2InIntegers.getDb2BrokeridInt());
+    caPolicyRequest.getPolicy().setPayment(db2InIntegers.getDb2PaymentInt());
+    caPolicyRequest.getPolicy().setIssuedate(caPolicyRequest.getPolicy().getIssuedate());
+    caPolicyRequest.getPolicy().setExpirydate(caPolicyRequest.getPolicy().getExpirydate());
+    caPolicyRequest.getPolicy().setBrokersreference(caPolicyRequest.getPolicy().getBrokersreference());
+    caPolicyRequest.getPolicy().setPolicytype(policy.getPolicytype());
+    try {
+        String sql = "INSERT INTO POLICY(POLICYNUMBER, CUSTOMERNUMBER, ISSUEDATE, EXPIRYDATE, POLICYTYPE, LASTCHANGED, BROKERID, BROKERSREFERENCE, PAYMENT)values(DEFAULT, ?, ?, ?, ?, CURRENT TIMESTAMP, ?, ?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, db2InIntegers.getDb2CustomernumInt());
+        ps.setString(2, caPolicyRequest.getPolicy().getIssuedate());
+        ps.setString(3, caPolicyRequest.getPolicy().getExpirydate());
+        ps.setString(4, policy.getPolicytype());
+        ps.setInt(5, caPolicyRequest.getPolicy().getLastchanged());
+        ps.setInt(6, db2InIntegers.getDb2BrokeridInt());
+        ps.setString(7, caPolicyRequest.getPolicy().getBrokersreference());
+        ps.setInt(8, db2InIntegers.getDb2PaymentInt());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        if (exception.getErrorCode() == -530) {
+            caPolicyRequest.setCaReturnCode(70);
+            mainlineWriteErrorMessage(dfhcommarea, errorMsg);
+            return;
+        }
+        else {
+            caPolicyRequest.setCaReturnCode(90);
+            mainlineWriteErrorMessage(dfhcommarea, errorMsg);
+            return;
+        }
+    }
+    try {
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT LASTCHANGED FROM POLICY WHERE POLICYNUMBER = " + db2PolicynumInt);
+        rs.next();
+        caPolicyRequest.getPolicy().setLastchanged(rs.getString(1));
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    caPolicyRequest.getPolicy().setPolicynumber(db2PolicynumInt);
+    errorMsg.getEmVariable().setEmPolnum(caPolicyRequest.getPolicy().getPolicynumber());
+    errorMsg.getEmVariable().setEmSqlreq("INSERT POLICY");
+} 

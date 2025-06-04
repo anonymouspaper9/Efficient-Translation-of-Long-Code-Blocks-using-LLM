@@ -1,0 +1,2183 @@
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+           DISPLAY "SNIPPET-1"
+           PERFORM UNTIL WS-FINISHED-FETCHING = 'Y'
+              MOVE SPACES TO WS-ANY-CHILD-FETCH-ABCODE
+              EXEC CICS FETCH
+                   NOSUSPEND
+                   ABCODE(WS-ANY-CHILD-FETCH-ABCODE)
+                   ANY(WS-ANY-CHILD-FETCH-TKN)
+                   CHANNEL(WS-ANY-CHILD-FETCH-CHAN)
+                   COMPSTATUS(WS-CHILD-FETCH-COMPST)
+                   RESP(WS-CICS-RESP)
+                   RESP2(WS-CICS-RESP2)
+              END-EXEC
+              IF WS-CICS-RESP NOT = DFHRESP(NORMAL)
+                 DISPLAY "SNIPPET-3"
+              ELSE
+                 DISPLAY "SNIPPET-6"
+              END-IF
+           END-PERFORM.
+
+## Variable Map:
+WS-FINISHED-FETCHING gettermapping wsFinishedFetching
+WS-FINISHED-FETCHING settermapping wsFinishedFetching = val
+WS-FINISHED-FETCHING PIC X JavaType char
+WS-CICS-RESP gettermapping this.getWsCicsResp()
+WS-CICS-RESP settermapping this.setWsCicsResp(val)
+WS-CICS-RESP PIC S9(8) JavaType int
+WS-ANY-CHILD-FETCH-ABCODE gettermapping wsAnyChildFetchAbcode
+WS-ANY-CHILD-FETCH-ABCODE settermapping wsAnyChildFetchAbcode = val
+WS-ANY-CHILD-FETCH-ABCODE PIC X(4) JavaType String
+
+
+## Class Map:
+public void creditCheckCc010(Dfhcommarea dfhcommarea){
+    String wsAnyChildFetchAbcode = "";
+    char wsFinishedFetching = 'N';
+}
+
+
+Output:
+=====================
+
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+           MOVE 'CIPCREDCHANN    ' TO WS-CHANNEL-NAME.
+           MOVE 0 TO WS-CHILD-ISSUED-CNT.
+           COMPUTE WS-PUT-CONT-LEN = LENGTH OF DFHCOMMAREA.
+           PERFORM VARYING WS-CC-CNT FROM 1 BY 1
+           UNTIL WS-CC-CNT > 5
+              DISPLAY "SNIPPET-2"
+              ADD 1 TO WS-CHILD-ISSUED-CNT
+              MOVE WS-CHANNEL-NAME TO
+                 WS-CHILD-CHAN (WS-CHILD-ISSUED-CNT)
+              MOVE WS-ANY-CHILD-TKN TO
+                 WS-CHILD-TKN (WS-CHILD-ISSUED-CNT)
+      D       DISPLAY 'WS-CHILD-ARRAY=' WS-CHILD-ARRAY
+           END-PERFORM.
+           EXEC CICS DELAY
+                FOR
+                SECONDS(3)
+           END-EXEC.
+           MOVE 'N' TO WS-FINISHED-FETCHING.
+           MOVE 0 TO WS-RETRIEVED-CNT.
+           MOVE 0 TO WS-TOTAL-CS-SCR.
+
+## Variable Map:
+WS-TOTAL-CS-SCR gettermapping wsTotalCsScr
+WS-TOTAL-CS-SCR settermapping wsTotalCsScr = val
+WS-TOTAL-CS-SCR PIC 9(6) JavaType int
+WS-RETRIEVED-CNT gettermapping wsRetrievedCnt
+WS-RETRIEVED-CNT settermapping wsRetrievedCnt = val
+WS-RETRIEVED-CNT PIC 9 JavaType int
+WS-PUT-CONT-LEN gettermapping wsPutContLen
+WS-PUT-CONT-LEN settermapping wsPutContLen = val
+WS-PUT-CONT-LEN PIC S9(8) JavaType int
+WS-FINISHED-FETCHING gettermapping wsFinishedFetching
+WS-FINISHED-FETCHING settermapping wsFinishedFetching = val
+WS-FINISHED-FETCHING PIC X JavaType char
+WS-CHILD-TKN(i) gettermapping wsChildDetails.get(i-1).getWsChildTkn()
+WS-CHILD-TKN(i) settermapping wsChildDetails.get(i-1).setWsChildTkn(val)
+WS-CHILD-TKN(i) PIC X(16) JavaType String
+WS-CHILD-ISSUED-CNT gettermapping wsChildIssuedCnt
+WS-CHILD-ISSUED-CNT settermapping wsChildIssuedCnt = val
+WS-CHILD-ISSUED-CNT PIC 9 JavaType int
+WS-CHILD-CHAN(i) gettermapping wsChildDetails.get(i-1).getWsChildChan()
+WS-CHILD-CHAN(i) settermapping wsChildDetails.get(i-1).setWsChildChan(val)
+WS-CHILD-CHAN(i) PIC X(16) JavaType String
+WS-CHANNEL-NAME gettermapping wsChannelName
+WS-CHANNEL-NAME settermapping wsChannelName = val
+WS-CHANNEL-NAME PIC X(16) JavaType String
+WS-CC-CNT gettermapping wsCcCnt
+WS-CC-CNT settermapping wsCcCnt = val
+WS-CC-CNT PIC 9 JavaType int
+WS-ANY-CHILD-TKN gettermapping wsAnyChildTkn
+WS-ANY-CHILD-TKN settermapping wsAnyChildTkn = val
+WS-ANY-CHILD-TKN PIC X(16) JavaType String
+DFHCOMMAREA gettermapping dfhcommarea.getBytes()
+DFHCOMMAREA settermapping dfhcommarea.setBytes(val)
+DFHCOMMAREA GROUP JavaType Dfhcommarea
+
+
+## Class Map:
+public void creditCheckCc010(Dfhcommarea dfhcommarea){
+    int wsChildIssuedCnt = 0;
+    ArrayList<WsChildDetails> wsChildDetails = Stream.generate(() -> new WsChildDetails()).limit(9).collect(Collectors.toCollection(ArrayList::new));
+    int wsCcCnt = 0;
+    int wsPutContLen = 0;
+    char wsFinishedFetching = 'N';
+    int wsRetrievedCnt = 0;
+    String wsChannelName = "";
+    int wsTotalCsScr = 0;
+    String wsAnyChildTkn = "";
+}
+
+
+Output:
+=====================
+
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+              STRING 'OCR' DELIMITED BY SIZE,
+                      WS-CC-CNT DELIMITED BY SIZE
+                 INTO WS-RUN-TRANSID
+              END-STRING
+              EVALUATE WS-CC-CNT
+                 WHEN 1
+                    MOVE 'CIPA            ' TO WS-PUT-CONT-NAME
+                 WHEN 2
+                    MOVE 'CIPB            ' TO WS-PUT-CONT-NAME
+                 WHEN 3
+                    MOVE 'CIPC            ' TO WS-PUT-CONT-NAME
+                 WHEN 4
+                    MOVE 'CIPD            ' TO WS-PUT-CONT-NAME
+                 WHEN 5
+                    MOVE 'CIPE            ' TO WS-PUT-CONT-NAME
+                 WHEN 6
+                    MOVE 'CIPF            ' TO WS-PUT-CONT-NAME
+                 WHEN 7
+                    MOVE 'CIPG            ' TO WS-PUT-CONT-NAME
+                 WHEN 8
+                    MOVE 'CIPH            ' TO WS-PUT-CONT-NAME
+                 WHEN 9
+                    MOVE 'CIPI            ' TO WS-PUT-CONT-NAME
+              END-EVALUATE
+              EXEC CICS PUT
+                   CHANNEL(WS-CHANNEL-NAME)
+                   CONTAINER(WS-PUT-CONT-NAME)
+                   FLENGTH(WS-PUT-CONT-LEN)
+                   FROM(DFHCOMMAREA)
+                   RESP(WS-CICS-RESP)
+                   RESP2(WS-CICS-RESP2)
+              END-EXEC
+              IF WS-CICS-RESP NOT = DFHRESP(NORMAL)
+                 MOVE 'N' TO COMM-SUCCESS
+                 MOVE 'A' TO COMM-FAIL-CODE
+                 DISPLAY 'Unsuccessful attempt to PUT CONTAINER. '
+                         'CONTAINER=' WS-PUT-CONT-NAME 'CHANNEL='
+                         WS-CHANNEL-NAME '. FLENGTH ='
+                         WS-PUT-CONT-LEN '.'
+                 DISPLAY '    RESP=' WS-CICS-RESP ' RESP2='
+                         WS-CICS-RESP2
+                 PERFORM GET-ME-OUT-OF-HERE
+              END-IF
+              EXEC CICS RUN
+                   CHANNEL(WS-CHANNEL-NAME)
+                   CHILD(WS-ANY-CHILD-TKN)
+                   RESP(WS-CICS-RESP)
+                   RESP2(WS-CICS-RESP2)
+                   TRANSID(WS-RUN-TRANSID)
+              END-EXEC
+              IF WS-CICS-RESP NOT = DFHRESP(NORMAL)
+                 MOVE 'N' TO COMM-SUCCESS
+                 MOVE 'B' TO COMM-FAIL-CODE
+                 DISPLAY 'Unsuccessful attempt to RUN TRANSID. '
+                         'TRANSID=' WS-RUN-TRANSID 'CHANNEL='
+                         WS-CHANNEL-NAME '. TOKEN='
+                         WS-ANY-CHILD-TKN
+                 DISPLAY '    RESP=' WS-CICS-RESP ' RESP2='
+                         WS-CICS-RESP2
+                 PERFORM GET-ME-OUT-OF-HERE
+              END-IF
+
+## Variable Map:
+WS-RUN-TRANSID gettermapping wsRunTransid
+WS-RUN-TRANSID settermapping wsRunTransid = val
+WS-RUN-TRANSID PIC X(4) JavaType String
+WS-PUT-CONT-NAME gettermapping wsPutContName
+WS-PUT-CONT-NAME settermapping wsPutContName = val
+WS-PUT-CONT-NAME PIC X(16) JavaType String
+WS-PUT-CONT-LEN gettermapping wsPutContLen
+WS-PUT-CONT-LEN settermapping wsPutContLen = val
+WS-PUT-CONT-LEN PIC S9(8) JavaType int
+WS-CICS-RESP2 gettermapping this.getWsCicsResp2()
+WS-CICS-RESP2 settermapping this.setWsCicsResp2(val)
+WS-CICS-RESP2 PIC S9(8) JavaType int
+WS-CICS-RESP gettermapping this.getWsCicsResp()
+WS-CICS-RESP settermapping this.setWsCicsResp(val)
+WS-CICS-RESP PIC S9(8) JavaType int
+WS-CHANNEL-NAME gettermapping wsChannelName
+WS-CHANNEL-NAME settermapping wsChannelName = val
+WS-CHANNEL-NAME PIC X(16) JavaType String
+WS-CC-CNT gettermapping wsCcCnt
+WS-CC-CNT settermapping wsCcCnt = val
+WS-CC-CNT PIC 9 JavaType int
+WS-ANY-CHILD-TKN gettermapping wsAnyChildTkn
+WS-ANY-CHILD-TKN settermapping wsAnyChildTkn = val
+WS-ANY-CHILD-TKN PIC X(16) JavaType String
+DFHCOMMAREA gettermapping dfhcommarea.getBytes()
+DFHCOMMAREA settermapping dfhcommarea.setBytes(val)
+DFHCOMMAREA GROUP JavaType Dfhcommarea
+COMM-SUCCESS gettermapping dfhcommarea.getCommSuccess()
+COMM-SUCCESS settermapping dfhcommarea.setCommSuccess(val)
+COMM-SUCCESS PIC X JavaType char
+COMM-FAIL-CODE gettermapping dfhcommarea.getCommFailCode()
+COMM-FAIL-CODE settermapping dfhcommarea.setCommFailCode(val)
+COMM-FAIL-CODE PIC X JavaType char
+
+
+## Class Map:
+public void creditCheckCc010(Dfhcommarea dfhcommarea){
+    int wsCcCnt = 0;
+    String wsPutContName = "";
+    int wsPutContLen = 0;
+    String wsChannelName = "";
+    String wsRunTransid = "";
+    String wsAnyChildTkn = "";
+}
+
+
+Output:
+=====================
+
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+                 DISPLAY "SNIPPET-4"
+                 IF WS-CICS-RESP = DFHRESP(NOTFND) AND
+                 WS-CICS-RESP2 = 1
+                    IF WS-RETRIEVED-CNT = 0
+                       MOVE 'Y' TO WS-FINISHED-FETCHING
+                       MOVE 0 TO COMM-CREDIT-SCORE
+                       STRING WS-ORIG-DATE-DD DELIMITED BY SIZE,
+                              WS-ORIG-DATE-MM DELIMITED BY SIZE,
+                              WS-ORIG-DATE-YYYY DELIMITED BY SIZE
+                              INTO COMM-CS-REVIEW-DATE
+                       END-STRING
+                       MOVE 'Y' TO WS-CREDIT-CHECK-ERROR
+                    ELSE
+                       MOVE 'Y' TO WS-FINISHED-FETCHING
+                       MOVE 'N' TO WS-CREDIT-CHECK-ERROR
+                       COMPUTE WS-ACTUAL-CS-SCR = WS-TOTAL-CS-SCR /
+                          WS-RETRIEVED-CNT
+                       MOVE WS-ACTUAL-CS-SCR TO COMM-CREDIT-SCORE
+                       MOVE FUNCTION CURRENT-DATE
+                          TO WS-CURRENT-DATE-DATA
+                       MOVE WS-CURRENT-DATE-DATA (1:8)
+                          TO WS-CURRENT-DATE-9
+                      COMPUTE WS-TODAY-INT =
+                          FUNCTION INTEGER-OF-DATE (WS-CURRENT-DATE-9)
+                       MOVE EIBTASKN           TO WS-SEED
+                       COMPUTE WS-REVIEW-DATE-ADD = ((21 - 1)
+                       COMPUTE WS-NEW-REVIEW-DATE-INT =
+                          WS-TODAY-INT + WS-REVIEW-DATE-ADD
+                       COMPUTE WS-NEW-REVIEW-YYYYMMDD = FUNCTION
+                          DATE-OF-INTEGER (WS-NEW-REVIEW-DATE-INT)
+                       MOVE WS-NEW-REVIEW-YYYYMMDD(1:4) TO
+                          COMM-CS-REVIEW-DATE(5:4)
+                       MOVE WS-NEW-REVIEW-YYYYMMDD(5:2) TO
+                          COMM-CS-REVIEW-DATE(3:2)
+                       MOVE WS-NEW-REVIEW-YYYYMMDD(7:2) TO
+                          COMM-CS-REVIEW-DATE(1:2)
+                    END-IF
+                 END-IF
+
+## Variable Map:
+WS-TOTAL-CS-SCR gettermapping wsTotalCsScr
+WS-TOTAL-CS-SCR settermapping wsTotalCsScr = val
+WS-TOTAL-CS-SCR PIC 9(6) JavaType int
+WS-TODAY-INT gettermapping wsTodayInt
+WS-TODAY-INT settermapping wsTodayInt = val
+WS-TODAY-INT PIC 9(8) JavaType int
+WS-SEED gettermapping wsSeed
+WS-SEED settermapping wsSeed = val
+WS-SEED PIC S9(15) JavaType long
+WS-REVIEW-DATE-ADD gettermapping wsReviewDateAdd
+WS-REVIEW-DATE-ADD settermapping wsReviewDateAdd = val
+WS-REVIEW-DATE-ADD PIC 99 JavaType int
+WS-RETRIEVED-CNT gettermapping wsRetrievedCnt
+WS-RETRIEVED-CNT settermapping wsRetrievedCnt = val
+WS-RETRIEVED-CNT PIC 9 JavaType int
+WS-ORIG-DATE-YYYY gettermapping wsOrigDateGrp.getWsOrigDateYyyy()
+WS-ORIG-DATE-YYYY settermapping wsOrigDateGrp.setWsOrigDateYyyy(val)
+WS-ORIG-DATE-YYYY PIC 9999 JavaType int
+WS-ORIG-DATE-MM gettermapping wsOrigDateGrp.getWsOrigDateMm()
+WS-ORIG-DATE-MM settermapping wsOrigDateGrp.setWsOrigDateMm(val)
+WS-ORIG-DATE-MM PIC 99 JavaType int
+WS-ORIG-DATE-DD gettermapping wsOrigDateGrp.getWsOrigDateDd()
+WS-ORIG-DATE-DD settermapping wsOrigDateGrp.setWsOrigDateDd(val)
+WS-ORIG-DATE-DD PIC 99 JavaType int
+WS-NEW-REVIEW-YYYYMMDD gettermapping wsNewReviewYyyymmdd
+WS-NEW-REVIEW-YYYYMMDD settermapping wsNewReviewYyyymmdd = val
+WS-NEW-REVIEW-YYYYMMDD PIC 9(8) JavaType int
+WS-NEW-REVIEW-DATE-INT gettermapping wsNewReviewDateInt
+WS-NEW-REVIEW-DATE-INT settermapping wsNewReviewDateInt = val
+WS-NEW-REVIEW-DATE-INT PIC 9(8) JavaType int
+WS-FINISHED-FETCHING gettermapping wsFinishedFetching
+WS-FINISHED-FETCHING settermapping wsFinishedFetching = val
+WS-FINISHED-FETCHING PIC X JavaType char
+WS-CURRENT-DATE-DATA gettermapping wsCurrentDateData.getBytes()
+WS-CURRENT-DATE-DATA settermapping wsCurrentDateData.setBytes(val)
+WS-CURRENT-DATE-DATA GROUP JavaType WsCurrentDateData
+WS-CURRENT-DATE-9 gettermapping wsCurrentDate9
+WS-CURRENT-DATE-9 settermapping wsCurrentDate9 = val
+WS-CURRENT-DATE-9 PIC 9(8) JavaType int
+WS-CREDIT-CHECK-ERROR gettermapping this.getWsCreditCheckError()
+WS-CREDIT-CHECK-ERROR settermapping this.setWsCreditCheckError(val)
+WS-CREDIT-CHECK-ERROR PIC X JavaType char
+WS-CICS-RESP2 gettermapping this.getWsCicsResp2()
+WS-CICS-RESP2 settermapping this.setWsCicsResp2(val)
+WS-CICS-RESP2 PIC S9(8) JavaType int
+WS-CICS-RESP gettermapping this.getWsCicsResp()
+WS-CICS-RESP settermapping this.setWsCicsResp(val)
+WS-CICS-RESP PIC S9(8) JavaType int
+WS-ACTUAL-CS-SCR gettermapping wsActualCsScr
+WS-ACTUAL-CS-SCR settermapping wsActualCsScr = val
+WS-ACTUAL-CS-SCR PIC 9(6) JavaType int
+COMM-CS-REVIEW-DATE gettermapping this.getCommCsReviewDate()
+COMM-CS-REVIEW-DATE settermapping this.setCommCsReviewDate(val)
+COMM-CS-REVIEW-DATE PIC 9(8) JavaType int
+COMM-CREDIT-SCORE gettermapping dfhcommarea.getCommCreditScore()
+COMM-CREDIT-SCORE settermapping dfhcommarea.setCommCreditScore(val)
+COMM-CREDIT-SCORE PIC 999 JavaType int
+
+
+## Class Map:
+public void creditCheckCc010(Dfhcommarea dfhcommarea){
+    WsOrigDateGrp wsOrigDateGrp = new WsOrigDateGrp();
+    WsCurrentDateData wsCurrentDateData = new WsCurrentDateData();
+    int wsCurrentDate9 = 0;
+    int wsTodayInt = 0;
+    int wsReviewDateAdd = 0;
+    int wsNewReviewDateInt = 0;
+    int wsNewReviewYyyymmdd = 0;
+    char wsFinishedFetching = 'N';
+    int wsRetrievedCnt = 0;
+    int wsActualCsScr = 0;
+    int wsTotalCsScr = 0;
+}
+
+
+Output:
+=====================
+
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+                 IF WS-CICS-RESP = DFHRESP(NOTFINISHED) AND
+                 WS-CICS-RESP2 = 52
+                    IF WS-RETRIEVED-CNT = 0
+                       MOVE 'Y' TO WS-FINISHED-FETCHING
+                       MOVE 0 TO COMM-CREDIT-SCORE
+                       MOVE 'Y' TO WS-CREDIT-CHECK-ERROR
+                       STRING WS-ORIG-DATE-DD DELIMITED BY SIZE,
+                              WS-ORIG-DATE-MM DELIMITED BY SIZE,
+                              WS-ORIG-DATE-YYYY DELIMITED BY SIZE
+                              INTO COMM-CS-REVIEW-DATE
+                       END-STRING
+                       MOVE 'N' TO COMM-SUCCESS
+                       MOVE 'C' TO COMM-FAIL-CODE
+                       DISPLAY 'EXEC CICS FETCH ANY failed. RESP='
+                          WS-CICS-RESP ' RESP2=' WS-CICS-RESP2
+                       DISPLAY '   NOTFINISHED (no data) was returned'
+                       DISPLAY '   Exiting CRECUST. COMMAREA='
+                          DFHCOMMAREA
+                       PERFORM GET-ME-OUT-OF-HERE
+                    ELSE
+                       DISPLAY "SNIPPET-5"
+                    END-IF
+                 END-IF
+                 IF WS-CICS-RESP = DFHRESP(INVREQ) AND
+                 WS-CICS-RESP2 = 1
+                    MOVE 0 TO COMM-CREDIT-SCORE
+                    STRING WS-ORIG-DATE-DD DELIMITED BY SIZE,
+                           WS-ORIG-DATE-MM DELIMITED BY SIZE,
+                           WS-ORIG-DATE-YYYY DELIMITED BY SIZE
+                           INTO COMM-CS-REVIEW-DATE
+                    END-STRING
+                    MOVE 'N' TO COMM-SUCCESS
+                    MOVE 'D' TO COMM-FAIL-CODE
+                    DISPLAY 'EXEC CICS FETCH ANY failed. RESP='
+                       WS-CICS-RESP ' RESP2=' WS-CICS-RESP2
+                    DISPLAY '   INVREQ (no data) was returned'
+                    DISPLAY '   Exiting CRECUST. COMMAREA='
+                       DFHCOMMAREA
+                    PERFORM GET-ME-OUT-OF-HERE
+                 END-IF
+
+## Variable Map:
+WS-RETRIEVED-CNT gettermapping wsRetrievedCnt
+WS-RETRIEVED-CNT settermapping wsRetrievedCnt = val
+WS-RETRIEVED-CNT PIC 9 JavaType int
+WS-ORIG-DATE-YYYY gettermapping wsOrigDateGrp.getWsOrigDateYyyy()
+WS-ORIG-DATE-YYYY settermapping wsOrigDateGrp.setWsOrigDateYyyy(val)
+WS-ORIG-DATE-YYYY PIC 9999 JavaType int
+WS-ORIG-DATE-MM gettermapping wsOrigDateGrp.getWsOrigDateMm()
+WS-ORIG-DATE-MM settermapping wsOrigDateGrp.setWsOrigDateMm(val)
+WS-ORIG-DATE-MM PIC 99 JavaType int
+WS-ORIG-DATE-DD gettermapping wsOrigDateGrp.getWsOrigDateDd()
+WS-ORIG-DATE-DD settermapping wsOrigDateGrp.setWsOrigDateDd(val)
+WS-ORIG-DATE-DD PIC 99 JavaType int
+WS-FINISHED-FETCHING gettermapping wsFinishedFetching
+WS-FINISHED-FETCHING settermapping wsFinishedFetching = val
+WS-FINISHED-FETCHING PIC X JavaType char
+WS-CREDIT-CHECK-ERROR gettermapping this.getWsCreditCheckError()
+WS-CREDIT-CHECK-ERROR settermapping this.setWsCreditCheckError(val)
+WS-CREDIT-CHECK-ERROR PIC X JavaType char
+WS-CICS-RESP2 gettermapping this.getWsCicsResp2()
+WS-CICS-RESP2 settermapping this.setWsCicsResp2(val)
+WS-CICS-RESP2 PIC S9(8) JavaType int
+WS-CICS-RESP gettermapping this.getWsCicsResp()
+WS-CICS-RESP settermapping this.setWsCicsResp(val)
+WS-CICS-RESP PIC S9(8) JavaType int
+DFHCOMMAREA gettermapping dfhcommarea.getBytes()
+DFHCOMMAREA settermapping dfhcommarea.setBytes(val)
+DFHCOMMAREA GROUP JavaType Dfhcommarea
+COMM-SUCCESS gettermapping dfhcommarea.getCommSuccess()
+COMM-SUCCESS settermapping dfhcommarea.setCommSuccess(val)
+COMM-SUCCESS PIC X JavaType char
+COMM-FAIL-CODE gettermapping dfhcommarea.getCommFailCode()
+COMM-FAIL-CODE settermapping dfhcommarea.setCommFailCode(val)
+COMM-FAIL-CODE PIC X JavaType char
+COMM-CS-REVIEW-DATE gettermapping this.getCommCsReviewDate()
+COMM-CS-REVIEW-DATE settermapping this.setCommCsReviewDate(val)
+COMM-CS-REVIEW-DATE PIC 9(8) JavaType int
+COMM-CREDIT-SCORE gettermapping dfhcommarea.getCommCreditScore()
+COMM-CREDIT-SCORE settermapping dfhcommarea.setCommCreditScore(val)
+COMM-CREDIT-SCORE PIC 999 JavaType int
+
+
+## Class Map:
+public void creditCheckCc010(Dfhcommarea dfhcommarea){
+    WsOrigDateGrp wsOrigDateGrp = new WsOrigDateGrp();
+    char wsFinishedFetching = 'N';
+    int wsRetrievedCnt = 0;
+}
+
+
+Output:
+=====================
+
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+                       MOVE 'Y' TO WS-FINISHED-FETCHING
+                       MOVE 'N' TO WS-CREDIT-CHECK-ERROR
+                       COMPUTE WS-ACTUAL-CS-SCR = WS-TOTAL-CS-SCR /
+                          WS-RETRIEVED-CNT
+                       MOVE WS-ACTUAL-CS-SCR TO COMM-CREDIT-SCORE
+                       MOVE FUNCTION CURRENT-DATE
+                          TO WS-CURRENT-DATE-DATA
+                       MOVE WS-CURRENT-DATE-DATA (1:8)
+                          TO WS-CURRENT-DATE-9
+                      COMPUTE WS-TODAY-INT =
+                          FUNCTION INTEGER-OF-DATE (WS-CURRENT-DATE-9)
+                       MOVE EIBTASKN           TO WS-SEED
+                       COMPUTE WS-REVIEW-DATE-ADD = ((21 - 1)
+                       COMPUTE WS-NEW-REVIEW-DATE-INT =
+                          WS-TODAY-INT + WS-REVIEW-DATE-ADD
+                       COMPUTE WS-NEW-REVIEW-YYYYMMDD = FUNCTION
+                          DATE-OF-INTEGER (WS-NEW-REVIEW-DATE-INT)
+                       MOVE WS-NEW-REVIEW-YYYYMMDD(1:4) TO
+                          COMM-CS-REVIEW-DATE(5:4)
+                       MOVE WS-NEW-REVIEW-YYYYMMDD(5:2) TO
+                          COMM-CS-REVIEW-DATE(3:2)
+                       MOVE WS-NEW-REVIEW-YYYYMMDD(7:2) TO
+                          COMM-CS-REVIEW-DATE(1:2)
+
+## Variable Map:
+WS-TOTAL-CS-SCR gettermapping wsTotalCsScr
+WS-TOTAL-CS-SCR settermapping wsTotalCsScr = val
+WS-TOTAL-CS-SCR PIC 9(6) JavaType int
+WS-TODAY-INT gettermapping wsTodayInt
+WS-TODAY-INT settermapping wsTodayInt = val
+WS-TODAY-INT PIC 9(8) JavaType int
+WS-SEED gettermapping wsSeed
+WS-SEED settermapping wsSeed = val
+WS-SEED PIC S9(15) JavaType long
+WS-REVIEW-DATE-ADD gettermapping wsReviewDateAdd
+WS-REVIEW-DATE-ADD settermapping wsReviewDateAdd = val
+WS-REVIEW-DATE-ADD PIC 99 JavaType int
+WS-RETRIEVED-CNT gettermapping wsRetrievedCnt
+WS-RETRIEVED-CNT settermapping wsRetrievedCnt = val
+WS-RETRIEVED-CNT PIC 9 JavaType int
+WS-NEW-REVIEW-YYYYMMDD gettermapping wsNewReviewYyyymmdd
+WS-NEW-REVIEW-YYYYMMDD settermapping wsNewReviewYyyymmdd = val
+WS-NEW-REVIEW-YYYYMMDD PIC 9(8) JavaType int
+WS-NEW-REVIEW-DATE-INT gettermapping wsNewReviewDateInt
+WS-NEW-REVIEW-DATE-INT settermapping wsNewReviewDateInt = val
+WS-NEW-REVIEW-DATE-INT PIC 9(8) JavaType int
+WS-FINISHED-FETCHING gettermapping wsFinishedFetching
+WS-FINISHED-FETCHING settermapping wsFinishedFetching = val
+WS-FINISHED-FETCHING PIC X JavaType char
+WS-CURRENT-DATE-DATA gettermapping wsCurrentDateData.getBytes()
+WS-CURRENT-DATE-DATA settermapping wsCurrentDateData.setBytes(val)
+WS-CURRENT-DATE-DATA GROUP JavaType WsCurrentDateData
+WS-CURRENT-DATE-9 gettermapping wsCurrentDate9
+WS-CURRENT-DATE-9 settermapping wsCurrentDate9 = val
+WS-CURRENT-DATE-9 PIC 9(8) JavaType int
+WS-CREDIT-CHECK-ERROR gettermapping this.getWsCreditCheckError()
+WS-CREDIT-CHECK-ERROR settermapping this.setWsCreditCheckError(val)
+WS-CREDIT-CHECK-ERROR PIC X JavaType char
+WS-ACTUAL-CS-SCR gettermapping wsActualCsScr
+WS-ACTUAL-CS-SCR settermapping wsActualCsScr = val
+WS-ACTUAL-CS-SCR PIC 9(6) JavaType int
+COMM-CS-REVIEW-DATE gettermapping this.getCommCsReviewDate()
+COMM-CS-REVIEW-DATE settermapping this.setCommCsReviewDate(val)
+COMM-CS-REVIEW-DATE PIC 9(8) JavaType int
+COMM-CREDIT-SCORE gettermapping dfhcommarea.getCommCreditScore()
+COMM-CREDIT-SCORE settermapping dfhcommarea.setCommCreditScore(val)
+COMM-CREDIT-SCORE PIC 999 JavaType int
+
+
+## Class Map:
+public void creditCheckCc010(Dfhcommarea dfhcommarea){
+    WsCurrentDateData wsCurrentDateData = new WsCurrentDateData();
+    int wsCurrentDate9 = 0;
+    int wsTodayInt = 0;
+    int wsReviewDateAdd = 0;
+    int wsNewReviewDateInt = 0;
+    int wsNewReviewYyyymmdd = 0;
+    char wsFinishedFetching = 'N';
+    int wsRetrievedCnt = 0;
+    int wsActualCsScr = 0;
+    int wsTotalCsScr = 0;
+}
+
+
+Output:
+=====================
+
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+                 EVALUATE WS-CHILD-FETCH-COMPST
+                    WHEN DFHVALUE(NORMAL)
+                       DISPLAY "SNIPPET-7"
+                    WHEN DFHVALUE(ABEND)
+                       MOVE 0 TO COMM-CREDIT-SCORE
+                       STRING WS-ORIG-DATE-DD DELIMITED BY SIZE,
+                              WS-ORIG-DATE-MM DELIMITED BY SIZE,
+                              WS-ORIG-DATE-YYYY DELIMITED BY SIZE
+                              INTO COMM-CS-REVIEW-DATE
+                       END-STRING
+                       MOVE 'N' TO COMM-SUCCESS
+                       MOVE 'F' TO COMM-FAIL-CODE
+                       PERFORM GET-ME-OUT-OF-HERE
+                    WHEN DFHVALUE(SECERROR)
+                       MOVE 0 TO COMM-CREDIT-SCORE
+                       STRING WS-ORIG-DATE-DD DELIMITED BY SIZE,
+                              WS-ORIG-DATE-MM DELIMITED BY SIZE,
+                              WS-ORIG-DATE-YYYY DELIMITED BY SIZE
+                              INTO COMM-CS-REVIEW-DATE
+                       END-STRING
+                       MOVE 'N' TO COMM-SUCCESS
+                       MOVE 'G' TO COMM-FAIL-CODE
+                       DISPLAY 'EXEC CICS FETCH ANY worked, '
+                          'but COMP-STATUS = SECERROR.'
+                          ' RESP='
+                          WS-CICS-RESP ' RESP2=' WS-CICS-RESP2
+                       DISPLAY '   Exiting CRECUST. COMMAREA='
+                          DFHCOMMAREA
+                       PERFORM GET-ME-OUT-OF-HERE
+                    WHEN OTHER
+                       DISPLAY "SNIPPET-8"
+                 END-EVALUATE
+
+## Variable Map:
+WS-ORIG-DATE-YYYY gettermapping wsOrigDateGrp.getWsOrigDateYyyy()
+WS-ORIG-DATE-YYYY settermapping wsOrigDateGrp.setWsOrigDateYyyy(val)
+WS-ORIG-DATE-YYYY PIC 9999 JavaType int
+WS-ORIG-DATE-MM gettermapping wsOrigDateGrp.getWsOrigDateMm()
+WS-ORIG-DATE-MM settermapping wsOrigDateGrp.setWsOrigDateMm(val)
+WS-ORIG-DATE-MM PIC 99 JavaType int
+WS-ORIG-DATE-DD gettermapping wsOrigDateGrp.getWsOrigDateDd()
+WS-ORIG-DATE-DD settermapping wsOrigDateGrp.setWsOrigDateDd(val)
+WS-ORIG-DATE-DD PIC 99 JavaType int
+WS-CICS-RESP2 gettermapping this.getWsCicsResp2()
+WS-CICS-RESP2 settermapping this.setWsCicsResp2(val)
+WS-CICS-RESP2 PIC S9(8) JavaType int
+WS-CICS-RESP gettermapping this.getWsCicsResp()
+WS-CICS-RESP settermapping this.setWsCicsResp(val)
+WS-CICS-RESP PIC S9(8) JavaType int
+WS-CHILD-FETCH-COMPST gettermapping wsChildFetchCompst
+WS-CHILD-FETCH-COMPST settermapping wsChildFetchCompst = val
+WS-CHILD-FETCH-COMPST PIC S9(8) JavaType int
+DFHCOMMAREA gettermapping dfhcommarea.getBytes()
+DFHCOMMAREA settermapping dfhcommarea.setBytes(val)
+DFHCOMMAREA GROUP JavaType Dfhcommarea
+COMM-SUCCESS gettermapping dfhcommarea.getCommSuccess()
+COMM-SUCCESS settermapping dfhcommarea.setCommSuccess(val)
+COMM-SUCCESS PIC X JavaType char
+COMM-FAIL-CODE gettermapping dfhcommarea.getCommFailCode()
+COMM-FAIL-CODE settermapping dfhcommarea.setCommFailCode(val)
+COMM-FAIL-CODE PIC X JavaType char
+COMM-CS-REVIEW-DATE gettermapping this.getCommCsReviewDate()
+COMM-CS-REVIEW-DATE settermapping this.setCommCsReviewDate(val)
+COMM-CS-REVIEW-DATE PIC 9(8) JavaType int
+COMM-CREDIT-SCORE gettermapping dfhcommarea.getCommCreditScore()
+COMM-CREDIT-SCORE settermapping dfhcommarea.setCommCreditScore(val)
+COMM-CREDIT-SCORE PIC 999 JavaType int
+
+
+## Class Map:
+public void creditCheckCc010(Dfhcommarea dfhcommarea){
+    WsOrigDateGrp wsOrigDateGrp = new WsOrigDateGrp();
+}
+
+
+Output:
+=====================
+
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+                       EVALUATE WS-ANY-CHILD-FETCH-TKN
+                          WHEN WS-CHILD-TKN(1)
+                             MOVE 'CIPA            '
+                                TO WS-CONTAINER-NAME
+                          WHEN WS-CHILD-TKN(2)
+                             MOVE 'CIPB            '
+                                TO WS-CONTAINER-NAME
+                          WHEN WS-CHILD-TKN(3)
+                             MOVE 'CIPC            '
+                                TO WS-CONTAINER-NAME
+                          WHEN WS-CHILD-TKN(4)
+                             MOVE 'CIPD            '
+                                TO WS-CONTAINER-NAME
+                          WHEN WS-CHILD-TKN(5)
+                             MOVE 'CIPE            '
+                                TO WS-CONTAINER-NAME
+                          WHEN WS-CHILD-TKN(6)
+                             MOVE 'CIPF            '
+                                TO WS-CONTAINER-NAME
+                          WHEN WS-CHILD-TKN(7)
+                             MOVE 'CIPG            '
+                                TO WS-CONTAINER-NAME
+                          WHEN WS-CHILD-TKN(8)
+                             MOVE 'CIPH            '
+                                TO WS-CONTAINER-NAME
+                          WHEN WS-CHILD-TKN(9)
+                             MOVE 'CIPI            '
+                                TO WS-CONTAINER-NAME
+                       END-EVALUATE
+                       MOVE 261 TO WS-CHILD-CONTAINER-LEN
+                       EXEC CICS GET
+                            CHANNEL(WS-ANY-CHILD-FETCH-CHAN)
+                            CONTAINER(WS-CONTAINER-NAME)
+                            FLENGTH(WS-CHILD-CONTAINER-LEN)
+                            INTO(WS-CHILD-DATA)
+                            RESP(WS-CICS-RESP)
+                            RESP2(WS-CICS-RESP2)
+                       END-EXEC
+                       IF WS-CICS-RESP NOT = DFHRESP(NORMAL)
+                          MOVE 0 TO COMM-CREDIT-SCORE
+                          STRING WS-ORIG-DATE-DD DELIMITED BY SIZE,
+                                 WS-ORIG-DATE-MM DELIMITED BY SIZE,
+                                 WS-ORIG-DATE-YYYY DELIMITED BY SIZE
+                                 INTO COMM-CS-REVIEW-DATE
+                          END-STRING
+                          MOVE 'N' TO COMM-SUCCESS
+                          MOVE 'E' TO COMM-FAIL-CODE
+                          DISPLAY 'EXEC CICS FETCH ANY worked, '
+                             'but GET CONTAINER failed.'
+                             ' CONTAINER='  WS-CONTAINER-NAME
+                             ' CHANNEL=' WS-ANY-CHILD-FETCH-CHAN
+                             ' RESP='
+                             WS-CICS-RESP ' RESP2=' WS-CICS-RESP2
+                          DISPLAY '   Exiting CRECUST. COMMAREA='
+                             DFHCOMMAREA
+                          PERFORM GET-ME-OUT-OF-HERE
+                       END-IF
+                       COMPUTE WS-RETRIEVED-CNT =
+                          WS-RETRIEVED-CNT + 1
+                       COMPUTE WS-TOTAL-CS-SCR =
+                          WS-TOTAL-CS-SCR + WS-CHILD-DATA-CREDIT-SCORE
+
+## Variable Map:
+WS-TOTAL-CS-SCR gettermapping wsTotalCsScr
+WS-TOTAL-CS-SCR settermapping wsTotalCsScr = val
+WS-TOTAL-CS-SCR PIC 9(6) JavaType int
+WS-RETRIEVED-CNT gettermapping wsRetrievedCnt
+WS-RETRIEVED-CNT settermapping wsRetrievedCnt = val
+WS-RETRIEVED-CNT PIC 9 JavaType int
+WS-ORIG-DATE-YYYY gettermapping wsOrigDateGrp.getWsOrigDateYyyy()
+WS-ORIG-DATE-YYYY settermapping wsOrigDateGrp.setWsOrigDateYyyy(val)
+WS-ORIG-DATE-YYYY PIC 9999 JavaType int
+WS-ORIG-DATE-MM gettermapping wsOrigDateGrp.getWsOrigDateMm()
+WS-ORIG-DATE-MM settermapping wsOrigDateGrp.setWsOrigDateMm(val)
+WS-ORIG-DATE-MM PIC 99 JavaType int
+WS-ORIG-DATE-DD gettermapping wsOrigDateGrp.getWsOrigDateDd()
+WS-ORIG-DATE-DD settermapping wsOrigDateGrp.setWsOrigDateDd(val)
+WS-ORIG-DATE-DD PIC 99 JavaType int
+WS-CONTAINER-NAME gettermapping wsContainerName
+WS-CONTAINER-NAME settermapping wsContainerName = val
+WS-CONTAINER-NAME PIC X(16) JavaType String
+WS-CICS-RESP2 gettermapping this.getWsCicsResp2()
+WS-CICS-RESP2 settermapping this.setWsCicsResp2(val)
+WS-CICS-RESP2 PIC S9(8) JavaType int
+WS-CICS-RESP gettermapping this.getWsCicsResp()
+WS-CICS-RESP settermapping this.setWsCicsResp(val)
+WS-CICS-RESP PIC S9(8) JavaType int
+WS-CHILD-DATA-CREDIT-SCORE gettermapping wsChildDataDobGroup.getWsChildDataCreditScore()
+WS-CHILD-DATA-CREDIT-SCORE settermapping wsChildDataDobGroup.setWsChildDataCreditScore(val)
+WS-CHILD-DATA-CREDIT-SCORE PIC 999 JavaType int
+WS-CHILD-DATA gettermapping wsChildData.getBytes()
+WS-CHILD-DATA settermapping wsChildData.setBytes(val)
+WS-CHILD-DATA GROUP JavaType WsChildData
+WS-CHILD-CONTAINER-LEN gettermapping wsChildContainerLen
+WS-CHILD-CONTAINER-LEN settermapping wsChildContainerLen = val
+WS-CHILD-CONTAINER-LEN PIC S9(8) JavaType int
+WS-ANY-CHILD-FETCH-TKN gettermapping wsAnyChildFetchTkn
+WS-ANY-CHILD-FETCH-TKN settermapping wsAnyChildFetchTkn = val
+WS-ANY-CHILD-FETCH-TKN PIC X(16) JavaType String
+WS-ANY-CHILD-FETCH-CHAN gettermapping wsAnyChildFetchChan
+WS-ANY-CHILD-FETCH-CHAN settermapping wsAnyChildFetchChan = val
+WS-ANY-CHILD-FETCH-CHAN PIC X(16) JavaType String
+DFHCOMMAREA gettermapping dfhcommarea.getBytes()
+DFHCOMMAREA settermapping dfhcommarea.setBytes(val)
+DFHCOMMAREA GROUP JavaType Dfhcommarea
+COMM-SUCCESS gettermapping dfhcommarea.getCommSuccess()
+COMM-SUCCESS settermapping dfhcommarea.setCommSuccess(val)
+COMM-SUCCESS PIC X JavaType char
+COMM-FAIL-CODE gettermapping dfhcommarea.getCommFailCode()
+COMM-FAIL-CODE settermapping dfhcommarea.setCommFailCode(val)
+COMM-FAIL-CODE PIC X JavaType char
+COMM-CS-REVIEW-DATE gettermapping this.getCommCsReviewDate()
+COMM-CS-REVIEW-DATE settermapping this.setCommCsReviewDate(val)
+COMM-CS-REVIEW-DATE PIC 9(8) JavaType int
+COMM-CREDIT-SCORE gettermapping dfhcommarea.getCommCreditScore()
+COMM-CREDIT-SCORE settermapping dfhcommarea.setCommCreditScore(val)
+COMM-CREDIT-SCORE PIC 999 JavaType int
+
+
+## Class Map:
+public void creditCheckCc010(Dfhcommarea dfhcommarea){
+    WsOrigDateGrp wsOrigDateGrp = new WsOrigDateGrp();
+    int wsRetrievedCnt = 0;
+    WsChildDataDobGroup wsChildDataDobGroup = new WsChildDataDobGroup();
+    String wsContainerName = "";
+    int wsTotalCsScr = 0;
+    int wsChildContainerLen = 0;
+    String wsAnyChildFetchTkn = "";
+    String wsAnyChildFetchChan = "";
+}
+
+
+Output:
+=====================
+
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+                       MOVE 0 TO COMM-CREDIT-SCORE
+                       STRING WS-ORIG-DATE-DD DELIMITED BY SIZE,
+                              WS-ORIG-DATE-MM DELIMITED BY SIZE,
+                              WS-ORIG-DATE-YYYY DELIMITED BY SIZE
+                              INTO COMM-CS-REVIEW-DATE
+                       END-STRING
+                       MOVE 'N' TO COMM-SUCCESS
+                       MOVE 'H' TO COMM-FAIL-CODE
+                       DISPLAY 'EXEC CICS FETCH ANY worked, '
+                          'but COMP-STATUS IS UNKNOWN.'
+                          ' RESP='
+                          WS-CICS-RESP ' RESP2=' WS-CICS-RESP2
+                       DISPLAY '   Exiting CRECUST. COMMAREA='
+                          DFHCOMMAREA
+                       PERFORM GET-ME-OUT-OF-HERE
+
+## Variable Map:
+WS-ORIG-DATE-YYYY gettermapping wsOrigDateGrp.getWsOrigDateYyyy()
+WS-ORIG-DATE-YYYY settermapping wsOrigDateGrp.setWsOrigDateYyyy(val)
+WS-ORIG-DATE-YYYY PIC 9999 JavaType int
+WS-ORIG-DATE-MM gettermapping wsOrigDateGrp.getWsOrigDateMm()
+WS-ORIG-DATE-MM settermapping wsOrigDateGrp.setWsOrigDateMm(val)
+WS-ORIG-DATE-MM PIC 99 JavaType int
+WS-ORIG-DATE-DD gettermapping wsOrigDateGrp.getWsOrigDateDd()
+WS-ORIG-DATE-DD settermapping wsOrigDateGrp.setWsOrigDateDd(val)
+WS-ORIG-DATE-DD PIC 99 JavaType int
+WS-CICS-RESP2 gettermapping this.getWsCicsResp2()
+WS-CICS-RESP2 settermapping this.setWsCicsResp2(val)
+WS-CICS-RESP2 PIC S9(8) JavaType int
+WS-CICS-RESP gettermapping this.getWsCicsResp()
+WS-CICS-RESP settermapping this.setWsCicsResp(val)
+WS-CICS-RESP PIC S9(8) JavaType int
+DFHCOMMAREA gettermapping dfhcommarea.getBytes()
+DFHCOMMAREA settermapping dfhcommarea.setBytes(val)
+DFHCOMMAREA GROUP JavaType Dfhcommarea
+COMM-SUCCESS gettermapping dfhcommarea.getCommSuccess()
+COMM-SUCCESS settermapping dfhcommarea.setCommSuccess(val)
+COMM-SUCCESS PIC X JavaType char
+COMM-FAIL-CODE gettermapping dfhcommarea.getCommFailCode()
+COMM-FAIL-CODE settermapping dfhcommarea.setCommFailCode(val)
+COMM-FAIL-CODE PIC X JavaType char
+COMM-CS-REVIEW-DATE gettermapping this.getCommCsReviewDate()
+COMM-CS-REVIEW-DATE settermapping this.setCommCsReviewDate(val)
+COMM-CS-REVIEW-DATE PIC 9(8) JavaType int
+COMM-CREDIT-SCORE gettermapping dfhcommarea.getCommCreditScore()
+COMM-CREDIT-SCORE settermapping dfhcommarea.setCommCreditScore(val)
+COMM-CREDIT-SCORE PIC 999 JavaType int
+
+
+## Class Map:
+public void creditCheckCc010(Dfhcommarea dfhcommarea){
+    WsOrigDateGrp wsOrigDateGrp = new WsOrigDateGrp();
+}
+
+
+Output:
+=====================
+

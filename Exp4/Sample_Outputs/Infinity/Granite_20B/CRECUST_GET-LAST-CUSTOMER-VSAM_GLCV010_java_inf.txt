@@ -1,0 +1,81 @@
+public void getLastCustomerVsamGlcv010(Dfhcommarea dfhcommarea)
+        throws java.lang.InterruptedException, java.lang.InterruptedException {
+    CustomerControlRecord customerControlRecord = new CustomerControlRecord();
+    CustomerKy2 customerKy2 = new CustomerKy2();
+    CustomerRecord customerRecord = new CustomerRecord();
+    try {
+        KeyedFile jdeclKeyedFile = new KeyedFile();
+        jdeclKeyedFile.setName("CUSTOMER");
+        KeyedFileBrowse jdeclKeyFileBrowse = jdeclKeyedFile.startBrowse(customerControlRecord.getCustomerControlKey());
+        /* STATEMENT BLOCK 1 */
+        jdeclKeyFileBrowse.end();
+    } catch (CicsConditionException e) {
+        if (e.getRESP() == 20) {
+            for (sysiderrRetry = 0; sysiderrRetry < 100; sysiderrRetry++) {
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e1) {
+                    throw e1;
+                }
+                try {
+                    KeyedFile jdeclKeyedFile = new KeyedFile();
+                    jdeclKeyedFile.setName("CUSTOMER");
+                    KeyedFileBrowse jdeclKeyFileBrowse = jdeclKeyedFile
+                            .startBrowse(customerControlRecord.getCustomerControlKey());
+                    /* STATEMENT BLOCK 1 */
+                    jdeclKeyFileBrowse.end();
+                } catch (CicsConditionException e2) {
+                    dfhcommarea.setCommSuccess('N');
+                    dfhcommarea.setCommFailCode('4');
+                    deqNamedCounterDnc010(dfhcommarea);
+                    getMeOutOfHereGmofh010();
+                }
+            }
+        } else {
+            dfhcommarea.setCommSuccess('N');
+            dfhcommarea.setCommFailCode('4');
+            deqNamedCounterDnc010(dfhcommarea);
+            getMeOutOfHereGmofh010();
+        }
+    }
+    customerControlRecord.setLastCustomerNumber(customerControlRecord.getLastCustomerNumber() + 1);
+    try {
+        KeyedFile jdeclKeyedFile = new KeyedFile();
+        jdeclKeyedFile.setName("CUSTOMER");
+        KeyedFileBrowse jdeclKeyFileBrowse = jdeclKeyedFile.startBrowse(customerControlRecord.getCustomerControlKey());
+        /* STATEMENT BLOCK 1 */
+        jdeclKeyFileBrowse.end();
+    } catch (CicsConditionException e) {
+        if (e.getRESP() == 20) {
+            for (sysiderrRetry = 0; sysiderrRetry < 100; sysiderrRetry++) {
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e1) {
+                    throw e1;
+                }
+                try {
+                    KeyedFile jdeclKeyedFile = new KeyedFile();
+                    jdeclKeyedFile.setName("CUSTOMER");
+                    KeyedFileBrowse jdeclKeyFileBrowse = jdeclKeyedFile
+                            .startBrowse(customerControlRecord.getCustomerControlKey());
+                    /* STATEMENT BLOCK 1 */
+                    jdeclKeyFileBrowse.end();
+                } catch (CicsConditionException e2) {
+                    dfhcommarea.setCommSuccess('N');
+                    dfhcommarea.setCommFailCode('4');
+                    deqNamedCounterDnc010(dfhcommarea);
+                    getMeOutOfHereGmofh010();
+                }
+            }
+        } else {
+            dfhcommarea.setCommSuccess('N');
+            dfhcommarea.setCommFailCode('4');
+            deqNamedCounterDnc010(dfhcommarea);
+            getMeOutOfHereGmofh010();
+        }
+    }
+    customerKy2.setRequiredCustNumber2(customerControlRecord.getLastCustomerNumber());
+    dfhcommarea.setCommNumber(customerKy2.getRequiredCustNumber2());
+    customerRecord.getCustomerKey().setCustomerNumber(customerKy2.getRequiredCustNumber2());
+    this.setNcsCustNoValue(customerKy2.getRequiredCustNumber2());
+}

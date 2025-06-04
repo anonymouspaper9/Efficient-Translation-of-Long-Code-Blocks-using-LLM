@@ -1,0 +1,43 @@
+```java
+public void sendTerminationMsgStm010() {
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    String endOfSessionMessage = "Session Ended";
+    String wsAbendPgm = "ABNDPROC";
+    WsFailInfo wsFailInfo = new WsFailInfo();
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+
+    /* This is prompt example 2 */
+    if (WS_CICS_RESP != DFHRESP.NORMAL) {
+        abndinfoRec.setAbndRespcode(EIBRESP);
+        abndinfoRec.setAbndResp2Code(EIBRESP2);
+        abndinfoRec.setAbndApplid(EIBTASKN);
+        abndinfoRec.setAbndTranid(EIBTRNID);
+        populateTimeDatePtd010(wsTimeNowGrp);
+        abndinfoRec.setAbndDate(wsTimeNowGrp.getWsOrigDate());
+        abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm());
+        abndinfoRec.setAbndUtimeKey(getWsUTime());
+        abndinfoRec.setAbndCode("HBNK");
+        abndinfoRec.setAbndProgram(wsAbendPgm);
+        abndinfoRec.setAbndFreeform("STM010 - SEND TEXT FAIL." + "EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2=" + abndinfoRec.getAbndResp2Code());
+
+        try {
+            JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO BANK(LOCATION)values('" + abndinfoRec.getAbndCode() + "')");
+        } catch (SQLException exception) {
+            abndinfoRec.setAbndSqlcode(exception.getErrorCode());
+            abendThisTaskAtt010(wsFailInfo);
+            return;
+        }
+
+        try {
+            PreparedStatement ps = JdbcConnection.connection.prepareStatement("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            abndinfoRec.setAbndUtimeKey(rs.getLong(1));
+        } catch (SQLException exception) {
+            System.out.println(exception);
+            abendThisTaskAtt010(wsFailInfo);
+            return;
+        }
+    }
+}
+```

@@ -1,0 +1,9 @@
+public void invokeOtherTxnsIot010() {
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    int wsCicsResp = 0;
+    int wsCicsResp2 = 0;
+    WsFailInfo wsFailInfo = new WsFailInfo();
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+    String wsAbendPgm = "ABNDPROC";
+
+}

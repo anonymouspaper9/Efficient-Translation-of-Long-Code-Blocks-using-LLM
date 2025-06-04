@@ -1,0 +1,41 @@
+public void mainlineTranRateInterval(String tsQpre, String wsTime){
+    int hHval;
+    int iCountVal;
+    int mMval;
+    int nCountVal;
+    int oCountVal;
+    int sSval;
+    WsHhmmss wsHhmmss = new WsHhmmss();
+    String wsNewv = "";
+    WsOldv wsOldv = new WsOldv();
+    int wsResp;
+    String wsTsQname = "";
+    String[] tsQpre = tsQpre.split(" ");
+    wsTsQname = tsQpre[0];
+    try {
+        CicsConnection cicsConnection = CicsConnection.getConnection();
+        cicsConnection.readQ(wsTsQname, wsOldv);
+        if (cicsConnection.getResp() != CicsResponse.NORMAL) {
+            wsOldv.setWsOldvss("120000");
+        }
+        cicsConnection.deleteQ(wsTsQname);
+        wsHhmmss.setWsHhmmss(wsTime);
+        cicsConnection.writeQ(wsTsQname, wsHhmmss);
+        wsHhmmss = wsHhmmss.getWsHhmmss();
+        hHval = Integer.parseInt(wsHhmmss.getWsHh());
+        mMval = Integer.parseInt(wsHhmmss.getWsMm());
+        sSval = Integer.parseInt(wsHhmmss.getWsSs());
+        nCountVal = (hHval * 3600) + (mMval * 60) + sSval;
+        wsOldv = wsOldv.getWsOldv();
+        hHval = Integer.parseInt(wsOldv.getWsOldvhh());
+        mMval = Integer.parseInt(wsOldv.getWsOldvmm());
+        sSval = Integer.parseInt(wsOldv.getWsOldvss());
+        oCountVal = (hHval * 3600) + (mMval * 60) + sSval;
+        iCountVal = nCountVal - oCountVal;
+        wsNewv = String.valueOf(iCountVal);
+        cicsConnection.writeQ(wsTsQname, wsNewv);
+        cicsConnection.startTransid("SSST", 1);
+    } catch (CicsException e) {
+        System.out.println(e.getMessage());
+    }
+} 

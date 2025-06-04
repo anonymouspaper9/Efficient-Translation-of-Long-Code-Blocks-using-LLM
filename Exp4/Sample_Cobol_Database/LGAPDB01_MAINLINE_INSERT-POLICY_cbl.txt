@@ -1,0 +1,62 @@
+       INSERT-POLICY.                                                   
+                                                                        
+      *    Move numeric fields to integer format                        
+           MOVE CA-BROKERID TO DB2-BROKERID-INT                         
+           MOVE CA-PAYMENT TO DB2-PAYMENT-INT                           
+                                                                        
+           MOVE ' INSERT POLICY' TO EM-SQLREQ                           
+           EXEC SQL                                                     
+             INSERT INTO POLICY                                         
+                       ( POLICYNUMBER,                                  
+                         CUSTOMERNUMBER,                                
+                         ISSUEDATE,                                     
+                         EXPIRYDATE,                                    
+                         POLICYTYPE,                                    
+                         LASTCHANGED,                                   
+                         BROKERID,                                      
+                         BROKERSREFERENCE,                              
+                         PAYMENT           )                            
+                VALUES ( DEFAULT,                                       
+                         :DB2-CUSTOMERNUM-INT,                          
+                         :CA-ISSUE-DATE,                                
+                         :CA-EXPIRY-DATE,                               
+                         :DB2-POLICYTYPE,                               
+                         CURRENT TIMESTAMP,                             
+                         :DB2-BROKERID-INT,                             
+                         :CA-BROKERSREF,                                
+                         :DB2-PAYMENT-INT      )                        
+           END-EXEC                                                     
+                                                                        
+           Evaluate SQLCODE                                             
+                                                                        
+             When 0                                                     
+               MOVE '00' TO CA-RETURN-CODE                              
+                                                                        
+             When -530                                                  
+               MOVE '70' TO CA-RETURN-CODE                              
+               PERFORM WRITE-ERROR-MESSAGE                              
+               EXEC CICS RETURN END-EXEC                                
+                                                                        
+             When Other                                                 
+               MOVE '90' TO CA-RETURN-CODE                              
+               PERFORM WRITE-ERROR-MESSAGE                              
+               EXEC CICS RETURN END-EXEC                                
+                                                                        
+           END-Evaluate.                                                
+                                                                        
+      *    get value of assigned policy number                          
+           EXEC SQL                                                     
+             SET :DB2-POLICYNUM-INT = IDENTITY_VAL_LOCAL()              
+           END-EXEC                                                     
+           MOVE DB2-POLICYNUM-INT TO CA-POLICY-NUM                      
+      *    and save in error msg field incase required                  
+           MOVE CA-POLICY-NUM TO EM-POLNUM                              
+                                                                        
+      *    get value of assigned Timestamp                              
+           EXEC SQL                                                     
+             SELECT LASTCHANGED                                         
+               INTO :CA-LASTCHANGED                                     
+               FROM POLICY                                              
+               WHERE POLICYNUMBER = :DB2-POLICYNUM-INT                  
+           END-EXEC.                                                    
+           EXIT.                                                        

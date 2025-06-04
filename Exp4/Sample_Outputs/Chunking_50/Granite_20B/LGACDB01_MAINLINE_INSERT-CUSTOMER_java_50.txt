@@ -1,0 +1,59 @@
+public void mainlineInsertCustomer(CaCustomerRequest caCustomerRequest) {
+
+    errorMsg.getEmVariable().setEmSqlreq(" INSERT CUSTOMER");
+    if (this.getLgacNcs().equals("ON")) {
+
+        try {
+            String sql = "INSERT INTO CUSTOMER(CUSTOMERNUMBER, FIRSTNAME, LASTNAME, DATEOFBIRTH, HOUSENAME, HOUSENUMBER, POSTCODE, PHONEMOBILE, PHONEHOME, EMAILADDRESS)values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+            ps.setInt(1, this.getDb2CustomernumInt());
+            ps.setString(2, caCustomerRequest.getCustomer().getFirstname());
+            ps.setString(3, caCustomerRequest.getCustomer().getLastname());
+            ps.setDate(4, caCustomerRequest.getCustomer().getDateofbirth());
+            ps.setString(5, caCustomerRequest.getCustomer().getHousename());
+            ps.setString(6, caCustomerRequest.getCustomer().getHousenumber());
+            ps.setString(7, caCustomerRequest.getCustomer().getPostcode());
+            ps.setString(8, caCustomerRequest.getCustomer().getPhonemobile());
+            ps.setString(9, caCustomerRequest.getCustomer().getPhonehome());
+            ps.setString(10, caCustomerRequest.getCustomer().getEmailaddress());
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException exception) {
+            caCustomerRequest.setCaReturnCode(Integer.parseInt("90"));
+            this.writeErrorMessage(errMsg);
+            return;
+        }
+
+    } else {
+        try {
+            String sql = "INSERT INTO CUSTOMER(FIRSTNAME, LASTNAME, DATEOFBIRTH, HOUSENAME, HOUSENUMBER, POSTCODE, PHONEMOBILE, PHONEHOME, EMAILADDRESS)values(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, caCustomerRequest.getCustomer().getFirstname());
+            ps.setString(2, caCustomerRequest.getCustomer().getLastname());
+            ps.setDate(3, caCustomerRequest.getCustomer().getDateofbirth());
+            ps.setString(4, caCustomerRequest.getCustomer().getHousename());
+            ps.setString(5, caCustomerRequest.getCustomer().getHousenumber());
+            ps.setString(6, caCustomerRequest.getCustomer().getPostcode());
+            ps.setString(7, caCustomerRequest.getCustomer().getPhonemobile());
+            ps.setString(8, caCustomerRequest.getCustomer().getPhonehome());
+            ps.setString(9, caCustomerRequest.getCustomer().getEmailaddress());
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException exception) {
+            caCustomerRequest.setCaReturnCode(Integer.parseInt("90"));
+            errorMsg.writeErrorMessage(errMsg);
+            return;
+        }
+        try {
+            ResultSet rs = JdbcConnection.connection.createStatement()
+                    .executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+            rs.next();
+            caCustomerRequest.setDb2CustomernumInt(rs.getInt(1));
+        } catch (SQLException exception) {
+            System.out.println(exception);
+            return;
+        }
+    }
+    caCustomerRequest.setCaCustomerNum(caCustomerRequest.getDb2CustomernumInt());
+
+}

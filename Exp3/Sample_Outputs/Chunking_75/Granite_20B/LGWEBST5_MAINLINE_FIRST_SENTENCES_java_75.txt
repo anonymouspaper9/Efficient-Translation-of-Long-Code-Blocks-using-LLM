@@ -1,0 +1,526 @@
+public void invokeMainline() {
+    String genApool = "GENA";
+    SymbList symbList = new SymbList();
+    String genacnth99 = "GENA01DCOM99";
+    String genacnti99 = "GENAOTHER   ";
+    String genacntg99 = "GENA01ACOM99";
+    String genacnth00 = "GENA01DCOM00";
+    String tsQpre = "";
+    String wsTsQname = "";
+
+    String wsApplid = "";
+    String genAcount = "GENACUSTNUM";
+    String genacnt199 = "GENA01ICUS99";
+    WsHeader wsHeader = new WsHeader();
+    String genacnt200 = "GENA01ACUS00";
+    String genacnt100 = "GENA01ICUS00";
+    String genacnt299 = "GENA01ACUS99";
+    symbList = new SymbList();
+    String wsTime = "";
+    int wsAbstime = 0;
+    String wsDate = "";
+    tsQpre = "GENA";
+    wsAbstime = AskTime.askTimeAbsTime();
+    wsDate = FormatTime.formatTimeAbsTime(wsAbstime, "MMDDYYYY");
+    wsTime = FormatTime.formatTimeAbsTime(wsAbstime, "TIME");
+    markDanson.tranInterval(reportVal);
+    Query.query(genAcount, genApool, wsResp, countVal);
+    genaCountV = countVal;
+    symbList.setS3(String.valueOf(genaCountV));
+    wsTsQname = tsQpre + "X05V";
+    nRateVal = Integer.parseInt(symbList.getS3());
+    markDanson.tranCounts(errReport);
+    Query.query(genacnt100, genApool, wsResp, countVal);
+    countSuccess = countVal;
+    countInq = countVal;
+    genacnt100V = countVal;
+    symbList.setS3(String.valueOf(genacnt100V));
+    wsTsQname = tsQpre + "100V";
+    nRateVal = Integer.parseInt(symbList.getS3());
+    markDanson.tranCounts(errReport);
+    Query.query(genacnt199, genApool, wsResp, countVal);
+    countErrors = countVal;
+    genacnt199V = countVal;
+    symbList.setS4(String.valueOf(genacnt199V));
+    Query.query(genacnt200, genApool, wsResp, countVal);
+    countSuccess = countSuccess + countVal;
+    countAdd = countVal;
+    genacnt200V = countVal;
+    symbList.setS5(String.valueOf(genacnt200V));
+    wsTsQname = tsQpre + "200V";
+    nRateVal = Integer.parseInt(symbList.getS5());
+    markDanson.tranCounts(errReport);
+    Query.query(genacnt299, genApool, wsResp, countVal);
+    countErrors = countErrors + countVal;
+    genacnt299V = countVal;
+    symbList.setS6(String.valueOf(genacnt299V));
+
+    genApool = "GENA";
+    String genacnt399 = "GENA01IMOT99";
+    String genacnt400 = "GENA01AMOT00";
+    String genacnt300 = "GENA01IMOT00";
+    String genacnt599 = "GENA01DMOT99";
+    String genacnt600 = "GENA01UMOT00";
+    String genacnt499 = "GENA01AMOT99";
+    String genacnt500 = "GENA01DMOT00";
+    symbList = new SymbList();
+    tsQpre = "";
+    wsTsQname = "";
+    QueryParm genacnt300Parm = new QueryParm();
+    genacnt300Parm.setName(genacnt300);
+    genacnt300Parm.setPool(genApool);
+    QueryParm genacnt399Parm = new QueryParm();
+    genacnt399Parm.setName(genacnt399);
+    genacnt399Parm.setPool(genApool);
+    QueryParm genacnt400Parm = new QueryParm();
+    genacnt400Parm.setName(genacnt400);
+    genacnt400Parm.setPool(genApool);
+    QueryParm genacnt499Parm = new QueryParm();
+    genacnt499Parm.setName(genacnt499);
+    genacnt499Parm.setPool(genApool);
+    QueryParm genacnt500Parm = new QueryParm();
+    genacnt500Parm.setName(genacnt500);
+    genacnt500Parm.setPool(genApool);
+    QueryParm genacnt599Parm = new QueryParm();
+    genacnt599Parm.setName(genacnt599);
+    genacnt599Parm.setPool(genApool);
+    QueryParm genacnt600Parm = new QueryParm();
+    genacnt600Parm.setName(genacnt600);
+    genacnt600Parm.setPool(genApool);
+    try {
+        QueryResponse genacnt300Resp = genacnt300Parm.query();
+        countVal = genacnt300Resp.getValue();
+        countSuccess = countSuccess + countVal;
+        genacnt300V = countVal;
+        symbList.setS7(genacnt300V);
+        tsQpre = tsQpre + "300V";
+        wsTsQname = tsQpre;
+    } catch (CicsConditionException e) {
+        System.out.println(e);
+    }
+    try {
+        QueryResponse genacnt399Resp = genacnt399Parm.query();
+        countVal = genacnt399Resp.getValue();
+        countErrors = countErrors + countVal;
+        genacnt399V = countVal;
+        symbList.setS8(genacnt399V);
+    } catch (CicsConditionException e) {
+        System.out.println(e);
+    }
+    try {
+        QueryResponse genacnt400Resp = genacnt400Parm.query();
+        countVal = genacnt400Resp.getValue();
+        countSuccess = countSuccess + countVal;
+        genacnt400V = countVal;
+        symbList.setS9(genacnt400V);
+        tsQpre = tsQpre + "400V";
+        wsTsQname = tsQpre;
+    } catch (CicsConditionException e) {
+        System.out.println(e);
+    }
+    try {
+        QueryResponse genacnt499Resp = genacnt499Parm.query();
+        countVal = genacnt499Resp.getValue();
+        countErrors = countErrors + countVal;
+        genacnt499V = countVal;
+        symbList.setS10(genacnt499V);
+    } catch (CicsConditionException e) {
+        System.out.println(e);
+    }
+    try {
+        QueryResponse genacnt500Resp = genacnt500Parm.query();
+        countVal = genacnt500Resp.getValue();
+        countSuccess = countSuccess + countVal;
+        genacnt500V = countVal;
+        symbList.setS11(genacnt500V);
+        tsQpre = tsQpre + "500V";
+        wsTsQname = tsQpre;
+    } catch (CicsConditionException e) {
+        System.out.println(e);
+    }
+    try {
+        QueryResponse genacnt599Resp = genacnt599Parm.query();
+        countVal = genacnt599Resp.getValue();
+        countErrors = countErrors + countVal;
+        genacnt599V = countVal;
+        symbList.setS12(genacnt599V);
+    } catch (CicsConditionException e) {
+        System.out.println(e);
+    }
+    try {
+        QueryResponse genacnt600Resp = genacnt600Parm.query();
+        countVal = genacnt600Resp.getValue();
+        countSuccess = countSuccess + countVal;
+        genacnt600V = countVal;
+        symbList.setS13(genacnt600V);
+        tsQpre = tsQpre + "600V";
+        wsTsQname = tsQpre;
+    } catch (CicsConditionException e) {
+        System.out.println(e);
+    }
+
+    genApool = "GENA";
+    String genacnt799 = "GENA01IEND99";
+    String genacnt800 = "GENA01AEND00";
+    String genacnt699 = "GENA01UMOT99";
+    String genacnt700 = "GENA01IEND00";
+    String genacnt899 = "GENA01AEND99";
+    String genacnt900 = "GENA01DEND00";
+    symbList = new SymbList();
+    tsQpre = "";
+    wsTsQname = "";
+    nRateVal = Integer.parseInt(symbList.getS13());
+    tranRateCounts();
+    try {
+        QueryParm jdeclQueryParm = new QueryParm();
+        jdeclQueryParm.setName(genacnt699);
+        jdeclQueryParm.setPool(genApool);
+        countVal = jdeclQueryParm.currentValue();
+        countErrors = countErrors + countVal;
+        genacnt699V = countVal;
+        symbList.setS14(String.format("%09d", genacnt699V));
+    } catch (CicsConditionException e) {
+        throw e;
+    }
+    try {
+        QueryParm jdeclQueryParm = new QueryParm();
+        jdeclQueryParm.setName(genacnt700);
+        jdeclQueryParm.setPool(genApool);
+        countVal = jdeclQueryParm.currentValue();
+        countSuccess = countSuccess + countVal;
+        genacnt700V = countVal;
+        symbList.setS15(String.format("%09d", genacnt700V));
+    } catch (CicsConditionException e) {
+        throw e;
+    }
+    countInq = countInq + countVal;
+    symbList.setS15(symbList.getS15());
+    wsTsQname = tsQpre + "700V";
+     nRateVal=Integer.parseInt(symbList.getS15());
+     
+    tranRateCounts();
+    try {
+        QueryParm jdeclQueryParm = new QueryParm();
+        jdeclQueryParm.setName(genacnt799);
+        jdeclQueryParm.setPool(genApool);
+        countVal = jdeclQueryParm.currentValue();
+        countErrors = countErrors + countVal;
+        genacnt799V = countVal;
+        symbList.setS16(String.format("%09d", genacnt799V));
+    } catch (CicsConditionException e) {
+        throw e;
+    }
+    try {
+        QueryParm jdeclQueryParm = new QueryParm();
+        jdeclQueryParm.setName(genacnt800);
+        jdeclQueryParm.setPool(genApool);
+        countVal = jdeclQueryParm.currentValue();
+        countSuccess = countSuccess + countVal;
+        genacnt800V = countVal;
+        symbList.setS17(String.format("%09d", genacnt800V));
+    } catch (CicsConditionException e) {
+        throw e;
+    }
+    countAdd = countAdd + countVal;
+    symbList.setS17(symbList.getS17());
+    wsTsQname = tsQpre + "800V";
+     nRateVal=Integer.parseInt(symbList.getS17());
+     
+    tranRateCounts();
+    try {
+        QueryParm jdeclQueryParm = new QueryParm();
+        jdeclQueryParm.setName(genacnt899);
+        jdeclQueryParm.setPool(genApool);
+        countVal = jdeclQueryParm.currentValue();
+        countErrors = countErrors + countVal;
+        genacnt899V = countVal;
+        symbList.setS18(String.format("%09d", genacnt899V));
+    } catch (CicsConditionException e) {
+        throw e;
+    }
+    try {
+        QueryParm jdeclQueryParm = new QueryParm();
+        jdeclQueryParm.setName(genacnt900);
+        jdeclQueryParm.setPool(genApool);
+        countVal = jdeclQueryParm.currentValue();
+        countSuccess = countSuccess + countVal;
+        genacnt900V = countVal;
+        symbList.setS19(String.format("%09d", genacnt900V));
+    } catch (CicsConditionException e) {
+        throw e;
+    }
+    countDel = countDel + countVal;
+    symbList.setS19(symbList.getS19());
+    wsTsQname = tsQpre + "900V";
+     nRateVal=Integer.parseInt(symbList.getS19());
+     
+    tranRateCounts();
+
+    symbList = new SymbList();
+    genApool = "GENA";
+    String genacnt999 = "GENA01DEND99";
+    String genacnta00 = "GENA01UEND00";
+    String genacntb99 = "GENA01IHOU99";
+    String genacntc00 = "GENA01AHOU00";
+    String genacnta99 = "GENA01UEND99";
+    String genacntb00 = "GENA01IHOU00";
+    String genacntc99 = "GENA01AHOU99";
+    tsQpre = "";
+    wsTsQname = "";
+    QueryParm genacnt999Parm = new QueryParm();
+    genacnt999Parm.setName(genacnt999);
+    genacnt999Parm.setPool(genApool);
+    QueryParm genacnta00Parm = new QueryParm();
+    genacnta00Parm.setName(genacnta00);
+    genacnta00Parm.setPool(genApool);
+    QueryParm genacntb99Parm = new QueryParm();
+    genacntb99Parm.setName(genacntb99);
+    genacntb99Parm.setPool(genApool);
+    QueryParm genacntc00Parm = new QueryParm();
+    genacntc00Parm.setName(genacntc00);
+    genacntc00Parm.setPool(genApool);
+    QueryParm genacnta99Parm = new QueryParm();
+    genacnta99Parm.setName(genacnta99);
+    genacnta99Parm.setPool(genApool);
+    QueryParm genacntb00Parm = new QueryParm();
+    genacntb00Parm.setName(genacntb00);
+    genacntb00Parm.setPool(genApool);
+    QueryParm genacntc99Parm = new QueryParm();
+    genacntc99Parm.setName(genacntc99);
+    genacntc99Parm.setPool(genApool);
+    int countVal = 0;
+    int countUpd = 0;
+    int countSuccess = 0;
+    int countInq = 0;
+    int countErrors = 0;
+    int countAdd = 0;
+    int nRateVal = 0;
+    int wsResp = 0;
+    try {
+        countVal = genacnt999Parm.getValue();
+        countErrors = countErrors + countVal;
+        genacnt999V = countVal;
+        symbList.setS20(genacnt999V);
+        countVal = genacnta00Parm.getValue();
+        countSuccess = countSuccess + countVal;
+        genacnta00V = countVal;
+        symbList.setS21(genacnta00V);
+        countUpd = countUpd + countVal;
+        symbList.setS21(genacnta00V);
+        wsTsQname = tsQpre + "A00V";
+        nRateVal = symbList.getS21();
+        tranRateCounts();
+        countVal = genacnta99Parm.getValue();
+        countErrors = countErrors + countVal;
+        genacnta99V = countVal;
+        symbList.setS22(genacnta99V);
+        countVal = genacntb00Parm.getValue();
+        countSuccess = countSuccess + countVal;
+        genacntb00V = countVal;
+        symbList.setS23(genacntb00V);
+        countInq = countInq + countVal;
+        symbList.setS23(genacntb00V);
+        wsTsQname = tsQpre + "B00V";
+        nRateVal = symbList.getS23();
+        tranRateCounts();
+        countVal = genacntb99Parm.getValue();
+        countErrors = countErrors + countVal;
+        genacntb99V = countVal;
+        symbList.setS24(genacntb99V);
+        countVal = genacntc00Parm.getValue();
+        countSuccess = countSuccess + countVal;
+        genacntc00V = countVal;
+        symbList.setS25(genacntc00V);
+        countAdd = countAdd + countVal;
+        symbList.setS25(genacntc00V);
+        wsTsQname = tsQpre + "C00V";
+        nRateVal = symbList.getS25();
+        tranRateCounts();
+        countVal = genacntc99Parm.getValue();
+        countErrors = countErrors + countVal;
+        genacntc99V = countVal;
+        symbList.setS26(genacntc99V);
+    } catch (CicsConditionException e) {
+        wsResp = e.getRESP2();
+        System.out.println("CICS error " + wsResp);
+    }
+
+    symbList = new SymbList();
+    genApool = "GENA";
+    String genacntd99 = "GENA01DHOU99";
+    String genacnte00 = "GENA01UHOU00";
+    String genacntd00 = "GENA01DHOU00";
+    String genacntf99 = "GENA01ICOM99";
+    String genacntg00 = "GENA01ACOM00";
+    String genacnte99 = "GENA01UHOU99";
+    String genacntf00 = "GENA01ICOM00";
+    tsQpre = "";
+    wsTsQname = "";
+    try {
+        QueryParm queryParm = new QueryParm();
+        queryParm.setPool(genApool);
+        queryParm.setName(genacntd00);
+        queryParm.setQueryType(QueryType.VALUE);
+        queryParm.execute();
+        countVal = queryParm.getValue();
+        countSuccess = countSuccess + countVal;
+        genacntd00V = countVal;
+        countDel = countDel + countVal;
+        symbList.setS27(String.valueOf(genacntd00V));
+        wsTsQname = tsQpre + "D00V";
+    } catch (CicsConditionException e) {
+        System.out.println(e);
+    }
+    try {
+        QueryParm queryParm = new QueryParm();
+        queryParm.setPool(genApool);
+        queryParm.setName(genacntd99);
+        queryParm.setQueryType(QueryType.VALUE);
+        queryParm.execute();
+        countVal = queryParm.getValue();
+        countErrors = countErrors + countVal;
+        genacntd99V = countVal;
+        symbList.setS28(String.valueOf(genacntd99V));
+    } catch (CicsConditionException e) {
+        System.out.println(e);
+    }
+    try {
+        QueryParm queryParm = new QueryParm();
+        queryParm.setPool(genApool);
+        queryParm.setName(genacnte00);
+        queryParm.setQueryType(QueryType.VALUE);
+        queryParm.execute();
+        countVal = queryParm.getValue();
+        countSuccess = countSuccess + countVal;
+        genacnte00V = countVal;
+        countUpd = countUpd + countVal;
+        symbList.setS29(String.valueOf(genacnte00V));
+        wsTsQname = tsQpre + "E00V";
+    } catch (CicsConditionException e) {
+        System.out.println(e);
+    }
+    try {
+        QueryParm queryParm = new QueryParm();
+        queryParm.setPool(genApool);
+        queryParm.setName(genacnte99);
+        queryParm.setQueryType(QueryType.VALUE);
+        queryParm.execute();
+        countVal = queryParm.getValue();
+        countErrors = countErrors + countVal;
+        genacnte99V = countVal;
+        symbList.setS30(String.valueOf(genacnte99V));
+    } catch (CicsConditionException e) {
+        System.out.println(e);
+    }
+    try {
+        QueryParm queryParm = new QueryParm();
+        queryParm.setPool(genApool);
+        queryParm.setName(genacntf00);
+        queryParm.setQueryType(QueryType.VALUE);
+        queryParm.execute();
+        countVal = queryParm.getValue();
+        countSuccess = countSuccess + countVal;
+        genacntf00V = countVal;
+        countInq = countInq + countVal;
+        symbList.setS31(String.valueOf(genacntf00V));
+        wsTsQname = tsQpre + "F00V";
+    } catch (CicsConditionException e) {
+        System.out.println(e);
+    }
+    try {
+        QueryParm queryParm = new QueryParm();
+        queryParm.setPool(genApool);
+        queryParm.setName(genacntf99);
+        queryParm.setQueryType(QueryType.VALUE);
+        queryParm.execute();
+        countVal = queryParm.getValue();
+        countErrors = countErrors + countVal;
+        genacntf99V = countVal;
+        symbList.setS32(String.valueOf(genacntf99V));
+    } catch (CicsConditionException e) {
+        System.out.println(e);
+    }
+    try {
+        QueryParm queryParm = new QueryParm();
+        queryParm.setPool(genApool);
+        queryParm.setName(genacntg00);
+        queryParm.setQueryType(QueryType.VALUE);
+        queryParm.execute();
+        countVal = queryParm.getValue();
+        countSuccess = countSuccess + countVal;
+        genacntg00V = countVal;
+        countAdd = countAdd + countVal;
+    } catch (CicsConditionException e) {
+        System.out.println(e);
+    }
+
+    genApool = "GENA";
+    symbList = new SymbList();
+    tsQpre = "";
+    wsTsQname = "";
+    symbList.setS33(String.valueOf(genacntg00V));
+    wsTsQname = tsQpre + "G00V";
+    nRateVal = Integer.parseInt(symbList.getS33());
+    tranRateCounts();
+    try {
+        QueryParm jdeclQueryParm = new QueryParm();
+        jdeclQueryParm.setName(genacntg99);
+        jdeclQueryParm.setPool(genApool);
+        countVal = jdeclQueryParm.getValue();
+        countErrors = countErrors + countVal;
+        symbList.setS34(String.valueOf(countVal));
+    } catch (CicsConditionException e) {
+        throw e;
+    }
+    try {
+        QueryParm jdeclQueryParm = new QueryParm();
+        jdeclQueryParm.setName(genacnth00);
+        jdeclQueryParm.setPool(genApool);
+        countVal = jdeclQueryParm.getValue();
+        countSuccess = countSuccess + countVal;
+        symbList.setS35(String.valueOf(countVal));
+    } catch (CicsConditionException e) {
+        throw e;
+    }
+    symbList.setS36(Integer.parseInt(symbList.getS35()));
+    wsTsQname = tsQpre + "H00V";
+    nRateVal = Integer.parseInt(symbList.getS36());
+    tranRateCounts();
+    try {
+        QueryParm jdeclQueryParm = new QueryParm();
+        jdeclQueryParm.setName(genacnth99);
+        jdeclQueryParm.setPool(genApool);
+        countVal = jdeclQueryParm.getValue();
+        countErrors = countErrors + countVal;
+        symbList.setS37(String.valueOf(countVal));
+    } catch (CicsConditionException e) {
+        throw e;
+    }
+    symbList.setS37(Integer.parseInt(symbList.getS37()));
+    wsTsQname = tsQpre + "I00V";
+    nRateVal = Integer.parseInt(symbList.getS37());
+    tranRateCounts();
+    symbList.setS38(Integer.parseInt(symbList.getS34()));
+    symbList.setS39(Integer.parseInt(symbList.getS35()));
+    wsTsQname = tsQpre + "X00V";
+    nRateVal = Integer.parseInt(symbList.getS38());
+    tranRateCounts();
+    wsTsQname = tsQpre + "X01V";
+    nRateVal = countInq;
+    tranRateCounts();
+    wsTsQname = tsQpre + "X02V";
+    nRateVal = countAdd;
+    tranRateCounts();
+    wsTsQname = tsQpre + "X03V";
+    nRateVal = countUpd;
+    tranRateCounts();
+    wsTsQname = tsQpre + "X04V";
+    nRateVal = countDel;
+    tranRateCounts();
+
+    markDanson.tranCounts(reportVal);
+    wsApplid = Region.getAPPLID();
+    symbList.setS1(wsApplid);
+    return;
+
+}

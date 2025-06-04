@@ -1,0 +1,452 @@
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+           DISPLAY "SNIPPET-1"
+           CALL "CEELOCT" USING WS-TODAY-LILLIAN,
+                                WS-TODAY-SECONDS,
+                                WS-TODAY-GREGORIAN,
+                                FC.
+           IF NOT CEE000 OF FC THEN
+              MOVE 'Y' TO WS-DATE-OF-BIRTH-ERROR
+              DISPLAY 'CEEDLOCT failed with msg '
+                 MSG-NO OF FC
+              GO TO DOBC999
+           END-IF.
+           SUBTRACT COMM-BIRTH-YEAR FROM WS-TODAY-G-YEAR
+              GIVING WS-CUSTOMER-AGE
+           IF WS-CUSTOMER-AGE > 150
+              MOVE 'Y' TO WS-DATE-OF-BIRTH-ERROR
+              MOVE 'O' TO COMM-FAIL-CODE
+              GO TO DOBC999
+           END-IF.
+           IF WS-TODAY-LILLIAN < WS-DATE-OF-BIRTH-LILLIAN
+                        MOVE 'Y' TO WS-DATE-OF-BIRTH-ERROR
+              MOVE 'Y' TO COMM-FAIL-CODE
+           END-IF.
+
+## Variable Map:
+WS-TODAY-SECONDS gettermapping wsTodaySeconds
+WS-TODAY-SECONDS settermapping wsTodaySeconds
+WS-TODAY-SECONDS GROUP JavaType String
+WS-TODAY-LILLIAN gettermapping wsTodayLillian
+WS-TODAY-LILLIAN settermapping wsTodayLillian = val
+WS-TODAY-LILLIAN PIC S9(9) JavaType int
+WS-TODAY-GREGORIAN gettermapping wsTodayGregorian.getBytes()
+WS-TODAY-GREGORIAN settermapping wsTodayGregorian.setBytes(val)
+WS-TODAY-GREGORIAN GROUP JavaType WsTodayGregorian
+WS-TODAY-G-YEAR gettermapping wsTodayGregorian.getWsTodayGYear()
+WS-TODAY-G-YEAR settermapping wsTodayGregorian.setWsTodayGYear(val)
+WS-TODAY-G-YEAR PIC 9(4) JavaType int
+WS-DATE-OF-BIRTH-LILLIAN gettermapping wsDateOfBirthLillian
+WS-DATE-OF-BIRTH-LILLIAN settermapping wsDateOfBirthLillian = val
+WS-DATE-OF-BIRTH-LILLIAN PIC S9(9) JavaType int
+WS-DATE-OF-BIRTH-ERROR gettermapping this.getWsDateOfBirthError()
+WS-DATE-OF-BIRTH-ERROR settermapping this.setWsDateOfBirthError(val)
+WS-DATE-OF-BIRTH-ERROR PIC X JavaType char
+WS-CUSTOMER-AGE gettermapping wsCustomerAge
+WS-CUSTOMER-AGE settermapping wsCustomerAge = val
+WS-CUSTOMER-AGE PIC S9999 JavaType int
+MSG-NO gettermapping ((Case1ConditionId)(fc.getConditionTokenValue())).getMsgNo()
+MSG-NO settermapping ((Case1ConditionId)(fc.getConditionTokenValue())).setMsgNo(val)
+MSG-NO PIC S9(4) JavaType int
+FC gettermapping fc.getBytes()
+FC settermapping fc.setBytes(val)
+FC GROUP JavaType Fc
+COMM-FAIL-CODE gettermapping commDobGroup.getCommFailCode()
+COMM-FAIL-CODE settermapping commDobGroup.setCommFailCode(val)
+COMM-FAIL-CODE PIC X JavaType char
+COMM-BIRTH-YEAR gettermapping commDobGroup.getCommBirthYear()
+COMM-BIRTH-YEAR settermapping commDobGroup.setCommBirthYear(val)
+COMM-BIRTH-YEAR PIC 9999 JavaType int
+
+
+## Class Map:
+public void dateOfBirthCheckDobc010(CommDobGroup7 commDobGroup){
+    String wsTodaySeconds = "";
+    WsTodayGregorian wsTodayGregorian = new WsTodayGregorian();
+    Fc fc = new Fc();
+}
+
+
+Output:
+=====================
+
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+           IF COMM-BIRTH-YEAR < 1601
+              MOVE 'Y' TO WS-DATE-OF-BIRTH-ERROR
+              MOVE 'O' TO COMM-FAIL-CODE
+              GO TO DOBC999
+           END-IF.
+           MOVE COMM-BIRTH-YEAR TO CEEDAYS-YEAR.
+           MOVE COMM-BIRTH-MONTH TO CEEDAYS-MONTH.
+           MOVE COMM-BIRTH-DAY TO CEEDAYS-DAY.
+           CALL "CEEDAYS" USING DATE-OF-BIRTH-FOR-CEEDAYS
+                                DATE-OF-BIRTH-FORMAT,
+                                WS-DATE-OF-BIRTH-LILLIAN,
+                                FC.
+           IF NOT CEE000 OF FC THEN
+              MOVE 'Y' TO WS-DATE-OF-BIRTH-ERROR
+              MOVE 'Z' TO COMM-FAIL-CODE
+              DISPLAY 'CEEDAYS failed, FORMAT LENGTH 10 with msg '
+                 MSG-NO OF FC
+                 ' for date YYYYMMDD' DATE-OF-BIRTH-FOR-CEEDAYS
+              GO TO DOBC999
+           END-IF.
+
+## Variable Map:
+WS-DATE-OF-BIRTH-LILLIAN gettermapping wsDateOfBirthLillian
+WS-DATE-OF-BIRTH-LILLIAN settermapping wsDateOfBirthLillian = val
+WS-DATE-OF-BIRTH-LILLIAN PIC S9(9) JavaType int
+WS-DATE-OF-BIRTH-ERROR gettermapping this.getWsDateOfBirthError()
+WS-DATE-OF-BIRTH-ERROR settermapping this.setWsDateOfBirthError(val)
+WS-DATE-OF-BIRTH-ERROR PIC X JavaType char
+MSG-NO gettermapping ((Case1ConditionId)(fc.getConditionTokenValue())).getMsgNo()
+MSG-NO settermapping ((Case1ConditionId)(fc.getConditionTokenValue())).setMsgNo(val)
+MSG-NO PIC S9(4) JavaType int
+FC gettermapping fc.getBytes()
+FC settermapping fc.setBytes(val)
+FC GROUP JavaType Fc
+DATE-OF-BIRTH-FORMAT gettermapping dateOfBirthFormat.getBytes()
+DATE-OF-BIRTH-FORMAT settermapping dateOfBirthFormat.setBytes(val)
+DATE-OF-BIRTH-FORMAT GROUP JavaType DateOfBirthFormat
+DATE-OF-BIRTH-FOR-CEEDAYS gettermapping dateOfBirthForCeedays.getBytes()
+DATE-OF-BIRTH-FOR-CEEDAYS settermapping dateOfBirthForCeedays.setBytes(val)
+DATE-OF-BIRTH-FOR-CEEDAYS GROUP JavaType DateOfBirthForCeedays
+COMM-FAIL-CODE gettermapping commDobGroup.getCommFailCode()
+COMM-FAIL-CODE settermapping commDobGroup.setCommFailCode(val)
+COMM-FAIL-CODE PIC X JavaType char
+COMM-BIRTH-YEAR gettermapping commDobGroup.getCommBirthYear()
+COMM-BIRTH-YEAR settermapping commDobGroup.setCommBirthYear(val)
+COMM-BIRTH-YEAR PIC 9999 JavaType int
+COMM-BIRTH-MONTH gettermapping commDobGroup.getCommBirthMonth()
+COMM-BIRTH-MONTH settermapping commDobGroup.setCommBirthMonth(val)
+COMM-BIRTH-MONTH PIC 99 JavaType int
+COMM-BIRTH-DAY gettermapping commDobGroup.getCommBirthDay()
+COMM-BIRTH-DAY settermapping commDobGroup.setCommBirthDay(val)
+COMM-BIRTH-DAY PIC 99 JavaType int
+CEEDAYS-YEAR gettermapping dateOfBirthForCeedays.getCeedaysYear()
+CEEDAYS-YEAR settermapping dateOfBirthForCeedays.setCeedaysYear(val)
+CEEDAYS-YEAR PIC 9999 JavaType int
+CEEDAYS-MONTH gettermapping dateOfBirthForCeedays.getCeedaysMonth()
+CEEDAYS-MONTH settermapping dateOfBirthForCeedays.setCeedaysMonth(val)
+CEEDAYS-MONTH PIC 99 JavaType int
+CEEDAYS-DAY gettermapping dateOfBirthForCeedays.getCeedaysDay()
+CEEDAYS-DAY settermapping dateOfBirthForCeedays.setCeedaysDay(val)
+CEEDAYS-DAY PIC 99 JavaType int
+
+
+## Class Map:
+public void dateOfBirthCheckDobc010(CommDobGroup7 commDobGroup){
+    DateOfBirthFormat dateOfBirthFormat = new DateOfBirthFormat();
+    DateOfBirthForCeedays dateOfBirthForCeedays = new DateOfBirthForCeedays();
+    Fc fc = new Fc();
+}
+
+
+Output:
+=====================
+

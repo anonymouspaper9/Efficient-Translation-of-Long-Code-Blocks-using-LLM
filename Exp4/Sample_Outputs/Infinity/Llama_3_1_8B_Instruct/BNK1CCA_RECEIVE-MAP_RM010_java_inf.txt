@@ -1,0 +1,20 @@
+public void receiveMapRm010(){
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    String wsAbendPgm = "ABNDPROC";
+    WsFailInfo wsFailInfo = new WsFailInfo();
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+    try {
+        String sql = "RECEIVE MAP('BNK1ACC') MAPSET('BNK1ACC')";
+        CICSConnection cicsConnection = CICSConnection.connection;
+        cicsConnection.execute(sql);
+    } catch (CICSException e) {
+        abndinfoRec.setAbndRespcode(e.getRespCode());
+        abndinfoRec.setAbndResp2Code(e.getResp2Code());
+        abndinfoRec.setAbndSqlcode(0);
+        wsFailInfo.setWsCicsFailMsg("BNKMENU - RM010 - RECEIVE MAP FAIL ");
+        wsFailInfo.setWsCicsRespDisp(abndinfoRec.getAbndRespcode());
+        wsFailInfo.setWsCicsResp2Disp(abndinfoRec.getAbndResp2Code());
+        abendThisTaskAtt010(wsFailInfo);
+        return;
+    }
+} 

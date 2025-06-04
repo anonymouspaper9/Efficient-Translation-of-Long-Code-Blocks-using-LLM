@@ -1,0 +1,75 @@
+       MAINLINE SECTION.                                                
+                                                                        
+           MOVE SPACES TO WRITE-MSG.                                    
+           MOVE SPACES TO WS-RECV.                                      
+                                                                        
+           EXEC CICS ASSIGN SYSID(WRITE-MSG-SYSID)                      
+                RESP(WS-RESP)                                           
+           END-EXEC.                                                    
+                                                                        
+           EXEC CICS ASSIGN STARTCODE(WS-STARTCODE)                     
+                RESP(WS-RESP)                                           
+           END-EXEC.                                                    
+                                                                        
+           EXEC CICS ASSIGN PRINSYSID(WS-PRINSYSID)                     
+                RESP(WS-RESP)                                           
+           END-EXEC.                                                    
+                                                                        
+           EXEC CICS ASSIGN INVOKINGPROG(WS-INVOKEPROG)                 
+                RESP(WS-RESP)                                           
+           END-EXEC.                                                    
+           IF WS-INVOKEPROG NOT = SPACES                                
+              MOVE 'C' To WS-FLAG                                       
+              MOVE COMMA-DATA  TO WRITE-MSG-MSG                         
+              MOVE EIBCALEN    TO WS-RECV-LEN                           
+           ELSE                                                         
+              EXEC CICS RECEIVE INTO(WS-RECV)                           
+                  LENGTH(WS-RECV-LEN)                                   
+                  RESP(WS-RESP)                                         
+              END-EXEC                                                  
+              MOVE 'R' To WS-FLAG                                       
+              MOVE WS-RECV-DATA  TO WRITE-MSG-MSG                       
+              SUBTRACT 5 FROM WS-RECV-LEN                               
+           END-IF.                                                      
+                                                                        
+           MOVE 'GENAERRS' TO STSQ-NAME.                                
+           IF WRITE-MSG-MSG(1:2) = 'Q=' THEN                            
+              MOVE WRITE-MSG-MSG(3:4) TO STSQ-EXT                       
+              MOVE WRITE-MSG-REST TO TEMPO                              
+              MOVE TEMPO          TO WRITE-MSG-MSG                      
+              SUBTRACT 7 FROM WS-RECV-LEN                               
+           END-IF.                                                      
+                                                                        
+           ADD 5 TO WS-RECV-LEN.                                        
+                                                                        
+      * Write output message to TDQ CSMT                                
+      *                                                                 
+           EXEC CICS WRITEQ TD QUEUE(STDQ-NAME)                         
+                     FROM(WRITE-MSG)                                    
+                     RESP(WS-RESP)                                      
+                     LENGTH(WS-RECV-LEN)                                
+                                                                        
+           END-EXEC.                                                    
+                                                                        
+      * Write output message to Genapp TSQ                              
+      * If no space is available then the task will not wait for        
+      *  storage to become available but will ignore the request...     
+      *                                                                 
+           EXEC CICS WRITEQ TS QUEUE(STSQ-NAME)                         
+                     FROM(WRITE-MSG)                                    
+                     RESP(WS-RESP)                                      
+                     NOSUSPEND                                          
+                     LENGTH(WS-RECV-LEN)                                
+                                                                        
+           END-EXEC.                                                    
+                                                                        
+           If WS-FLAG = 'R' Then                                        
+             EXEC CICS SEND TEXT FROM(FILLER-X)                         
+              WAIT                                                      
+              ERASE                                                     
+              LENGTH(1)                                                 
+              FREEKB                                                    
+             END-EXEC.                                                  
+                                                                        
+           EXEC CICS RETURN                                             
+           END-EXEC.                                                    

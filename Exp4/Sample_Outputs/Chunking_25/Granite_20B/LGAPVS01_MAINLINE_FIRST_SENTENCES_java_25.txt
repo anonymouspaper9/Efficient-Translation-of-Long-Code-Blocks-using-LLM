@@ -1,0 +1,53 @@
+public void invokeMainline(CaPolicyRequest caPolicyRequest) {
+
+    WfPolicyInfo wfPolicyInfo = new WfPolicyInfo();
+    String wfPolicyData = "";
+
+    wfPolicyInfo.getWfPolicyKey().setWfRequestId(caPolicyRequest.getCaRequestId().charAt(3));
+    wfPolicyInfo.getWfPolicyKey().setWfPolicyNum(caPolicyRequest.getCaPolicyNum());
+    wfPolicyInfo.getWfPolicyKey().setWfCustomerNum(caPolicyRequest.getCaCustomerNum());
+
+    if (wfPolicyInfo.getWfPolicyKey().getWfRequestId() == 'C') {
+
+        wfPolicyInfo = caPolicyRequest.getWfPolicyData();
+        wfPolicyInfo.setWfBPostcode(caPolicyRequest.getCaBPostcode());
+        wfPolicyInfo.setWfBStatus(caPolicyRequest.getCaBStatus());
+        wfPolicyInfo.setWfBCustomer(caPolicyRequest.getCaBCustomer());
+        if (wfPolicyInfo.getWfPolicyType() == 'E') {
+            ((WfEPolicyData) wfPolicyInfo).setWfEWithProfits(caPolicyRequest.getCaEWithProfits());
+            ((WfEPolicyData) wfPolicyInfo).setWfEEquities(caPolicyRequest.getCaEEquities());
+            ((WfEPolicyData) wfPolicyInfo).setWfEManagedFund(caPolicyRequest.getCaEManagedFund());
+            ((WfEPolicyData) wfPolicyInfo).setWfEFundName(caPolicyRequest.getCaEFundName());
+            ((WfEPolicyData) wfPolicyInfo).setWfELifeAssured(caPolicyRequest.getCaELifeAssured());
+        } else if (wfPolicyInfo.getWfPolicyType() == 'H') {
+            ((WfHPolicyData) wfPolicyInfo).setWfHPropertyType(caPolicyRequest.getCaHPropertyType());
+            ((WfHPolicyData) wfPolicyInfo).setWfHBedrooms(caPolicyRequest.getCaHBedrooms());
+            ((WfHPolicyData) wfPolicyInfo).setWfHValue(caPolicyRequest.getCaHValue());
+            ((WfHPolicyData) wfPolicyInfo).setWfHPostcode(caPolicyRequest.getCaHPostcode());
+            ((WfHPolicyData) wfPolicyInfo).setWfHHouseName(caPolicyRequest.getCaHHouseName());
+        } else if (wfPolicyInfo.getWfPolicyType() == 'M') {
+            ((WfMPolicyData) wfPolicyInfo).setWfMMake(caPolicyRequest.getCaMMake());
+            ((WfMPolicyData) wfPolicyInfo).setWfMModel(caPolicyRequest.getCaMModel());
+            ((WfMPolicyData) wfPolicyInfo).setWfMValue(caPolicyRequest.getCaMValue());
+            ((WfMPolicyData) wfPolicyInfo).setWfMRegnumber(caPolicyRequest.getCaMRegnumber());
+        }
+
+    }
+    wfPolicyInfo.getWfPolicyKey().setWfPolicyNum(String.valueOf(caPolicyRequest.getCaPolicyNum()));
+    try {
+        KeyedFile jdeclKeyedFile = new KeyedFile();
+        jdeclKeyedFile.setName("KSDSPOLY");
+        RecordHolder jdeclRecordHolder = new RecordHolder();
+        String jdeclLocalCcsid = System.getProperty("com.ibm.cics.jvmserver.local.ccsid");
+        Charset jdeclLocalCharSet = Charset.forName(jdeclLocalCcsid);
+        jdeclKeyedFile.write(wfPolicyInfo.getWfPolicyKey().getWfPolicyNum().getBytes(jdeclLocalCharSet),
+                wfPolicyInfo.getBytes());
+    } catch (CicsConditionException e) {
+        wsResp = e.getRESP();
+        wsResp2 = e.getRESP2();
+        caPolicyRequest.setCaReturnCode(80);
+        writeErrorMessage();
+        Task.getTask().abend();
+    }
+
+}

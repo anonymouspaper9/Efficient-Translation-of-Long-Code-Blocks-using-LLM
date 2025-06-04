@@ -1,0 +1,81 @@
+public void invokeMainline(Dfhcommarea dfhcommarea) {
+    GenAcount genAcount = new GenAcount();
+    int wsAbstime = 0;
+    String wsTime = "";
+    String wsDate = "";
+    WsQarea wsQarea = new WsQarea();
+    String wsQname = "GENASTRT";
+
+    String wsChaNname1 = "DFHEP.DATA.00001";
+    String wsChaNname2 = "DFHEP.DATA.00002";
+    String wsDataReq = "";
+    String wsDataRc = "";
+    WsHeader wsHeader = new WsHeader();
+    wsHeader.setWsTransid(Task.getTask().getTransactionName());
+    wsHeader.setWsTermid(Task.getTask().getSTARTCODE());
+    wsHeader.setWsTasknum(Task.getTask().getTaskNumber());
+    wsHeader.setWsCalen(dfhcommarea.length());
+    Object jdeclTask = Task.getTask();
+    Channel jdeclChannel = jdeclTask.getCurrentChannel();
+    Container jdeclContainer1 = jdeclChannel.getContainer(wsChaNname1);
+    byte[] jdeclTempOutputData = jdeclContainer1.get();
+    Charset jdeclCharset = Charset.forName(System.getProperty("com.ibm.cics.jvmserver.local.ccsid"));
+    wsDataReq = new String(jdeclTempOutputData, jdeclCharset);
+    Container jdeclContainer2 = jdeclChannel.getContainer(wsChaNname2);
+    jdeclTempOutputData = jdeclContainer2.get();
+    jdeclCharset = Charset.forName(System.getProperty("com.ibm.cics.jvmserver.local.ccsid"));
+    wsDataRc = new String(jdeclTempOutputData, jdeclCharset);
+
+    wsDataReq = "";
+    wsDataRc = "";
+    if (wsResp == StatusCodeHelper.DFHRESP(NORMAL)) {
+        genAcount.setGenAcounter(wsDataReq);
+        genAcount.setGenAtype(wsDataRc);
+    } else {
+        if (dfhcommarea.getEibcalen() == 0) {
+            Task.getTask().abend();
+        } else {
+            genAcount.setGenAcounter(dfhcommarea.getCaRequestId());
+            genAcount.setGenAtype(String.valueOf(dfhcommarea.getCaReturnCode()));
+        }
+    }
+    TSQ jdeclTsq = new TSQ();
+    ItemHolder jdeclRecord = new ItemHolder();
+    jdeclTsq.setName(wsQname);
+    jdeclTsq.readItem(1, jdeclRecord);
+    wsQarea.setBytes(jdeclRecord.getStringValue());
+
+    genAcount = new GenAcount();
+    wsQarea = new WsQarea();
+    wsQname = "GENASTRT";
+    if (wsResp == StatusCodeHelper.QIDERR) {
+        wsAbstime = AskTimeUtils.askTimeAbsTime();
+        wsDate = CICSDateTimeFormat.DDMMYYYY.formatDateTime(wsAbstime, ZoneId.systemDefault());
+        wsTime = CICSDateTimeFormat.HHMMSS.formatDateTime(wsAbstime, ZoneId.systemDefault());
+        wsQarea.setWsAreaD(wsDate);
+        wsQarea.setWsAreaT(wsTime);
+        jdeclTsq = new TSQ();
+        jdeclTsq.setName(wsQname);
+        jdeclTsq.writeString(wsQarea.toByteString());
+    }
+    if (genAcount.getGenAcounter().equals("02ACUS")) {
+        genAcount.setGenAcounter("01ACUS");
+    }
+    if (genAcount.getGenAcounter().equals("02ICOM") || genAcount.getGenAcounter().equals("03ICOM")
+            || genAcount.getGenAcounter().equals("05ICOM")) {
+        genAcount.setGenAcounter("01ICOM");
+    }
+    if (!genAcount.getGenAtype().equals("00")) {
+        genAcount.setGenAtype("99");
+    }
+
+    try {
+        jdeclTask = Task.getTask();
+        genAcount.setTrancount(jdeclTask.getTask().getInvokingProgramName());
+        genAcount.setGenapool(genApool);
+        genAcount.setGenacount(trancount);
+    } catch (CicsConditionException e) {
+        throw e;
+    }
+
+}

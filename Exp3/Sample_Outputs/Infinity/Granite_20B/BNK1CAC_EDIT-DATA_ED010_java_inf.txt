@@ -1,0 +1,181 @@
+public void editDataEd010(Switches switches) {
+    String intrtiComp1 = "";
+    int wsNumCountPoint;
+    String wsReverse = "";
+    if (custnoli < 1 || custnoi.equals("__________")) {
+        messageo = String.valueOf(' ').repeat(80);
+        messageo = "Please enter a 10 digit Customer Number ";
+        messageo = messageo + " ";
+        messageo = messageo + " ";
+        switches.setValidDataSw('N');
+        custnoli = -1;
+        return;
+    }
+    if (!custnoi.matches("\\d+")) {
+        messageo = String.valueOf(' ').repeat(80);
+        messageo = "Please enter a numeric Customer number ";
+        messageo = messageo + " ";
+        messageo = messageo + " ";
+        switches.setValidDataSw('N');
+        custnoli = -1;
+        return;
+    }
+    if (acctypi.equals("________") || acctypl < 1) {
+        messageo = String.valueOf(' ').repeat(80);
+        messageo = "Account Type should be ISA,CURRENT,LOAN,";
+        messageo = messageo + "SAVING or MORTGAGE";
+        switches.setValidDataSw('N');
+        acctypl = -1;
+        return;
+    }
+    messageo = String.valueOf(' ').repeat(80);
+    if (acctypl > 0) {
+        switch (acctypi) {
+            case "ISA_____" :
+                acctypi = "ISA     ";
+                break;
+            case "isa_____" :
+                acctypi = "ISA     ";
+                break;
+            case "ISA     " :
+                break;
+            case "isa     " :
+                acctypi = "ISA     ";
+                break;
+            case "CURRENT_" :
+                acctypi = "CURRENT ";
+                break;
+            case "current_" :
+                acctypi = "CURRENT ";
+                break;
+            case "CURRENT " :
+                break;
+            case "current " :
+                acctypi = "CURRENT ";
+                break;
+            case "LOAN____" :
+                acctypi = "LOAN    ";
+                break;
+            case "loan____" :
+                acctypi = "LOAN    ";
+                break;
+            case "loan    " :
+                acctypi = "LOAN    ";
+                break;
+            case "LOAN    " :
+                break;
+            case "SAVING__" :
+                acctypi = "SAVING  ";
+                break;
+            case "saving__" :
+                acctypi = "SAVING  ";
+                break;
+            case "saving  " :
+                acctypi = "SAVING  ";
+                break;
+            case "SAVING  " :
+                break;
+            case "MORTGAGE" :
+                break;
+            case "mortgage" :
+                acctypi = "MORTGAGE";
+                break;
+            default:
+                messageo = String.valueOf(' ').repeat(80);
+                messageo = "Account Type should be ISA,CURRENT,LOAN,";
+                messageo = messageo + "SAVING or MORTGAGE";
+                switches.setValidDataSw('N');
+                acctypl = -1;
+                return;
+        }
+    }
+    if (intrtl == 0) {
+        messageo = String.valueOf(' ').repeat(80);
+        messageo = "Please supply a numeric interest rate";
+        switches.setValidDataSw('N');
+        intrtl = -1;
+        return;
+    }
+    if (!intrti.matches("\\d+")) {
+        int wsNumCountTotal = 0;
+        wsNumCountTotal = (int) intrti.chars().filter(c->c=='0').count();
+        wsNumCountTotal = wsNumCountTotal + (int) intrti.chars().filter(c->c=='1').count();
+        wsNumCountTotal = wsNumCountTotal + (int) intrti.chars().filter(c->c=='2').count();
+        wsNumCountTotal = wsNumCountTotal + (int) intrti.chars().filter(c->c=='3').count();
+        wsNumCountTotal = wsNumCountTotal + (int) intrti.chars().filter(c->c=='4').count();
+        wsNumCountTotal = wsNumCountTotal + (int) intrti.chars().filter(c->c=='5').count();
+        wsNumCountTotal = wsNumCountTotal + (int) intrti.chars().filter(c->c=='6').count();
+        wsNumCountTotal = wsNumCountTotal + (int) intrti.chars().filter(c->c=='7').count();
+        wsNumCountTotal = wsNumCountTotal + (int) intrti.chars().filter(c->c=='8').count();
+        wsNumCountTotal = wsNumCountTotal + (int) intrti.chars().filter(c->c=='9').count();
+        wsNumCountTotal = wsNumCountTotal + (int) intrti.chars().filter(c->c=='.').count();
+        wsNumCountTotal = wsNumCountTotal + (int) intrti.chars().filter(c->c=='-').count();
+        wsNumCountTotal = wsNumCountTotal + (int) intrti.chars().filter(c->c=='+').count();
+        wsNumCountTotal = wsNumCountTotal + (int) intrti.chars().filter(c->c==' ').count();
+        if (wsNumCountTotal < intrtl) {
+            messageo = String.valueOf(' ').repeat(80);
+            messageo = "Please supply a numeric interest rate";
+            switches.setValidDataSw('N');
+            intrtl = -1;
+            return;
+        }
+        wsNumCountPoint = 0;
+        wsNumCountPoint = (int) intrti.chars().filter(c->c=='.').count();
+        if (wsNumCountPoint > 1) {
+            messageo = String.valueOf(' ').repeat(80);
+            messageo = "Use one decimal point for interest rate only";
+            switches.setValidDataSw('N');
+            intrtl = -1;
+            return;
+        }
+        if (wsNumCountPoint == 1) {
+            wsNumCountTotal = 0;
+            wsNumCountTotal = (int) intrti.chars().filter(c->c=='.').skip(1).count();
+            if (wsNumCountTotal > 2) {
+                wsNumCountTotal = 0;
+                wsNumCountPoint = 0;
+                wsNumCountPoint = (int) intrti.chars().filter(c->c=='.').count();
+                wsNumCountPoint = wsNumCountPoint + 2;
+                wsNumCountPoint = wsNumCountPoint - 1;
+                wsNumCountTotal = (int) intrti.chars().filter(c->c=='.').skip(wsNumCountPoint).count();
+                if (wsNumCountTotal > 2) {
+                    messageo = String.valueOf(' ').repeat(80);
+                    messageo = "Only up to two decimal places are supported";
+                    switches.setValidDataSw('N');
+                    intrtl = -1;
+                    return;
+                }
+            }
+        }
+    }
+    intrtiComp1 = intrti;
+    intrtiComp1 = intrtiComp1.replaceAll("[^\\d.]", "");
+    intrtiComp1 = intrtiComp1.replaceAll("\\.", "");
+    intrtiComp1 = intrtiComp1.replaceAll("\\-", "");
+    intrtiComp1 = intrtiComp1.replaceAll("\\+", "");
+    intrtiComp1 = intrtiComp1.replaceAll("\\s", "");
+    intrtiComp1 = intrtiComp1.replaceAll("\\$", "");
+    intrtiComp1 = intrtiComp1.replaceAll("\\,", "");
+    intrtiComp1 = intrtiComp1.replaceAll("\\(", "");
+    intrtiComp1 = intrtiComp1.replaceAll("\\)", "");
+    intrtiComp1 = intrtiComp1.replaceAll("\\[", "");
+    intrtiComp1 = intrtiComp1.replaceAll("\\]", "");
+    intrtiComp1 = intrtiComp1.replaceAll("\\{", "");
+    intrtiComp1 = intrtiComp1.replaceAll("\\}", "");
+    intrtiComp1 = intrtiComp1.replaceAll("\\|", "");
+    intrtiComp1 = intrtiComp1.replaceAll("\\^", "");
+    intrtiComp1 = intrtiComp1.replaceAll("\\*", "");
+    intrtiComp1 = intrtiComp1.replaceAll("\\/", "");
+    intrtiComp1 = intrtiComp1.replaceAll("\\%", "");
+    intrtiComp1 = intrtiComp1.replaceAll("\\&", "");
+    intrtiComp1 = intrtiComp1.replaceAll("\\#", "");
+    intrtiComp1 = intrtiComp1.replaceAll("\\@", "");
+    intrtiComp1 = intrtiComp1.replaceAll("\\!", "");
+    intrtiComp1 = intrtiComp1.replaceAll("\\~", "");
+    intrtiComp1 = intrtiComp1.replaceAll("\\`", "");
+    intrtiComp1 = intrtiComp1.replaceAll("\\<", "");
+    intrtiComp1 = intrtiComp1.replaceAll("\\>", "");
+    intrtiComp1 = intrtiComp1.replaceAll("\\?", "");
+    intrtiComp1 = intrtiComp1.replaceAll("\\:", "");
+    intrti;
+}

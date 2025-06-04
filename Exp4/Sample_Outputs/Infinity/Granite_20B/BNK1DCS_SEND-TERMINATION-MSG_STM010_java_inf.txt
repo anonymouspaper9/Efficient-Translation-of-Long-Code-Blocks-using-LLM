@@ -1,0 +1,98 @@
+public void sendTerminationMsgStm010(Dfhcommarea dfhcommarea) {
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    String endOfSessionMessage = "Session Ended";
+    String wsAbendPgm = "ABNDPROC";
+    WsFailInfo wsFailInfo = new WsFailInfo();
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+    try {
+        Task.getTask().getChannel("CHANNEL-NAME0001").delete();
+    } catch (CicsConditionException e) {
+        abndinfoRec.setAbndRespcode(e.getErrorCode());
+        abndinfoRec.setAbndResp2Code(e.getErrorCode());
+        abndinfoRec.setAbndCode("HBNK");
+        abndinfoRec.setAbndProgram(Task.getTask().getProgramName());
+        abndinfoRec.setAbndFreeform("BNK1DCS - STM010 - DELETE CHANNEL-NAME0001 FAIL");
+        abndinfoRec.setAbndDate(this.getWsOrigDate());
+        abndinfoRec.setAbndTime(this.getWsTimeNowGrp().getWsTimeNowGrpHh() + ":"
+                + this.getWsTimeNowGrp().getWsTimeNowGrpMm() + ":" + this.getWsTimeNowGrp().getWsTimeNowGrpSs());
+        abndinfoRec.setAbndUtimeKey(this.getWsUTime());
+        abndinfoRec.setAbndTranid(Task.getTask().getTransactionName());
+        abndinfoRec.setAbndTasknoKey(Task.getTask().getTaskNumber());
+        abndinfoRec.setAbndSqlcode(0);
+        abndinfoRec.setAbndApplid(Region.getAPPLID());
+        abndinfoRec.setAbndDate(this.getWsOrigDate());
+        abndinfoRec.setAbndTime(this.getWsTimeNowGrp().getWsTimeNowGrpHh() + ":"
+                + this.getWsTimeNowGrp().getWsTimeNowGrpMm() + ":" + this.getWsTimeNowGrp().getWsTimeNowGrpSs());
+        abndinfoRec.setAbndUtimeKey(this.getWsUTime());
+        abndinfoRec.setAbndTranid(Task.getTask().getTransactionName());
+        abndinfoRec.setAbndTasknoKey(Task.getTask().getTaskNumber());
+        abndinfoRec.setAbndSqlcode(0);
+        abndinfoRec.setAbndApplid(Region.getAPPLID());
+        abndinfoRec.setAbndDate(this.getWsOrigDate());
+        abndinfoRec.setAbndTime(this.getWsTimeNowGrp().getWsTimeNowGrpHh() + ":"
+                + this.getWsTimeNowGrp().getWsTimeNowGrpMm() + ":" + this.getWsTimeNowGrp().getWsTimeNowGrpSs());
+        abndinfoRec.setAbndUtimeKey(this.getWsUTime());
+        abndinfoRec.setAbndTranid(Task.getTask().getTransactionName());
+        abndinfoRec.setAbndTasknoKey(Task.getTask().getTaskNumber());
+        abndinfoRec.setAbndSqlcode(0);
+        abndinfoRec.setAbndApplid(Region.getAPPLID());
+        abndinfoRec.setAbndDate(this.getWsOrigDate());
+        abndinfoRec.setAbndTime(this.getWsTimeNowGrp().getWsTimeNowGrpHh() + ":"
+                + this.getWsTimeNowGrp().getWsTimeNowGrpMm() + ":" + this.getWsTimeNowGrp().getWsTimeNowGrpSs());
+        abndinfoRec.setAbndUtimeKey(this.getWsUTime());
+        abndinfoRec.setAbndTranid(Task.getTask().getTransactionName());
+        abndinfoRec.setAbndTasknoKey(Task.getTask().getTaskNumber());
+        abndinfoRec.setAbndSqlcode(0);
+        abndinfoRec.setAbndApplid(Region.getAPPLID());
+        abndinfoRec.setAbndDate(this.getWsOrigDate());
+        abndinfoRec.setAbndTime(this.getWsTimeNowGrp().getWsTimeNowGrpHh() + ":"
+                + this.getWsTimeNowGrp().getWsTimeNowGrpMm() + ":" + this.getWsTimeNowGrp().getWsTimeNowGrpSs());
+        abndinfoRec.setAbndUtimeKey(this.getWsUTime());
+        abndinfoRec.setAbndTranid(Task.getTask().getTransactionName());
+        abndinfoRec.setAbndTasknoKey(Task.getTask().getTaskNumber());
+        abndinfoRec.setAbndSqlcode(0);
+        abndinfoRec.setAbndApplid(Region.getAPPLID());
+        abndinfoRec.setAbndDate(this.getWsOrigDate());
+        abndinfoRec.setAbndTime(this.getWsTimeNowGrp().getWsTimeNowGrpHh() + ":"
+                + this.getWsTimeNowGrp().getWsTimeNowGrpMm() + ":" + this.getWsTimeNowGrp().getWsTimeNowGrpSs());
+        abndinfoRec.setAbndUtimeKey(this.getWsUTime());
+        abndinfoRec.setAbndTranid(Task.getTask().getTransactionName());
+        abndinfoRec.setAbndTasknoKey(Task.getTask().getTaskNumber());
+        abndinfoRec.setAbndSqlcode(0);
+        abndinfoRec.setAbndApplid(Region.getAPPLID());
+        abndinfoRec.setAbndDate(this.getWsOrigDate());
+        abndinfoRec.setAbndTime(this.getWsTimeNowGrp().getWsTimeNowGrpHh() + ":"
+                + this.getWsTimeNowGrp().getWsTimeNowGrpMm() + ":" + this.getWsTimeNowGrp().getWsTimeNowGrpSs());
+        abndinfoRec.setAbndUtimeKey(this.getWsUTime());
+        abndinfoRec.setAbndTranid(Task.getTask().getTransactionName());
+        abndinfoRec.setAbndTasknoKey(Task.getTask().getTaskNumber());
+        abndinfoRec.setAbndSqlcode(0);
+        abndinfoRec.setAbndApplid(Region.getAPPLID());
+        abndinfoRec.setAbndDate(this.getWsOrigDate());
+        abndinfoRec.setAbndTime(this.getWsTimeNowGrp().getWsTimeNowGrpHh() + ":"
+                + this.getWsTimeNowGrp().getWsTimeNowGrpMm() + ":" + this.getWsTimeNowGrp().getWsTimeNowGrpSs());
+        abndinfoRec.setAbndUtimeKey(this.getWsUTime());
+        abndinfoRec.setAbndTranid(Task.getTask().getTransactionName());
+        abndinfoRec.setAbndTasknoKey(Task.getTask().getTaskNumber());
+        abndinfoRec.setAbndSqlcode(0);
+        abndinfoRec.setAbndApplid(Region.getAPPLID());
+        abndinfoRec.setAbndDate(this.getWsOrigDate());
+        abndinfoRec.setAbndTime(this.getWsTimeNowGrp().getWsTimeNowGrpHh() + ":"
+                + this.getWsTimeNowGrp().getWsTimeNowGrpMm() + ":" + this.getWsTimeNowGrp().getWsTimeNowGrpSs());
+        abndinfoRec.setAbndUtimeKey(this.getWsUTime());
+        abndinfoRec.setAbndTranid(Task.getTask().getTransactionName());
+        abndinfoRec.setAbndTasknoKey(Task.getTask().getTaskNumber());
+        abndinfoRec.setAbndSqlcode(0);
+        abndinfoRec.setAbndApplid(Region.getAPPLID());
+        abndinfoRec.setAbndDate(this.getWsOrigDate());
+        abndinfoRec.setAbndTime(this.getWsTimeNowGrp().getWsTimeNowGrpHh() + ":"
+                + this.getWsTimeNowGrp().getWsTimeNowGrpMm() + ":" + this.getWsTimeNowGrp().getWsTimeNowGrpSs());
+        abndinfoRec.setAbndUtimeKey(this.getWsUTime());
+        abndinfoRec.setAbndTranid(Task.getTask().getTransactionName());
+        abndinfoRec.setAbndTasknoKey(Task.getTask().getTaskNumber());
+        abndinfoRec.setAbndSqlcode(0);
+        abndinfoRec.setAbndApplid(Region.getAPPLID());
+        abndinfoRec.setAbndDate(this.getWsOrigDate());
+        abndinfoRec.setAbndTime(this.getWsTimeNowGrp().getWsTimeNowGrpHh() + ":" + this.getWsTimeNowGrp().get);
+    }
+}

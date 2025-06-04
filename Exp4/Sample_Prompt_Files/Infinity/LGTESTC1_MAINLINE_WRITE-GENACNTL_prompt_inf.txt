@@ -1,0 +1,288 @@
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+       WRITE-GENACNTL.                                                  
+           EXEC CICS ENQ
+                LENGTH(Length Of STSQ-NAME)
+                RESOURCE(STSQ-NAME)
+           END-EXEC.                                                    
+           Move 'Y' To WS-FLAG-TSQH                                     
+           Move 1   To WS-Item-Count                                    
+           EXEC CICS READQ
+                TS
+                INTO(READ-MSG)
+                ITEM(1)
+                QUEUE(STSQ-NAME)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           If WS-RESP = DFHRESP(NORMAL)                                 
+              Perform With Test after Until WS-RESP > 0                 
+                 EXEC CICS READQ
+                      TS
+                      NEXT
+                      INTO(READ-MSG)
+                      QUEUE(STSQ-NAME)
+                      RESP(WS-RESP)
+                 END-EXEC                                               
+                 Add 1 To WS-Item-Count                                 
+                 If WS-RESP = DFHRESP(NORMAL) And                       
+                      Read-Msg-Msg(1:13) = 'HIGH CUSTOMER'              
+                      Move CA-Customer-Num To Write-Msg-High            
+                      Move Space to WS-FLAG-TSQH                        
+                      EXEC CICS WRITEQ
+                           TS
+                           REWRITE
+                           FROM(Write-Msg-H)
+                           ITEM(WS-Item-Count)
+                           LENGTH(F24)
+                           QUEUE(STSQ-NAME)
+                           RESP(WS-RESP)
+                      END-EXEC                                          
+                      MOVE 99 To WS-RESP                                
+                 End-If                                                 
+              End-Perform                                               
+           End-If.                                                      
+           If WS-FLAG-TSQH = 'Y'                                        
+             EXEC CICS WRITEQ
+                  TS
+                  NOSUSPEND
+                  FROM(WRITE-MSG-E)
+                  LENGTH(20)
+                  QUEUE(STSQ-NAME)
+                  RESP(WS-RESP)
+             END-EXEC                                                   
+             Move CA-Customer-Num To Write-Msg-Low                      
+             Move CA-Customer-Num To Write-Msg-High                     
+             EXEC CICS WRITEQ
+                  TS
+                  NOSUSPEND
+                  FROM(WRITE-MSG-L)
+                  LENGTH(23)
+                  QUEUE(STSQ-NAME)
+                  RESP(WS-RESP)
+             END-EXEC                                                   
+             EXEC CICS WRITEQ
+                  TS
+                  NOSUSPEND
+                  FROM(WRITE-MSG-H)
+                  LENGTH(24)
+                  QUEUE(STSQ-NAME)
+                  RESP(WS-RESP)
+             END-EXEC                                                   
+           End-If.                                                      
+           EXEC CICS DEQ
+                LENGTH(Length Of STSQ-NAME)
+                RESOURCE(STSQ-NAME)
+           END-EXEC.                                                    
+           EXIT.                                                        
+
+## Variable Map:
+WS-RESP gettermapping wsResp
+WS-RESP settermapping wsResp = val
+WS-RESP PIC S9(8) JavaType int
+WS-Item-Count gettermapping wsItemCount
+WS-Item-Count settermapping wsItemCount = val
+WS-Item-Count PIC S9(4) JavaType int
+WS-FLAG-TSQH gettermapping wsFlagTsqh
+WS-FLAG-TSQH settermapping wsFlagTsqh = val
+WS-FLAG-TSQH PIC X JavaType char
+WRITE-MSG-LOW gettermapping writeMsgLow
+WRITE-MSG-LOW settermapping writeMsgLow = val
+WRITE-MSG-LOW PIC 9(10) JavaType long
+WRITE-MSG-L gettermapping writeMsgL
+WRITE-MSG-L settermapping writeMsgL = val
+WRITE-MSG-L PIC X(13) JavaType String
+WRITE-MSG-High gettermapping writeMsgHigh
+WRITE-MSG-High settermapping writeMsgHigh = val
+WRITE-MSG-High PIC 9(10) JavaType long
+WRITE-MSG-H gettermapping writeMsgH
+WRITE-MSG-H settermapping writeMsgH = val
+WRITE-MSG-H PIC X(14) JavaType String
+WRITE-MSG-E gettermapping writeMsgE
+WRITE-MSG-E settermapping writeMsgE = val
+WRITE-MSG-E PIC X(20) JavaType String
+STSQ-NAME gettermapping stsqName
+STSQ-NAME settermapping stsqName = val
+STSQ-NAME PIC X(8) JavaType String
+READ-MSG-MSG gettermapping readMsg.getReadMsgMsg()
+READ-MSG-MSG settermapping readMsg.setReadMsgMsg(val)
+READ-MSG-MSG PIC X(80) JavaType String
+READ-MSG gettermapping readMsg.getBytes()
+READ-MSG settermapping readMsg.setBytes(val)
+READ-MSG GROUP JavaType ReadMsg
+F24 gettermapping f24
+F24 settermapping f24 = val
+F24 PIC S9(4) JavaType int
+CA-CUSTOMER-NUM gettermapping commArea.getCaCustomerNum()
+CA-CUSTOMER-NUM settermapping commArea.setCaCustomerNum(val)
+CA-CUSTOMER-NUM PIC 9(10) JavaType long
+
+
+## Class Map:
+public void mainlineWriteGenacntl(CommArea commArea){
+    int f24 = 24;
+    ReadMsg readMsg = new ReadMsg();
+    String stsqName = "GENACNTL";
+    String writeMsgE = "**** GENAPP CNTL";
+    String writeMsgH = "HIGH CUSTOMER=";
+    long writeMsgHigh;
+    String writeMsgL = "LOW CUSTOMER=";
+    long writeMsgLow;
+    char wsFlagTsqh = ' ';
+    int wsItemCount;
+    int wsResp;
+}
+
+
+Output:

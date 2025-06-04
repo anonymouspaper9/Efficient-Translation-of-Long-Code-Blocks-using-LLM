@@ -1,0 +1,67 @@
+       MAINLINE SECTION.                                                
+                                                                        
+      *                                                                 
+           INITIALIZE WS-HEADER.                                        
+      *                                                                 
+           MOVE EIBTRNID TO WS-TRANSID.                                 
+           MOVE EIBTRMID TO WS-TERMID.                                  
+           MOVE EIBTASKN TO WS-TASKNUM.                                 
+           MOVE EIBCALEN TO WS-CALEN.                                   
+      *                                                                 
+           Exec CICS Get Container(WS-CHANname1)                        
+                         Into(WS-Data-Req)                              
+                         Resp(WS-RESP)                                  
+           End-Exec.                                                    
+      *                                                                 
+           Exec CICS Get Container(WS-CHANname2)                        
+                         Into(WS-Data-RC)                               
+                         Resp(WS-RESP)                                  
+           End-Exec.                                                    
+      *                                                                 
+           If WS-RESP = DFHRESP(NORMAL)                                 
+             Move WS-Data-REQ  To  GENACounter                          
+             Move WS-Data-RC   To  GENAType                             
+           Else                                                         
+             IF EIBCALEN IS EQUAL TO ZERO                               
+                 EXEC CICS RETURN END-EXEC                              
+             Else                                                       
+               Move CA-REQUEST-ID  To GENAcounter                       
+               Move CA-RETURN-CODE To GENAtype                          
+             End-if                                                     
+           End-if.                                                      
+      *                                                                 
+           Exec Cics ReadQ TS Queue(WS-Qname)                           
+                     Into(WS-Qarea)                                     
+                     Length(Length of WS-Qarea)                         
+                     Resp(WS-RESP)                                      
+           End-Exec.                                                    
+           If WS-RESP     = DFHRESP(QIDERR) Then                        
+             EXEC CICS ASKTIME ABSTIME(WS-ABSTIME)                      
+             END-EXEC                                                   
+             EXEC CICS FORMATTIME ABSTIME(WS-ABSTIME)                   
+                       DDMMYYYY(WS-DATE)                                
+                       TIME(WS-TIME)                                    
+             END-EXEC                                                   
+             Move WS-Date To WS-area-D                                  
+             Move WS-Time To WS-area-T                                  
+             Exec Cics WriteQ TS Queue(WS-Qname)                        
+                       From(WS-Qarea)                                   
+                       Length(Length of WS-Qarea)                       
+                       Resp(WS-RESP)                                    
+             End-Exec                                                   
+           End-if                                                       
+      *                                                                 
+           If GENAcounter = '02ACUS'                                    
+                                     Move '01ACUS' to GENAcounter.      
+           If GENAcounter = '02ICOM' or                                 
+              GENAcounter = '03ICOM' or                                 
+              GENAcounter = '05ICOM' Move '01ICOM' to GENAcounter.      
+           If GENAType Not = '00' Move '99' To GENAtype.                
+                                                                        
+               Exec CICS Get Counter(GENAcount)                         
+                             Pool(GENApool)                             
+                             Value(Trancount)                           
+                             Resp(WS-RESP)                              
+               End-Exec                                                 
+                                                                        
+           EXEC CICS RETURN END-EXEC.                                   

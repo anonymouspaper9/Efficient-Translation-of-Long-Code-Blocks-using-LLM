@@ -1,0 +1,70 @@
+       MAINLINE SECTION.                                                
+      *                                                                 
+           MOVE SPACES TO WS-RECV.                                      
+                                                                        
+           EXEC CICS ASSIGN SYSID(WS-SYSID)                             
+                RESP(WS-RESP)                                           
+           END-EXEC.                                                    
+                                                                        
+           EXEC CICS ASSIGN STARTCODE(WS-STARTCODE)                     
+                RESP(WS-RESP)                                           
+           END-EXEC.                                                    
+                                                                        
+           EXEC CICS ASSIGN Invokingprog(WS-Invokeprog)                 
+                RESP(WS-RESP)                                           
+           END-EXEC.                                                    
+           IF WS-STARTCODE(1:1) = 'D' or                                
+              WS-Invokeprog Not = Spaces                                
+              MOVE 'C' To WS-FLAG                                       
+              MOVE COMMA-DATA  TO WS-COMMAREA                           
+              MOVE EIBCALEN    TO WS-RECV-LEN                           
+              MOVE 11          TO WS-RECV-LEN                           
+              SUBTRACT 1 FROM WS-RECV-LEN                               
+           ELSE                                                         
+              EXEC CICS RECEIVE INTO(WS-RECV)                           
+                  LENGTH(WS-RECV-LEN)                                   
+                  RESP(WS-RESP)                                         
+              END-EXEC                                                  
+              MOVE 'R' To WS-FLAG                                       
+              MOVE WS-RECV-DATA  TO WS-COMMAREA                         
+              SUBTRACT 6 FROM WS-RECV-LEN                               
+           END-IF.                                                      
+      *                                                                 
+           Move Spaces                      To CA-Area                  
+           Move WS-Commarea(1:1)            To Part-Key-Type            
+           Move WS-Commarea(2:WS-RECV-LEN)  To Part-Key-Num             
+      *                                                                 
+           Exec CICS Read File('KSDSPOLY')                              
+                     Into(CA-AREA)                                      
+                     Length(F64)                                        
+                     Ridfld(PART-KEY)                                   
+                     KeyLength(F11)                                     
+                     Generic                                            
+                     RESP(WS-RESP)                                      
+                     GTEQ                                               
+           End-Exec.                                                    
+                                                                        
+           If CA-Policy-Type   Not = Part-Key-Type Or                   
+              WS-RESP NOT          = DFHRESP(NORMAL)                    
+             Move 'Policy Bad='   To Write-Msg-Text                     
+             Move 13              To WRITE-Msg-CustNum                  
+             Move 13              To WRITE-Msg-PolNum                   
+           Else                                                         
+             Move CA-Area to WRITE-MSG-Key                              
+           End-If                                                       
+                                                                        
+           If WS-FLAG = 'R' Then                                        
+             EXEC CICS SEND TEXT FROM(WRITE-MSG)                        
+              WAIT                                                      
+              ERASE                                                     
+              LENGTH(80)                                                
+              FREEKB                                                    
+             END-EXEC                                                   
+           Else                                                         
+             Move Spaces          To COMMA-Data                         
+             Move Write-Msg-Text  To COMMA-Data-Text                    
+             Move Write-Msg-Key   To COMMA-Data-Key                     
+           End-If.                                                      
+                                                                        
+           EXEC CICS RETURN                                             
+           END-EXEC.                                                    

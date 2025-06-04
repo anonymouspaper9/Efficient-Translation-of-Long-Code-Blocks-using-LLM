@@ -1,0 +1,50 @@
+```java
+public void receiveMapRm010() {
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    String wsAbendPgm = "ABNDPROC";
+    WsFailInfo wsFailInfo = new WsFailInfo();
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+
+    CicsResponse cicsResponse = new CicsResponse();
+    abndinfoRec.setAbndResponse(cicsResponse);
+
+    try {
+        Cics.receive(abndinfoRec, "BNK1ACC");
+    } catch (CicsException e) {
+        populateFailInfo(wsFailInfo, "RM010 - RECEIVE MAP FAIL.", cicsResponse);
+        linkAbend(abndinfoRec, wsFailInfo);
+        return;
+    }
+
+    if (!cicsResponse.isNormal()) {
+        populateFailInfo(wsFailInfo, "RM010 - RECEIVE MAP FAIL.", cicsResponse);
+        linkAbend(abndinfoRec, wsFailInfo);
+        return;
+    }
+
+    // Populate AbndinfoRec fields
+    abndinfoRec.setAbndUtimeKey(getWsUTime());
+    wsTimeNowGrp.setWsTimeNowGrpHh(getHours());
+    wsTimeNowGrp.setWsTimeNowGrpMm(getMinutes());
+    abndinfoRec.setAbndTime(String.format("%02d:%02d:%02d", wsTimeNowGrp.getWsTimeNowGrpHh(), wsTimeNowGrp.getWsTimeNowGrpMm(), getSeconds()));
+    abndinfoRec.setAbndDate(getWsOrigDate());
+    abndinfoRec.setAbndSqlcode(0);
+    abndinfoRec.setAbndRespcode(cicsResponse.getCode());
+    abndinfoRec.setAbndResp2Code(cicsResponse.getCode2());
+    abndinfoRec.setAbndProgram(wsAbendPgm);
+    abndinfoRec.setAbndFreeform("RM010 - RECEIVE MAP FAIL. EIBRESP=" + cicsResponse.getCode() + " RESP2=" + cicsResponse.getCode2());
+}
+
+private void populateFailInfo(WsFailInfo wsFailInfo, String msg, CicsResponse cicsResponse) {
+    wsFailInfo.setWsCicsResp(cicsResponse.getCode());
+    wsFailInfo.setWsCicsResp2(cicsResponse.getCode2());
+    wsFailInfo.setWsCicsRespDisp(cicsResponse.getDisplayCode());
+    wsFailInfo.setWsCicsResp2Disp(cicsResponse.getDisplayCode2());
+    wsFailInfo.setWsCicsFailMsg(msg);
+}
+
+private void linkAbend(AbndinfoRec abndinfoRec, WsFailInfo wsFailInfo) {
+    // Link to ABEND program
+    // ...
+}
+```

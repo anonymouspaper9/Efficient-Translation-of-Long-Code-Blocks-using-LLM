@@ -1,0 +1,142 @@
+```java
+public void sendTerminationMsgStm010() {
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    String endOfSessionMessage = "Session Ended";
+    String wsAbendPgm = "ABNDPROC";
+    WsFailInfo wsFailInfo = new WsFailInfo();
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+
+    /* This is prompt example 2 */
+    if (cicsSend(endOfSessionMessage)) {
+        int response = getCicsResponse();
+        if (response != CICS_RESPONSE_NORMAL) {
+            initializeAbndinfoRec(abndinfoRec);
+            setAbndRespcode(abndinfoRec, response);
+            setAbndResp2code(abndinfoRec, getCicsResponse2());
+            assignApplid(abndinfoRec, getAbndApplid());
+            setAbndTasknoKey(abndinfoRec, getEibTaskn());
+            setAbndTranid(abndinfoRec, getEibTrnid());
+            populateTimeDate(wsTimeNowGrp);
+            setAbndDate(abndinfoRec, wsTimeNowGrp.getWsOrigDate());
+            setAbndTime(abndinfoRec, formatTime(wsTimeNowGrp));
+            setAbndUtimeKey(abndinfoRec, getWsUTime());
+            setAbndCode(abndinfoRec, "HBNK");
+            assignProgram(abndinfoRec, wsAbendPgm);
+            setAbndSqlcode(abndinfoRec, 0);
+            setAbndFreeform(abndinfoRec, "STM010 - SEND TEXT FAIL" +
+                    " EIBRESP=" + getAbndRespcode() +
+                    " RESP2=" + getAbndResp2code());
+            link(abndinfoRec, wsFailInfo);
+            setWsCicsFailMsg(wsFailInfo, "BNK1CCS - STM010 - SEND TEXT FAIL");
+            setWsCicsResp(wsFailInfo, response);
+            setWsCicsResp2(wsFailInfo, getCicsResponse2());
+            restoreTermDefRtd010(dfhCommArea, wsFailInfo);
+            abendThisTaskAtt010(dfhCommArea, wsFailInfo);
+        }
+    }
+}
+
+private boolean cicsSend(String message) {
+    // Implement CICS SEND command here
+    return true;
+}
+
+private int getCicsResponse() {
+    // Implement CICS GET RESPONSE command here
+    return 0;
+}
+
+private int getCicsResponse2() {
+    // Implement CICS GET RESPONSE2 command here
+    return 0;
+}
+
+private void initializeAbndinfoRec(AbndinfoRec abndinfoRec) {
+    // Implement initialization of AbndinfoRec here
+}
+
+private void setAbndRespcode(AbndinfoRec abndinfoRec, int response) {
+    // Implement setting AbndinfoRec.AbndRespcode here
+}
+
+private void setAbndResp2code(AbndinfoRec abndinfoRec, int response2) {
+    // Implement setting AbndinfoRec.AbndResp2Code here
+}
+
+private void assignApplid(AbndinfoRec abndinfoRec, String applid) {
+    // Implement setting AbndinfoRec.AbndApplid here
+}
+
+private void setAbndTasknoKey(AbndinfoRec abndinfoRec, int tasknoKey) {
+    // Implement setting AbndinfoRec.AbndTasknoKey here
+}
+
+private void setAbndTranid(AbndinfoRec abndinfoRec, String tranid) {
+    // Implement setting AbndinfoRec.AbndTranid here
+}
+
+private void populateTimeDate(WsTimeNowGrp wsTimeNowGrp) {
+    // Implement populating WsTimeNowGrp here
+}
+
+private void setAbndDate(AbndinfoRec abndinfoRec, String date) {
+    // Implement setting AbndinfoRec.AbndDate here
+}
+
+private void setAbndTime(AbndinfoRec abndinfoRec, String time) {
+    // Implement setting AbndinfoRec.AbndTime here
+}
+
+private void setAbndUtimeKey(AbndinfoRec abndinfoRec, long utimeKey) {
+    // Implement setting AbndinfoRec.AbndUtimeKey here
+}
+
+private void setAbndCode(AbndinfoRec abndinfoRec, String code) {
+    // Implement setting AbndinfoRec.AbndCode here
+}
+
+private void assignProgram(AbndinfoRec abndinfoRec, String program) {
+    // Implement setting AbndinfoRec.AbndProgram here
+}
+
+private void setAbndSqlcode(AbndinfoRec abndinfoRec, int sqlcode) {
+    // Implement setting AbndinfoRec.AbndSqlcode here
+}
+
+private void setAbndFreeform(AbndinfoRec abndinfoRec, String freeform) {
+    // Implement setting AbndinfoRec.AbndFreeform here
+}
+
+private void link(AbndinfoRec abndinfoRec, WsFailInfo wsFailInfo) {
+    // Implement CICS LINK command here
+}
+
+private void setWsCicsFailMsg(WsFailInfo wsFailInfo, String msg) {
+    // Implement setting WsFailInfo.WsCicsFailMsg here
+}
+
+private void setWsCicsResp(WsFailInfo wsFailInfo, int response) {
+    // Implement setting WsFailInfo.WsCicsResp here
+}
+
+private void setWsCicsResp2(WsFailInfo wsFailInfo, int response2) {
+    // Implement setting WsFailInfo.WsCicsResp2 here
+}
+
+private void restoreTermDefRtd010(String dfhCommArea, WsFailInfo wsFailInfo) {
+    // Implement RESTORE-TERM-DEF command here
+}
+
+private void populateTimeDatePtd10() {
+    // Implement POPULATE-TIME-DATE command here
+}
+
+private void abendThisTaskAtt010(String dfhCommArea, WsFailInfo wsFailInfo) {
+    // Implement ABEND-THIS-TASK command here
+}
+
+private String formatTime(WsTimeNowGrp wsTimeNowGrp) {
+    // Implement formatting time here
+    return "";
+}
+```

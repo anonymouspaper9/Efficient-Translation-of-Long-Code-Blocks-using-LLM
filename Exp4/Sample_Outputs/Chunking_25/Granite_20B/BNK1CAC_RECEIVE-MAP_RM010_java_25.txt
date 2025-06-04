@@ -1,0 +1,5 @@
+public void receiveMapRm010() {
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+
+}

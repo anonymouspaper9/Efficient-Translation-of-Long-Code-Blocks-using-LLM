@@ -1,0 +1,41 @@
+public void invokeMainline(Dfhcommarea dfhcommarea){
+    BusinessRules businessRules = new BusinessRules();
+    ErrorMsg errorMsg = new ErrorMsg();
+    String lgapbr01 = "LGAPBR01";
+    String lgapdb01 = "LGAPDB01";
+    int wsCaHeaderLen = 28;
+    WsHeader wsHeader = new WsHeader();
+    int wsRequiredCaLen = 0;
+    if (businessRules.isInRulesMode() && dfhcommarea.getCaRequestId().equals("01AEND")) {
+        try {
+            String sql = "EXEC CICS LINK COMMAREA(?) LENGTH(?) PROGRAM(?)";
+            PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+            ps.setBytes(1, wsHeader.getBytes());
+            ps.setInt(2, 32500);
+            ps.setString(3, lgapbr01);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException exception) {
+            mainlineWriteErrorMessage(dfhcommarea, errorMsg);
+            return;
+        }
+    }
+    try {
+        String sql = "EXEC CICS LINK COMMAREA(?) LENGTH(?) PROGRAM(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setBytes(1, wsHeader.getBytes());
+        ps.setInt(2, 32500);
+        ps.setString(3, lgapdb01);
+        ps.executeUpdate();
+        ps.close();
+    } catch (SQLException exception) {
+        dfhcommarea.setCaReturnCode(1);
+        return;
+    }
+    if (dfhcommarea.getCaReturnCode() > 0) {
+        dfhcommarea.setCaReturnCode(0);
+    }
+    dfhcommarea.setCaReturnCode(0);
+    dfhcommarea.setCaReturnCode(0);
+    dfhcommarea.setCaReturnCode(0);
+} 

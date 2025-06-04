@@ -1,0 +1,60 @@
+```java
+public void invokeOtherTxnsIot010(String actionI, int wsCicsResp, int wsCicsResp2, AbndinfoRec abndinfoRec) {
+    String wsAbendPgm = "ABNDPROC";
+    int wsUTime = 0;
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+    WsFailInfo wsFailInfo = new WsFailInfo();
+
+    if (actionI.equals("1")) {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setString(1, getSysGerm());
+        ps.executeUpdate();
+        ps.close();
+
+        if (wsCicsResp != DFHRESP.NORMAL) {
+            setCaSumAssured(10);
+            printFunction(errReport);
+            return;
+        }
+    } else if (actionI.equals("2")) {
+        // Similar code for action 2
+    } else if (actionI.equals("3")) {
+        // Similar code for action 3
+    } else if (actionI.equals("4")) {
+        // Similar code for action 4
+    } else if (actionI.equals("5")) {
+        // Similar code for action 5
+    } else if (actionI.equals("6")) {
+        // Similar code for action 6
+    } else if (actionI.equals("7")) {
+        // Similar code for action 7
+    } else if (actionI.equals("A")) {
+        // Similar code for action A
+    }
+
+    wsTimeNowGrp.populateTimeDate();
+    wsUTime = wsTimeNowGrp.getWsUTime();
+    String wsTimeNowGrpHh = String.valueOf(wsTimeNowGrp.getWsTimeNowGrpHh());
+    String wsTimeNowGrpMm = String.valueOf(wsTimeNowGrp.getWsTimeNowGrpMm());
+
+    abndinfoRec.setAbndUtimeKey(wsUTime);
+    abndinfoRec.setAbndTranid("ODCS");
+    abndinfoRec.setAbndTime(wsTimeNowGrpHh + ":" + wsTimeNowGrpMm + ":" + wsTimeNowGrpMm);
+    abndinfoRec.setAbndTasknoKey(getEibTaskn());
+    abndinfoRec.setAbndSqlcode(0);
+    abndinfoRec.setAbndRespcode(wsCicsResp);
+    abndinfoRec.setAbndResp2Code(wsCicsResp2);
+    abndinfoRec.setAbndProgram(wsAbendPgm);
+    abndinfoRec.setAbndFreeform("IOT010 - RETURN TRANSID(ODCS) FAIL. EIBRESP=" + wsCicsResp + ", RESP2=" + wsCicsResp2);
+    abndinfoRec.setAbndDate(getWsOrigDate());
+    abndinfoRec.setAbndCode("HBNK");
+
+    if (wsCicsResp != DFHRESP.NORMAL) {
+        wsFailInfo.setWsCicsResp(wsCicsResp);
+        wsFailInfo.setWsCicsResp2(wsCicsResp2);
+        wsFailInfo.setWsCicsFailMsg("BNKMENU - IOT010 - RETURN TRANSID(ODCS) FAIL");
+        abendThisTaskAtt010(wsFailInfo);
+    }
+}
+```

@@ -1,0 +1,46 @@
+public void invokeMainline(Dfhcommarea dfhcommarea){
+    Cdb2Area cdb2Area = new Cdb2Area();
+    ErrorMsg errorMsg = new ErrorMsg();
+    String lgacdb02 = "LGACDB02";
+    String lgacvs01 = "LGACVS01";
+    int wsCaHeaderLen = 18;
+    int wsCustomerLen = 72;
+    WsHeader wsHeader = new WsHeader();
+    int wsRequiredCaLen = 0;
+    if (dfhcommarea.getWsCalen() == 0){
+        errorMsg.setEmVariable("NO COMMAREA RECEIVED");
+        mainlineWriteErrorMessage(dfhcommarea, errorMsg);
+        System.exit(0);
+    }
+    dfhcommarea.setCaReturnCode(0);
+    wsHeader.setWsCalen(dfhcommarea.getWsCalen());
+    wsHeader.setWsAddrDfhcommarea(dfhcommarea.getBytes());
+    wsRequiredCaLen = wsCaHeaderLen + wsCustomerLen;
+    if (dfhcommarea.getWsCalen() < wsRequiredCaLen){
+        dfhcommarea.setCaReturnCode(98);
+        System.exit(0);
+    }
+    mainlineObtainCustomerNumber();
+    mainlineInsertCustomer(caCustomerRequest);
+    cdb2Area.setD2RequestId("02ACUS");
+    cdb2Area.getCustomerSecure().setStateIndicator("N");
+    cdb2Area.getCustomerSecure().setCustomerpass("5732fec825535eeafb8fac50fee3a8aa");
+    cdb2Area.getCustomerSecure().setPassChanges(0);
+    cdb2Area.getCustomerSecure().setCustomernumber(0);
+    lgacdb02 = "LGACDB02";
+    lgacvs01 = "LGACVS01";
+    cdb2Area.setBytes(cdb2Area.getBytes());
+    try {
+        CicsConnection.cicsLink(cdb2Area, lgacdb02);
+    } catch (CicsException e) {
+        dfhcommarea.setCaReturnCode(e.getReturnCode());
+        System.exit(0);
+    }
+    try {
+        CicsConnection.cicsLink(dfhcommarea, lgacvs01);
+    } catch (CicsException e) {
+        dfhcommarea.setCaReturnCode(e.getReturnCode());
+        System.exit(0);
+    }
+    System.exit(0);
+} 

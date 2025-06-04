@@ -1,0 +1,48 @@
+
+```java
+public void invokeMainline(Dfhcommarea dfhcommarea) {
+    BusinessRules businessRules = new BusinessRules();
+    ErrorMsg errorMsg = new ErrorMsg();
+    String lgapbr01 = "LGAPBR01";
+    String lgapdb01 = "LGAPDB01";
+    int wsCaHeaderLen = 28;
+    WsHeader wsHeader = new WsHeader();
+    int wsRequiredCaLen = 0;
+
+    // Initialize WS-HEADER
+    wsHeader.setWsTransid(dfhcommarea.getWsTransid());
+    wsHeader.setWsTermid(dfhcommarea.getWsTermid());
+    wsHeader.setWsTasknum(dfhcommarea.getWsTasknum());
+    wsHeader.setWsCalen(dfhcommarea.getWsCalen());
+
+    if (dfhcommarea.getWsCalen() == 0) {
+        errorMsg.setEmVariable(new EmVariable("NO COMMAREA RECEIVED"));
+        mainlineWriteErrorMessage(dfhcommarea, errorMsg);
+        CICS.abend("LGCA", "NODUMP");
+    }
+
+    wsHeader.setCaReturnCode(0);
+    wsHeader.setWsAddrDfhcommarea(dfhcommarea.getBytes());
+    wsHeader.setWsCaHeaderLen(wsCaHeaderLen);
+    wsHeader.setWsAddrDfhcommareaLength(dfhcommarea.getLength());
+
+    if (dfhcommarea.getLength() < wsCaHeaderLen) {
+        wsHeader.setCaReturnCode(98);
+        CICS.returnToCics();
+    }
+
+    if (businessRules.isInRulesMode() && dfhcommarea.getCaRequestId().equals("01AEND")) {
+        CICS.link(lgapbr01, dfhcommarea.getBytes(), 32500);
+    }
+
+    CICS.link(lgapdb01, dfhcommarea.getBytes(), 32500);
+
+    if (wsHeader.getCaReturnCode() > 0) {
+        CICS.returnToCics();
+    }
+
+    if (dfhcommarea.getCaReturnCode() > 0) {
+        CICS.returnToCics();
+    }
+}
+```

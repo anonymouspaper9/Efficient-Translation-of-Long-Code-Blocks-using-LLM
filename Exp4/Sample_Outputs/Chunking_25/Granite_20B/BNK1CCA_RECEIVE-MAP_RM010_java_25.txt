@@ -1,0 +1,55 @@
+public void receiveMapRm010() {
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+
+    try {
+        byte[] byteArray = new byte[100];
+        Task jdeclTask = Task.getTask();
+        Channel jdeclChannel = jdeclTask.getCurrentChannel();
+        Container jdeclContainer = jdeclChannel.getContainer("DFHWS-DATA");
+        jdeclContainer.get(byteArray, 0, 100);
+        bnk1acci.setBytes(byteArray);
+    } catch (CicsConditionException e) {
+
+        abndinfoRec = new AbndinfoRec();
+        String wsAbendPgm = "ABNDPROC";
+        WsFailInfo wsFailInfo = new WsFailInfo();
+
+        wsTimeNowGrp = new WsTimeNowGrp();
+        abndinfoRec = new AbndinfoRec();
+        abndinfoRec.setAbndApplid(Region.getAPPLID());
+        abndinfoRec.setAbndRespcode(Task.getTask().getApplicationContext().getPlatform().getReturnCode());
+        abndinfoRec.setAbndResp2Code(Task.getTask().getTask().getApplicationContext().getVersion().getMicroVersion());
+        abndinfoRec.setAbndTasknoKey(Task.getTask().getTaskNumber());
+        abndinfoRec.setAbndTranid(Task.getTask().getTransactionName());
+        this.populateTimeDate(wsTimeNowGrp);
+        abndinfoRec.setAbndDate(this.getWsOrigDate());
+        abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":"
+                + wsTimeNowGrp.getWsTimeNowGrpSs());
+        abndinfoRec.setAbndUtimeKey(this.getWsUTime());
+        abndinfoRec.setAbndCode("HBNK");
+
+        Task jdeclCurrent_Program = Task.getTask();
+        abndinfoRec.setAbndProgram(jdeclCurrent_Program.getProgramName());
+        abndinfoRec.setAbndSqlcode(0);
+        String jdeclVar1 = "RM010 - RECEIVE MAP FAIL." + "EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2="
+                + abndinfoRec.getAbndResp2Code();
+        abndinfoRec.setAbndFreeform(jdeclVar1);
+        Task jdeclTask = Task.getTask();
+        Channel jdeclChannelObj = jdeclTask.getCurrentChannel();
+        Container jdeclCommareaContainer = jdeclChannelObj.createContainer("DFHCOMMAREA");
+        byte[] jdeclCommareaByteArray = jdeclCommareaContainer.getNoConvert(0, abndinfoRec.getAbndFreeform().length());
+         System.arraycopy(abndinfoRec.getAbndFreeform().getBytes(),0,jdeclCommareaByteArray,0,abndinfoRec.getAbndFreeform().length());
+         
+        jdeclCommareaContainer.putNoConvert(jdeclCommareaByteArray);
+        Program jdeclProgObj = new Program();
+        jdeclProgObj.setName(wsAbendPgm);
+        jdeclProgObj.link(jdeclCommareaContainer);
+        wsFailInfo.setWsCicsFailMsg("BNKMENU - RM010 - RECEIVE MAP FAIL ");
+        wsFailInfo.setWsCicsRespDisp(abndinfoRec.getAbndRespcode());
+        wsFailInfo.setWsCicsResp2Disp(abndinfoRec.getAbndResp2Code());
+        abendThisTask(wsFailInfo);
+
+    }
+
+}

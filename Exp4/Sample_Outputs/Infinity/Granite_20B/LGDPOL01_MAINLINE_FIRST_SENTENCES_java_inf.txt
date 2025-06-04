@@ -1,0 +1,31 @@
+public void invokeMainline(Dfhcommarea dfhcommarea) {
+    ErrorMsg errorMsg = new ErrorMsg();
+    int wsCaHeaderLen = 28;
+    WsHeader wsHeader = new WsHeader();
+    wsHeader.setWsTransid(Task.getTask().getTransactionName());
+    wsHeader.setWsTermid(Task.getTask().getSTARTCODE());
+    wsHeader.setWsTasknum(Task.getTask().getTaskNumber());
+    if (dfhcommarea.getEibcalen() == 0) {
+        errorMsg.getEmVariable().setBytes(" NO COMMAREA RECEIVED");
+        mainlineWriteErrorMessage(dfhcommarea, errorMsg);
+        Task.getTask().abend("LGCA");
+    }
+    dfhcommarea.setCaReturnCode(0);
+    wsHeader.setWsCalen(dfhcommarea.getEibcalen());
+    if (dfhcommarea.getEibcalen() < wsCaHeaderLen) {
+        dfhcommarea.setCaReturnCode(98);
+        Task.getTask().abend();
+    }
+    errorMsg.getEmVariable().setEmCusnum(String.valueOf(dfhcommarea.getCaCustomerNum()));
+    errorMsg.getEmVariable().setEmPolnum(String.valueOf(dfhcommarea.getCaPolicyNum()));
+    dfhcommarea.setCaRequestId(dfhcommarea.getCaRequestId().toUpperCase());
+    if (!(dfhcommarea.getCaRequestId().equals("01DEND") || dfhcommarea.getCaRequestId().equals("01DMOT")
+            || dfhcommarea.getCaRequestId().equals("01DHOU") || dfhcommarea.getCaRequestId().equals("01DCOM"))) {
+        dfhcommarea.setCaReturnCode(99);
+    } else {
+        mainlineDeletePolicyDb2Info(dfhcommarea);
+        if (dfhcommarea.getCaReturnCode() > 0) {
+            Task.getTask().abend();
+        }
+    }
+}

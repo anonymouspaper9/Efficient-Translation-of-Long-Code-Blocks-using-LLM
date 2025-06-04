@@ -1,0 +1,90 @@
+
+```java
+public void invokeMainline(CaPolicyRequest caPolicyRequest) {
+    String wfPolicyData = "";
+    WfPolicyInfo wfPolicyInfo = new WfPolicyInfo();
+    int wsCommareaLen = 64;
+    int wsCommareaLenF = 64;
+    String wsFileIn = "";
+    int wsResp;
+    int wsResp2;
+
+    char wfRequestId = caPolicyRequest.getCaRequestId().charAt(0);
+
+    switch (wfRequestId) {
+        case 'C':
+            // Code for 'C' request
+            break;
+        case 'E':
+            // Code for 'E' request
+            break;
+        case 'H':
+            // Code for 'H' request
+            break;
+        case 'M':
+            // Code for 'M' request
+            break;
+        default:
+            wfPolicyData = " ".repeat(43);
+    }
+
+    wfPolicyInfo.setWfPolicyKey(new WfPolicyKey(
+            caPolicyRequest.getCaRequestId(),
+            caPolicyRequest.getCaPolicyNum(),
+            caPolicyRequest.getCaCustomerNum()
+    ));
+
+    wfPolicyInfo.setWfPolicyData(wfPolicyData);
+
+    try {
+        JdbcConnection.connection.createStatement()
+                .executeUpdate("UPDATE KSDSPOLY SET POLICY_DATA = ? WHERE POLICY_NUM = ?",
+                        PreparedStatement.RETURN_GENERATED_KEYS)
+                .setString(1, wfPolicyData)
+                .setString(2, caPolicyRequest.getCaPolicyNum())
+                .executeUpdate();
+
+        ResultSet rs = JdbcConnection.connection.createStatement()
+                .executeQuery("SELECT LENGTH(POLICY_DATA) FROM KSDSPOLY WHERE POLICY_NUM = ?",
+                        caPolicyRequest.getCaPolicyNum());
+        rs.next();
+        wsCommareaLen = rs.getInt(1);
+
+        wsFileIn = new String(wfPolicyInfo.getBytes());
+
+        rs = JdbcConnection.connection.createStatement()
+                .executeQuery("SELECT POLICY_DATA FROM KSDSPOLY WHERE POLICY_NUM = ?",
+                        caPolicyRequest.getCaPolicyNum());
+        rs.next();
+        wfPolicyData = rs.getString(1);
+        wsCommareaLenF = wfPolicyData.length();
+
+        wsResp = DFHRESP.NORMAL;
+    } catch (SQLException e) {
+        wsResp2 = EIBRESP2;
+        wsResp = DFHRESP.ABEND;
+        mainlineWriteErrorMessage(dfhcommarea, wsResp, wsResp2);
+    }
+
+    if (wsResp != DFHRESP.NORMAL) {
+        caPolicyRequest.setCaReturnCode(wsResp2);
+        return;
+    }
+
+    try {
+        JdbcConnection.connection.createStatement()
+                .executeUpdate("UPDATE KSDSPOLY SET POLICY_DATA = ? WHERE POLICY_NUM = ?",
+                        wfPolicyData,
+                        caPolicyRequest.getCaPolicyNum());
+    } catch (SQLException e) {
+        wsResp2 = EIBRESP2;
+        wsResp = DFHRESP.ABEND;
+        mainlineWriteErrorMessage(dfhcommarea, wsResp, wsResp2);
+    }
+
+    if (wsResp != DFHRESP.NORMAL) {
+        caPolicyRequest.setCaReturnCode(wsResp2);
+        return;
+    }
+}
+```

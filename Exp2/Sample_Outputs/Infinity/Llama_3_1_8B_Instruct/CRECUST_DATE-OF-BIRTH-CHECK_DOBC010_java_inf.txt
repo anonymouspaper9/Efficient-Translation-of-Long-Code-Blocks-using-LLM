@@ -1,0 +1,39 @@
+public void dateOfBirthCheckDobc010(CommDobGroup7 commDobGroup){
+    DateOfBirthForCeedays dateOfBirthForCeedays = new DateOfBirthForCeedays();
+    DateOfBirthFormat dateOfBirthFormat = new DateOfBirthFormat();
+    Fc fc = new Fc();
+    int wsCustomerAge;
+    int wsDateOfBirthLillian;
+    WsTodayGregorian wsTodayGregorian = new WsTodayGregorian();
+    int wsTodayLillian;
+    String wsTodaySeconds = "";
+    /* This is prompt example 3 */
+    if (commDobGroup.getCommBirthYear() < 1601) {
+        this.setWsDateOfBirthError('Y');
+        commDobGroup.setCommFailCode('O');
+        return;
+    }
+    dateOfBirthForCeedays.setCeedaysYear(commDobGroup.getCommBirthYear());
+    dateOfBirthForCeedays.setCeedaysMonth(commDobGroup.getCommBirthMonth());
+    dateOfBirthForCeedays.setCeedaysDay(commDobGroup.getCommBirthDay());
+    try {
+        fc.setBytes(dateOfBirthFormat.getBytes());
+        wsTodayLillian = wsTodayGregorian.getWsTodayLillian();
+        wsDateOfBirthLillian = dateOfBirthForCeedays.getCeedaysLillian();
+        wsTodaySeconds = wsTodayGregorian.getWsTodaySeconds();
+        wsCustomerAge = wsTodayGregorian.getWsTodayGYear() - commDobGroup.getCommBirthYear();
+        if (wsCustomerAge > 150) {
+            this.setWsDateOfBirthError('Y');
+            commDobGroup.setCommFailCode('O');
+            return;
+        }
+        if (wsTodayLillian < wsDateOfBirthLillian) {
+            this.setWsDateOfBirthError('Y');
+            commDobGroup.setCommFailCode('Y');
+        }
+    } catch (Exception e) {
+        this.setWsDateOfBirthError('Y');
+        System.out.println("CEEDAYS failed, FORMAT LENGTH 10 with msg " + fc.getMsgNo() + " for date " + dateOfBirthForCeedays.getCeedaysYear() + dateOfBirthForCeedays.getCeedaysMonth() + dateOfBirthForCeedays.getCeedaysDay());
+        return;
+    }
+} 

@@ -1,0 +1,54 @@
+public void mainlineWriteGenacntl(CommArea commArea) {
+    String stsqName = "GENACNTL";
+    char wsFlagTsqh = ' ';
+    int f24 = 24;
+    ReadMsg readMsg = new ReadMsg();
+    String writeMsgH = "HIGH CUSTOMER=";
+
+    String writeMsgE = "**** GENAPP CNTL";
+    String writeMsgL = "LOW CUSTOMER=";
+    stsqName = "GENACNTL";
+    wsFlagTsqh = ' ';
+    writeMsgH = "HIGH CUSTOMER=";
+    try {
+        TSQ jdeclTsq = new TSQ();
+        ItemHolder jdeclBuffer = new ItemHolder();
+        jdeclTsq.setName(stsqName);
+        wsItemCount = 1;
+        while (wsResp == 0) {
+            jdeclTsq.readItem(wsItemCount, jdeclBuffer);
+            readMsg.setBytes(jdeclBuffer.getStringValue());
+            wsItemCount = wsItemCount + 1;
+            if (readMsg.getReadMsgMsg().substring(0, 13).equals("HIGH CUSTOMER")) {
+                writeMsgHigh = commArea.getCaCustomerNum();
+                wsFlagTsqh = ' ';
+                jdeclTsq.rewriteItem(wsItemCount, writeMsgH + writeMsgHigh);
+                wsResp = 99;
+            }
+        }
+    } catch (InvalidQueueIdException e) {
+        System.out.println("Invalid queue id");
+    } catch (InvalidTSRequestException e) {
+        System.out.println("Invalid TS request");
+    } catch (ItemErrorException e) {
+        System.out.println("Item error");
+    } catch (CicsConditionException e) {
+        System.out.println("Cics condition");
+    }
+
+    if (wsFlagTsqh == 'Y') {
+        TSQ jdeclTsq = new TSQ();
+        ItemHolder jdeclBuffer = new ItemHolder();
+        jdeclTsq.setName(stsqName);
+        jdeclTsq.setNoSuspend();
+        jdeclTsq.writeString(writeMsgE);
+        writeMsgLow = commArea.getCaCustomerNum();
+        writeMsgL = writeMsgL + writeMsgLow;
+        jdeclTsq.writeString(writeMsgL);
+        writeMsgHigh = commArea.getCaCustomerNum();
+        writeMsgH = writeMsgH + writeMsgHigh;
+        jdeclTsq.writeString(writeMsgH);
+    }
+    jdeclTsq.dequeue();
+
+}

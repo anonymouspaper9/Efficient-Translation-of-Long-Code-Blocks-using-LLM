@@ -1,0 +1,83 @@
+public void mainlineWriteGenacntl(CommArea commArea) {
+    String stsqName = "GENACNTL";
+    char wsFlagTsqh = ' ';
+    String writeMsgE = "**** GENAPP CNTL";
+    String writeMsgL = "LOW CUSTOMER=";
+    String writeMsgH = "HIGH CUSTOMER=";
+
+    ReadMsg readMsg = new ReadMsg();
+    try {
+        enq(stsqName);
+    } catch (CicsConditionException e) {
+        System.out.println(e);
+    }
+    wsFlagTsqh = 'Y';
+    wsItemCount = 1;
+    TSQ jdeclTsq = new TSQ();
+    ItemHolder jdeclBuffer = new ItemHolder();
+    jdeclTsq.setName(stsqName);
+    try {
+        jdeclTsq.readItem(wsItemCount, jdeclBuffer);
+    } catch (InvalidQueueIdException e) {
+        throw e;
+    } catch (CicsConditionException e) {
+        throw e;
+    }
+    readMsg.setBytes(jdeclBuffer.getStringValue());
+
+    stsqName = "GENACNTL";
+    wsFlagTsqh = ' ';
+    int f24 = 24;
+    readMsg = new ReadMsg();
+    while (wsResp == 0) {
+        try {
+            jdeclTsq = new TSQ();
+            jdeclBuffer = new ItemHolder();
+            jdeclTsq.setName(stsqName);
+            wsResp = jdeclTsq.readNextItem(jdeclBuffer);
+            readMsg.setBytes(jdeclBuffer.getStringValue());
+        } catch (InvalidQueueIdException e) {
+            wsResp = 99;
+        } catch (InvalidTSRequestException e) {
+            wsResp = 99;
+        } catch (ItemErrorException e) {
+            wsResp = 99;
+        } catch (CicsConditionException e) {
+            wsResp = 99;
+        }
+        wsItemCount++;
+        if (wsResp == 0 && readMsg.getReadMsgMsg().substring(0, 13).equals("HIGH CUSTOMER")) {
+            writeMsgHigh = commArea.getCaCustomerNum();
+            wsFlagTsqh = ' ';
+            try {
+                jdeclTsq = new TSQ();
+                jdeclTsq.setName(stsqName);
+                jdeclTsq.writeString(writeMsgH + writeMsgHigh);
+            } catch (InvalidQueueIdException e) {
+                wsResp = 99;
+            } catch (CicsConditionException e) {
+                wsResp = 99;
+            }
+        }
+    }
+
+    stsqName = "GENACNTL";
+    wsFlagTsqh = ' ';
+    writeMsgH = "HIGH CUSTOMER=";
+    if (wsFlagTsqh == 'Y') {
+        jdeclTsq = new TSQ();
+        jdeclBuffer = new ItemHolder();
+        jdeclTsq.setName(stsqName);
+        jdeclTsq.setNoSuspend();
+        jdeclTsq.writeString(writeMsgE);
+        writeMsgLow = commArea.getCaCustomerNum();
+        writeMsgL = writeMsgL + writeMsgLow;
+        jdeclTsq.writeString(writeMsgL);
+        writeMsgHigh = commArea.getCaCustomerNum();
+        writeMsgH = writeMsgH + writeMsgHigh;
+        jdeclTsq.writeString(writeMsgH);
+    }
+
+    Task.getTask().getCurrentChannel().dequeue(stsqName);
+
+}

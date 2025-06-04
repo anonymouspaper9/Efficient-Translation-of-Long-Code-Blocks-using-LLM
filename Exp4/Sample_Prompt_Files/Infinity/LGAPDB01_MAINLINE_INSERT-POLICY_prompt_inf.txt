@@ -1,0 +1,260 @@
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+       INSERT-POLICY.                                                   
+           MOVE CA-BROKERID TO DB2-BROKERID-INT                         
+           MOVE CA-PAYMENT TO DB2-PAYMENT-INT                           
+           MOVE ' INSERT POLICY' TO EM-SQLREQ                           
+           EXEC SQL                                                     
+             INSERT INTO POLICY                                         
+                       ( POLICYNUMBER,                                  
+                         CUSTOMERNUMBER,                                
+                         ISSUEDATE,                                     
+                         EXPIRYDATE,                                    
+                         POLICYTYPE,                                    
+                         LASTCHANGED,                                   
+                         BROKERID,                                      
+                         BROKERSREFERENCE,                              
+                         PAYMENT           )                            
+                VALUES ( DEFAULT,                                       
+                         :DB2-CUSTOMERNUM-INT,                          
+                         :CA-ISSUE-DATE,                                
+                         :CA-EXPIRY-DATE,                               
+                         :DB2-POLICYTYPE,                               
+                         CURRENT TIMESTAMP,                             
+                         :DB2-BROKERID-INT,                             
+                         :CA-BROKERSREF,                                
+                         :DB2-PAYMENT-INT      )                        
+           END-EXEC                                                     
+           Evaluate SQLCODE                                             
+             When 0                                                     
+               MOVE '00' TO CA-RETURN-CODE                              
+             When -530                                                  
+               MOVE '70' TO CA-RETURN-CODE                              
+               PERFORM WRITE-ERROR-MESSAGE                              
+               EXEC CICS RETURN
+               END-EXEC                                
+             When Other                                                 
+               MOVE '90' TO CA-RETURN-CODE                              
+               PERFORM WRITE-ERROR-MESSAGE                              
+               EXEC CICS RETURN
+               END-EXEC                                
+           END-Evaluate.                                                
+           EXEC SQL                                                     
+             SET :DB2-POLICYNUM-INT = IDENTITY_VAL_LOCAL()              
+           END-EXEC                                                     
+           MOVE DB2-POLICYNUM-INT TO CA-POLICY-NUM                      
+           MOVE CA-POLICY-NUM TO EM-POLNUM                              
+           EXEC SQL                                                     
+             SELECT LASTCHANGED                                         
+               INTO :CA-LASTCHANGED                                     
+               FROM POLICY                                              
+               WHERE POLICYNUMBER = :DB2-POLICYNUM-INT                  
+           END-EXEC.                                                    
+           EXIT.                                                        
+
+## Variable Map:
+EM-SQLREQ gettermapping errorMsg.getEmVariable().getEmSqlreq()
+EM-SQLREQ settermapping errorMsg.getEmVariable().setEmSqlreq(val)
+EM-SQLREQ PIC X(16) JavaType String
+EM-POLNUM gettermapping errorMsg.getEmVariable().getEmPolnum()
+EM-POLNUM settermapping errorMsg.getEmVariable().setEmPolnum(val)
+EM-POLNUM PIC X(10) JavaType String
+DB2-POLICYTYPE gettermapping policy.getPolicytype()
+DB2-POLICYTYPE settermapping policy.setPolicytype(val)
+DB2-POLICYTYPE PIC X JavaType String
+DB2-POLICYNUM-INT gettermapping db2PolicynumInt
+DB2-POLICYNUM-INT settermapping db2PolicynumInt = val
+DB2-POLICYNUM-INT PIC S9(9) JavaType int
+DB2-PAYMENT-INT gettermapping db2InIntegers.getDb2PaymentInt()
+DB2-PAYMENT-INT settermapping db2InIntegers.setDb2PaymentInt(val)
+DB2-PAYMENT-INT PIC S9(9) JavaType int
+DB2-CUSTOMERNUM-INT gettermapping db2InIntegers.getDb2CustomernumInt()
+DB2-CUSTOMERNUM-INT settermapping db2InIntegers.setDb2CustomernumInt(val)
+DB2-CUSTOMERNUM-INT PIC S9(9) JavaType int
+DB2-BROKERID-INT gettermapping db2InIntegers.getDb2BrokeridInt()
+DB2-BROKERID-INT settermapping db2InIntegers.setDb2BrokeridInt(val)
+DB2-BROKERID-INT PIC S9(9) JavaType int
+CA-RETURN-CODE gettermapping caPolicyRequest.getCaReturnCode()
+CA-RETURN-CODE settermapping caPolicyRequest.setCaReturnCode(val)
+CA-RETURN-CODE PIC 9(2) JavaType int
+CA-POLICY-NUM gettermapping caPolicyRequest.getPolicy().getPolicynumber()
+CA-POLICY-NUM settermapping caPolicyRequest.getPolicy().setPolicynumber(val)
+CA-POLICY-NUM PIC 9(10) JavaType int
+CA-PAYMENT gettermapping caPolicyRequest.getPolicy().getPayment()
+CA-PAYMENT settermapping caPolicyRequest.getPolicy().setPayment(val)
+CA-PAYMENT PIC 9(6) JavaType int
+CA-LASTCHANGED gettermapping caPolicyRequest.getPolicy().getLastchanged()
+CA-LASTCHANGED settermapping caPolicyRequest.getPolicy().setLastchanged(val)
+CA-LASTCHANGED PIC X(26) JavaType Date
+CA-ISSUE-DATE gettermapping caPolicyRequest.getPolicy().getIssuedate()
+CA-ISSUE-DATE settermapping caPolicyRequest.getPolicy().setIssuedate(val)
+CA-ISSUE-DATE PIC X(10) JavaType Date
+CA-EXPIRY-DATE gettermapping caPolicyRequest.getPolicy().getExpirydate()
+CA-EXPIRY-DATE settermapping caPolicyRequest.getPolicy().setExpirydate(val)
+CA-EXPIRY-DATE PIC X(10) JavaType Date
+CA-BROKERSREF gettermapping caPolicyRequest.getPolicy().getBrokersreference()
+CA-BROKERSREF settermapping caPolicyRequest.getPolicy().setBrokersreference(val)
+CA-BROKERSREF PIC X(10) JavaType String
+CA-BROKERID gettermapping caPolicyRequest.getPolicy().getBrokerid()
+CA-BROKERID settermapping caPolicyRequest.getPolicy().setBrokerid(val)
+CA-BROKERID PIC 9(10) JavaType int
+MAINLINE_WRITE-ERROR-MESSAGE, mainlineWriteErrorMessage(dfhcommarea, errorMsg)
+
+## Class Map:
+public void mainlineInsertPolicy(CaPolicyRequest caPolicyRequest, Db2InIntegers db2InIntegers, int db2PolicynumInt, ErrorMsg errorMsg, Policy policy){
+}
+
+
+Output:

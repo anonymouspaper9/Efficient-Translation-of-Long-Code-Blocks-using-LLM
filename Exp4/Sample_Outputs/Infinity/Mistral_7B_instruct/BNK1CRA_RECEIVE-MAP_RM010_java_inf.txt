@@ -1,0 +1,44 @@
+```java
+public void receiveMapRm010() {
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    String wsAbendPgm = "ABNDPROC";
+    WsFailInfo wsFailInfo = new WsFailInfo();
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+
+    try {
+        CicsReceiveResponse cicsReceiveResponse = cicsReceive("BNK1CDI", "BNK1CDM");
+        if (cicsReceiveResponse.getResponseCode() != CicsReceiveResponse.NORMAL) {
+            initializeAbndinfoRec(abndinfoRec);
+            abndinfoRec.setAbndRespcode(cicsReceiveResponse.getResponseCode());
+            abndinfoRec.setAbndResp2Code(cicsReceiveResponse.getResponse2Code());
+            assignApplid(abndinfoRec, "ABND-APPLID");
+            abndinfoRec.setAbndTasknoKey(RM010);
+            abndinfoRec.setAbndTranid("EIBTRNID");
+            populateTimeDatePtd010(wsTimeNowGrp);
+            abndinfoRec.setAbndDate(wsTimeNowGrp.getWsOrigDate());
+            abndinfoRec.setAbndTime(formatTime(wsTimeNowGrp.getWsTimeNowGrpHh(), wsTimeNowGrp.getWsTimeNowGrpMm()));
+            abndinfoRec.setAbndUtimeKey(getWsUTime());
+            abndinfoRec.setAbndCode("HBNK");
+            assignProgram(abndinfoRec, wsAbendPgm);
+            abndinfoRec.setAbndSqlcode(0);
+            String errorMessage = "RM010 - RECEIVE MAP FAIL."
+                    + " EIBRESP=" + abndinfoRec.getAbndRespcode()
+                    + " RESP2=" + abndinfoRec.getAbndResp2Code();
+            abndinfoRec.setAbndFreeform(errorMessage.getBytes());
+            link(abndinfoRec);
+            wsFailInfo.setWsCicsResp(abndinfoRec.getAbndRespcode());
+            wsFailInfo.setWsCicsResp2(abndinfoRec.getAbndResp2Code());
+            wsFailInfo.setWsCicsFailMsg("BNKMENU - RM010 - RECEIVE MAP FAIL ");
+            abendThisTaskAtt010(wsFailInfo);
+        }
+    } catch (Exception e) {
+        System.out.println(e);
+    }
+}
+
+private String formatTime(int hour, int minute) {
+    return String.format("%02d:%02d", hour, minute);
+}
+
+// Other methods for initializing, assigning, linking, and formatting
+```

@@ -1,0 +1,214 @@
+
+```java
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class Main {
+    public static void mainlineGetClaimDb2Info1(CaPolicyRequest caPolicyRequest, Db2InIntegers db2InIntegers, Db2Policy db2Policy, ErrorMsg errorMsg) {
+        String sql = "SELECT POLICY.CustomerNumber, ClaimNumber, CLAIM.PolicyNumber, ClaimDate, Paid, Value, Cause, Observations FROM POLICY, CLAIM WHERE ( POLICY.POLICYNUMBER = CLAIM.POLICYNUMBER AND CLAIM.ClaimNumber = ? )";
+        try (Connection connection = DriverManager.getConnection("jdbc:db2://localhost:50000/DBNAME", "USER", "PASS");
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, db2InIntegers.getDb2ClaimnumInt());
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                int wsCaHeadertrailerLen = 33;
+                int wsCommLen = 1102;
+                int wsFullClaimLen = 618;
+                caPolicyRequest.setWsRequiredCaLen(wsCaHeadertrailerLen + wsCommLen);
+                caPolicyRequest.setWsRequiredCaLen(caPolicyRequest.getWsRequiredCaLen() + wsFullClaimLen);
+                if (resultSet.getRow() > wsCommLen) {
+                    throw new RuntimeException("Claim data is too large");
+                }
+                caPolicyRequest.setCaCustomerNum(resultSet.getInt(1));
+                caPolicyRequest.setCaPolicyNum(resultSet.getInt(3));
+                caPolicyRequest.setDb2ClaimnumInt(resultSet.getInt(2));
+                caPolicyRequest.setDb2CValueInt(resultSet.getInt(6));
+                caPolicyRequest.setDb2CPaidInt(resultSet.getInt(5));
+                caPolicyRequest.setCaPolicyCommon(db2Policy.getDb2PolicyCommon().getBytes());
+                caPolicyRequest.setCaClaim(db2Claim.getBytes());
+                caPolicyRequest.setCaCFiller("FINAL".getBytes());
+            } else if (resultSet.getSQLState().equals("100")) {
+                caPolicyRequest.setCaReturnCode(1);
+            } else {
+                caPolicyRequest.setCaReturnCode(90);
+                errorMsg.setEmVariable(new EmVariable("", sql));
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+    }
+
+    public static class EmVariable {
+        private String emSqlreq;
+
+        public EmVariable(String emSqlreq) {
+            this.emSqlreq = emSqlreq;
+        }
+
+        public String getEmSqlreq() {
+            return emSqlreq;
+        }
+
+        public void setEmSqlreq(String emSqlreq) {
+            this.emSqlreq = emSqlreq;
+        }
+    }
+
+    public static class CaPolicyRequest {
+        private int wsRequiredCaLen;
+        private int wsFullClaimLen;
+        private int wsCommLen;
+        private int wsCaHeadertrailerLen;
+        private long caCustomerNum;
+        private int caPolicyNum;
+        private int db2ClaimnumInt;
+        private int db2CValueInt;
+        private int db2CPaidInt;
+        private byte[] caPolicyCommon;
+        private byte[] caClaim;
+        private byte[] caCFiller;
+        private int caReturnCode;
+
+        public int getWsRequiredCaLen() {
+            return wsRequiredCaLen;
+        }
+
+        public void setWsRequiredCaLen(int wsRequiredCaLen) {
+            this.wsRequiredCaLen = wsRequiredCaLen;
+        }
+
+        public int getWsFullClaimLen() {
+            return wsFullClaimLen;
+        }
+
+        public void setWsFullClaimLen(int wsFullClaimLen) {
+            this.wsFullClaimLen = wsFullClaimLen;
+        }
+
+        public int getWsCommLen() {
+            return wsCommLen;
+        }
+
+        public void setWsCommLen(int wsCommLen) {
+            this.wsCommLen = wsCommLen;
+        }
+
+        public int getWsCaHeadertrailerLen() {
+            return wsCaHeadertrailerLen;
+        }
+
+        public void setWsCaHeadertrailerLen(int wsCaHeadertrailerLen) {
+            this.wsCaHeadertrailerLen = wsCaHeadertrailerLen;
+        }
+
+        public long getCaCustomerNum() {
+            return caCustomerNum;
+        }
+
+        public void setCaCustomerNum(long caCustomerNum) {
+            this.caCustomerNum = caCustomerNum;
+        }
+
+        public int getCaPolicyNum() {
+            return caPolicyNum;
+        }
+
+        public void setCaPolicyNum(int caPolicyNum) {
+            this.caPolicyNum = caPolicyNum;
+        }
+
+        public int getDb2ClaimnumInt() {
+            return db2ClaimnumInt;
+        }
+
+        public void setDb2ClaimnumInt(int db2ClaimnumInt) {
+            this.db2ClaimnumInt = db2ClaimnumInt;
+        }
+
+        public int getDb2CValueInt() {
+            return db2CValueInt;
+        }
+
+        public void setDb2CValueInt(int db2CValueInt) {
+            this.db2CValueInt = db2CValueInt;
+        }
+
+        public int getDb2CPaidInt() {
+            return db2CPaidInt;
+        }
+
+        public void setDb2CPaidInt(int db2CPaidInt) {
+            this.db2CPaidInt = db2CPaidInt;
+        }
+
+        public byte[] getCaPolicyCommon() {
+            return caPolicyCommon;
+        }
+
+        public void setCaPolicyCommon(byte[] caPolicyCommon) {
+            this.caPolicyCommon = caPolicyCommon;
+        }
+
+        public byte[] getCaClaim() {
+            return caClaim;
+        }
+
+        public void setCaClaim(byte[] caClaim) {
+            this.caClaim = caClaim;
+        }
+
+        public byte[] getCaCFiller() {
+            return caCFiller;
+        }
+
+        public void setCaCFiller(byte[] caCFiller) {
+            this.caCFiller = caCFiller;
+        }
+
+        public int getCaReturnCode() {
+            return caReturnCode;
+        }
+
+        public void setCaReturnCode(int caReturnCode) {
+            this.caReturnCode = caReturnCode;
+        }
+    }
+
+    public static class Db2InIntegers {
+        private int db2PolicynumInt;
+        private int db2CustomernumInt;
+        private int db2ClaimnumInt;
+
+        public int getDb2PolicynumInt() {
+            return db2PolicynumInt;
+        }
+
+        public void setDb2PolicynumInt(int db2PolicynumInt) {
+            this.db2PolicynumInt = db2PolicynumInt;
+        }
+
+        public int getDb2CustomernumInt() {
+            return db2CustomernumInt;
+        }
+
+        public void setDb2CustomernumInt(int db2CustomernumInt) {
+            this.db2CustomernumInt = db2CustomernumInt;
+        }
+
+        public int getDb2ClaimnumInt() {
+            return db2ClaimnumInt;
+        }
+
+        public void setDb2ClaimnumInt(int db2ClaimnumInt) {
+            this.db2ClaimnumInt = db2ClaimnumInt;
+        }
+    }
+
+    public static class Db2Policy {
+        private byte[] db2Policy

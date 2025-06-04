@@ -1,0 +1,180 @@
+public void updateAccountDb2Uad010(Dfhcommarea dfhcommarea, int sqlcodeDisplay){
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    int desiredAccNo;
+    int desiredSortCode;
+    String wsAbendPgm = "ABNDPROC";
+    int wsCicsResp;
+    int wsCicsResp2;
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+    dfhcommarea.setCommSuccess('N');
+    if (dfhcommarea.getCommFaccno() == dfhcommarea.getCommTaccno()
+        && dfhcommarea.getCommFscode() == dfhcommarea.getCommTscode()) {
+        abndinfoRec.setAbndRespcode(EIBRESP);
+        abndinfoRec.setAbndResp2Code(EIBRESP2);
+        abndinfoRec.setAbndApplid(getAbndApplid());
+        abndinfoRec.setAbndTasknoKey(EIBTASKN);
+        abndinfoRec.setAbndTranid(EIBTRNID);
+        populateTimeDatePtd010();
+        abndinfoRec.setAbndDate(getWsOrigDate());
+        abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm());
+        abndinfoRec.setAbndUtimeKey(getWsUTime());
+        abndinfoRec.setAbndCode("SAME");
+        abndinfoRec.setAbndProgram(getAbndProgram());
+        abndinfoRec.setAbndSqlcode(0);
+        abndinfoRec.setAbndFreeform("UAD010 - Cannot transfer to the same account EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2=" + abndinfoRec.getAbndResp2Code());
+        linkToAbend(abndinfoRec);
+        System.out.println("Cannot transfer to the same account");
+        abend("SAME");
+    }
+    if (dfhcommarea.getCommFaccno() < dfhcommarea.getCommTaccno()) {
+        desiredAccNo = dfhcommarea.getCommFaccno();
+        desiredSortCode = dfhcommarea.getCommFscode();
+        if (updateAccountDb2FromUadf010(dfhcommarea, sqlcodeDisplay) == 0) {
+            desiredAccNo = dfhcommarea.getCommTaccno();
+            desiredSortCode = dfhcommarea.getCommTscode();
+            if (updateAccountDb2ToUadt010(dfhcommarea) != 0) {
+                if (dfhcommarea.getCommFailCode() == '2') {
+                    syncpointRollback(wsCicsResp, wsCicsResp2);
+                    if (wsCicsResp != 0) {
+                        abndinfoRec.setAbndRespcode(EIBRESP);
+                        abndinfoRec.setAbndResp2Code(EIBRESP2);
+                        abndinfoRec.setAbndApplid(getAbndApplid());
+                        abndinfoRec.setAbndTasknoKey(EIBTASKN);
+                        abndinfoRec.setAbndTranid(EIBTRNID);
+                        populateTimeDatePtd010();
+                        abndinfoRec.setAbndDate(getWsOrigDate());
+                        abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm());
+                        abndinfoRec.setAbndUtimeKey(getWsUTime());
+                        abndinfoRec.setAbndCode("HROL");
+                        abndinfoRec.setAbndProgram(getAbndProgram());
+                        abndinfoRec.setAbndSqlcode(0);
+                        abndinfoRec.setAbndFreeform("UAD010(2) - Error on SYNCPOINT ROLLBACK after UPDATING TO account EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2=" + abndinfoRec.getAbndResp2Code());
+                        linkToAbend(abndinfoRec);
+                        System.out.println("XFRFUN error syncpoint rollback after updating TO account ,RESP=" + wsCicsResp + ",RESP2=" + wsCicsResp2);
+                        abend("HROL");
+                    }
+                    return;
+                } else {
+                    System.out.println("Error updating TO account");
+                    abend("TO  ");
+                }
+            }
+        } else {
+            if (dfhcommarea.getCommFailCode() == '1') {
+                syncpointRollback(wsCicsResp, wsCicsResp2);
+                if (wsCicsResp != 0) {
+                    System.out.println("XFRFUN error syncpoint rollback after updating FROM account ,RESP=" + wsCicsResp + ",RESP2=" + wsCicsResp2);
+                    abend("HROL");
+                }
+                return;
+            } else {
+                abndinfoRec.setAbndRespcode(EIBRESP);
+                abndinfoRec.setAbndResp2Code(EIBRESP2);
+                abndinfoRec.setAbndApplid(getAbndApplid());
+                abndinfoRec.setAbndTasknoKey(EIBTASKN);
+                abndinfoRec.setAbndTranid(EIBTRNID);
+                populateTimeDatePtd010();
+                abndinfoRec.setAbndDate(getWsOrigDate());
+                abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm());
+                abndinfoRec.setAbndUtimeKey(getWsUTime());
+                abndinfoRec.setAbndCode("FROM");
+                abndinfoRec.setAbndProgram(getAbndProgram());
+                abndinfoRec.setAbndSqlcode(0);
+                abndinfoRec.setAbndFreeform("UAD010(3) - Error updating FROM account EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2=" + abndinfoRec.getAbndResp2Code());
+                linkToAbend(abndinfoRec);
+                System.out.println("Error updating FROM account");
+                abend("FROM");
+            }
+        }
+    } else {
+        desiredAccNo = dfhcommarea.getCommTaccno();
+        desiredSortCode = dfhcommarea.getCommTscode();
+        if (updateAccountDb2ToUadt010(dfhcommarea) == 0) {
+            desiredAccNo = dfhcommarea.getCommFaccno();
+            desiredSortCode = dfhcommarea.getCommFscode();
+            if (updateAccountDb2FromUadf010(dfhcommarea, sqlcodeDisplay) != 0) {
+                if (dfhcommarea.getCommFailCode() != '1') {
+                    abndinfoRec.setAbndRespcode(EIBRESP);
+                    abndinfoRec.setAbndResp2Code(EIBRESP2);
+                    abndinfoRec.setAbndApplid(getAbndApplid());
+                    abndinfoRec.setAbndTasknoKey(EIBTASKN);
+                    abndinfoRec.setAbndTranid(EIBTRNID);
+                    populateTimeDatePtd010();
+                    abndinfoRec.setAbndDate(getWsOrigDate());
+                    abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm());
+                    abndinfoRec.setAbndUtimeKey(getWsUTime());
+                    abndinfoRec.setAbndCode("FROM");
+                    abndinfoRec.setAbndProgram(getAbndProgram());
+                    abndinfoRec.setAbndSqlcode(0);
+                    abndinfoRec.setAbndFreeform("UAD010(4) - Error updating FROM account EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2=" + abndinfoRec.getAbndResp2Code());
+                    linkToAbend(abndinfoRec);
+                    System.out.println("Error updating FROM account");
+                    abend("FROM");
+                } else {
+                    syncpointRollback(wsCicsResp, wsCicsResp2);
+                    if (wsCicsResp != 0) {
+                        abndinfoRec.setAbndRespcode(EIBRESP);
+                        abndinfoRec.setAbndResp2Code(EIBRESP2);
+                        abndinfoRec.setAbndApplid(getAbndApplid());
+                        abndinfoRec.setAbndTasknoKey(EIBTASKN);
+                        abndinfoRec.setAbndTranid(EIBTRNID);
+                        populateTimeDatePtd010();
+                        abndinfoRec.setAbndDate(getWsOrigDate());
+                        abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm());
+                        abndinfoRec.setAbndUtimeKey(getWsUTime());
+                        abndinfoRec.setAbndCode("HROL");
+                        abndinfoRec.setAbndProgram(getAbndProgram());
+                        abndinfoRec.setAbndSqlcode(0);
+                        abndinfoRec.setAbndFreeform("UAD010(5) - Error on SYNCPOINT ROLLBACK after UPDATING the FROM account EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2=" + abndinfoRec.getAbndResp2Code());
+                        linkToAbend(abndinfoRec);
+                        System.out.println("XFRFUN error syncpoint rollback after updating FROM account ,RESP=" + wsCicsResp + ",RESP2=" + wsCicsResp2);
+                        abend("HROL");
+                    }
+                    return;
+                }
+            }
+        } else {
+            if (dfhcommarea.getCommFailCode() != '2') {
+                abndinfoRec.setAbndRespcode(EIBRESP);
+                abndinfoRec.setAbndResp2Code(EIBRESP2);
+                abndinfoRec.setAbndApplid(getAbndApplid());
+                abndinfoRec.setAbndTasknoKey(EIBTASKN);
+                abndinfoRec.setAbndTranid(EIBTRNID);
+                populateTimeDatePtd010();
+                abndinfoRec.setAbndDate(getWsOrigDate());
+                abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm());
+                abndinfoRec.setAbndUtimeKey(getWsUTime());
+                abndinfoRec.setAbndCode("TO  ");
+                abndinfoRec.setAbndProgram(getAbndProgram());
+                abndinfoRec.setAbndSqlcode(0);
+                abndinfoRec.setAbndFreeform("UAD010(6) - Error updating TO account EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2=" + abndinfoRec.getAbndResp2Code());
+                linkToAbend(abndinfoRec);
+                System.out.println("Error updating TO account");
+                abend("TO  ");
+            } else {
+                syncpointRollback(wsCicsResp, wsCicsResp2);
+                if (wsCicsResp != 0) {
+                    abndinfoRec.setAbndRespcode(EIBRESP);
+                    abndinfoRec.setAbndResp2Code(EIBRESP2);
+                    abndinfoRec.setAbndApplid(getAbndApplid());
+                    abndinfoRec.setAbndTasknoKey(EIBTASKN);
+                    abndinfoRec.setAbndTranid(EIBTRNID);
+                    populateTimeDatePtd010();
+                    abndinfoRec.setAbndDate(getWsOrigDate());
+                    abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm());
+                    abndinfoRec.setAbndUtimeKey(getWsUTime());
+                    abndinfoRec.setAbndCode("HROL");
+                    abndinfoRec.setAbndProgram(getAbndProgram());
+                    abndinfoRec.setAbndSqlcode(0);
+                    abndinfoRec.setAbndFreeform("UAD010(7) - Error on SYNCPOINT ROLLBACK after UPDATING the TO account EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2=" + abndinfoRec.getAbndResp2Code());
+                    linkToAbend(abndinfoRec);
+                    System.out.println("XFRFUN error syncpoint rollback after updating TO account ,RESP=" + wsCicsResp + ",RESP2=" + wsCicsResp2);
+                    abend("HROL");
+                }
+                return;
+            }
+        }
+    }
+    writeToProctranWtp010(dfhcommarea, sqlcodeDisplay);
+    dfhcommarea.setCommSuccess('Y');
+}

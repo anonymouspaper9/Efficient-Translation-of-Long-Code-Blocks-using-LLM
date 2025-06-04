@@ -1,0 +1,75 @@
+       GLCV010.
+
+           INITIALIZE CUSTOMER-CONTROL
+           MOVE ZERO TO CUSTOMER-CONTROL-SORTCODE
+           MOVE ALL '9' TO CUSTOMER-CONTROL-NUMBER
+
+           EXEC CICS READ FILE('CUSTOMER')
+                     RIDFLD(CUSTOMER-CONTROL-KEY)
+                     UPDATE
+                     INTO(CUSTOMER-CONTROL)
+                     RESP(WS-CICS-RESP)
+                     RESP2(WS-CICS-RESP2)
+           END-EXEC
+
+           IF WS-CICS-RESP = DFHRESP(SYSIDERR)
+             PERFORM VARYING SYSIDERR-RETRY FROM 1 BY 1
+             UNTIL SYSIDERR-RETRY > 100
+             OR WS-CICS-RESP = DFHRESP(NORMAL)
+             OR WS-CICS-RESP IS NOT EQUAL TO DFHRESP(SYSIDERR)
+               EXEC CICS DELAY FOR SECONDS(3)
+               END-EXEC
+
+               EXEC CICS READ FILE('CUSTOMER')
+                         RIDFLD(CUSTOMER-CONTROL-KEY)
+                         UPDATE
+                         INTO(CUSTOMER-CONTROL)
+                         RESP(WS-CICS-RESP)
+                         RESP2(WS-CICS-RESP2)
+               END-EXEC
+
+             END-PERFORM
+           ELSE
+             IF WS-CICS-RESP IS NOT = DFHRESP(NORMAL)
+               MOVE 'N' TO COMM-SUCCESS
+               MOVE '4' TO COMM-FAIL-CODE
+               PERFORM DEQ-NAMED-COUNTER
+               PERFORM GET-ME-OUT-OF-HERE
+             END-IF
+           END-IF.
+           ADD 1 TO LAST-CUSTOMER-NUMBER IN CUSTOMER-CONTROL
+           GIVING LAST-CUSTOMER-NUMBER IN CUSTOMER-CONTROL
+
+           EXEC CICS REWRITE FILE('CUSTOMER')
+                FROM(CUSTOMER-CONTROL)
+                RESP(WS-CICS-RESP)
+                RESP2(WS-CICS-RESP2)
+           END-EXEC
+
+           IF WS-CICS-RESP = DFHRESP(SYSIDERR)
+              PERFORM VARYING SYSIDERR-RETRY FROM 1 BY 1
+              UNTIL SYSIDERR-RETRY > 100
+              OR WS-CICS-RESP = DFHRESP(NORMAL)
+              OR WS-CICS-RESP IS NOT EQUAL TO DFHRESP(SYSIDERR)
+                 EXEC CICS DELAY FOR SECONDS(3)
+                 END-EXEC
+
+                 EXEC CICS REWRITE FILE('CUSTOMER')
+                    FROM(CUSTOMER-CONTROL)
+                    RESP(WS-CICS-RESP)
+                    RESP2(WS-CICS-RESP2)
+                 END-EXEC
+              END-PERFORM
+           ELSE
+              IF WS-CICS-RESP IS NOT EQUAL TO DFHRESP(NORMAL)
+                 MOVE 'N' TO COMM-SUCCESS
+                 MOVE '4' TO COMM-FAIL-CODE
+
+                 PERFORM DEQ-NAMED-COUNTER
+                 PERFORM GET-ME-OUT-OF-HERE
+              END-IF
+           END-IF
+
+           MOVE LAST-CUSTOMER-NUMBER OF CUSTOMER-CONTROL  TO
+              COMM-NUMBER CUSTOMER-NUMBER REQUIRED-CUST-NUMBER2
+              NCS-CUST-NO-VALUE.

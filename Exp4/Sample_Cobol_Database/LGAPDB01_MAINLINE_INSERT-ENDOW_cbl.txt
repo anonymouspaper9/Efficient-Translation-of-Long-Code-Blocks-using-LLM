@@ -1,0 +1,71 @@
+       INSERT-ENDOW.                                                    
+                                                                        
+      *    Move numeric fields to integer format                        
+           MOVE CA-E-TERM        TO DB2-E-TERM-SINT                     
+           MOVE CA-E-SUM-ASSURED TO DB2-E-SUMASSURED-INT                
+                                                                        
+           MOVE ' INSERT ENDOW ' TO EM-SQLREQ                           
+      *----------------------------------------------------------------*
+      *    There are 2 versions of INSERT...                           *
+      *      one which updates all fields including Varchar            *
+      *      one which updates all fields Except Varchar               *
+      *----------------------------------------------------------------*
+           SUBTRACT WS-REQUIRED-CA-LEN FROM EIBCALEN                    
+               GIVING WS-VARY-LEN                                       
+                                                                        
+           IF WS-VARY-LEN IS GREATER THAN ZERO                          
+      *       Commarea contains data for Varchar field                  
+              MOVE CA-E-PADDING-DATA                                    
+                  TO WS-VARY-CHAR(1:WS-VARY-LEN)                        
+              EXEC SQL                                                  
+                INSERT INTO ENDOWMENT                                   
+                          ( POLICYNUMBER,                               
+                            WITHPROFITS,                                
+                            EQUITIES,                                   
+                            MANAGEDFUND,                                
+                            FUNDNAME,                                   
+                            TERM,                                       
+                            SUMASSURED,                                 
+                            LIFEASSURED,                                
+                            PADDINGDATA    )                            
+                   VALUES ( :DB2-POLICYNUM-INT,                         
+                            :CA-E-WITH-PROFITS,                         
+                            :CA-E-EQUITIES,                             
+                            :CA-E-MANAGED-FUND,                         
+                            :CA-E-FUND-NAME,                            
+                            :DB2-E-TERM-SINT,                           
+                            :DB2-E-SUMASSURED-INT,                      
+                            :CA-E-LIFE-ASSURED,                         
+                            :WS-VARY-FIELD )                            
+              END-EXEC                                                  
+           ELSE                                                         
+              EXEC SQL                                                  
+                INSERT INTO ENDOWMENT                                   
+                          ( POLICYNUMBER,                               
+                            WITHPROFITS,                                
+                            EQUITIES,                                   
+                            MANAGEDFUND,                                
+                            FUNDNAME,                                   
+                            TERM,                                       
+                            SUMASSURED,                                 
+                            LIFEASSURED    )                            
+                   VALUES ( :DB2-POLICYNUM-INT,                         
+                            :CA-E-WITH-PROFITS,                         
+                            :CA-E-EQUITIES,                             
+                            :CA-E-MANAGED-FUND,                         
+                            :CA-E-FUND-NAME,                            
+                            :DB2-E-TERM-SINT,                           
+                            :DB2-E-SUMASSURED-INT,                      
+                            :CA-E-LIFE-ASSURED )                        
+              END-EXEC                                                  
+           END-IF                                                       
+                                                                        
+           IF SQLCODE NOT EQUAL 0                                       
+             MOVE '90' TO CA-RETURN-CODE                                
+             PERFORM WRITE-ERROR-MESSAGE                                
+      *      Issue Abend to cause backout of update to Policy table     
+             EXEC CICS ABEND ABCODE('LGSQ') NODUMP END-EXEC             
+             EXEC CICS RETURN END-EXEC                                  
+           END-IF.                                                      
+                                                                        
+           EXIT.                                                        

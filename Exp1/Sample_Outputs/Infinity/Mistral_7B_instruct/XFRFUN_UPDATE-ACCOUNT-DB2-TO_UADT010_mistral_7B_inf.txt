@@ -1,0 +1,79 @@
+```java
+public void updateAccountDb2ToUadt010(Dfhcommarea dfhcommarea) {
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    int db2DeadlockRetry;
+    int desiredAccNo;
+    int desiredSortCode;
+    HostAccountRow hostAccountRow = new HostAccountRow();
+    int sqlcodeDisplay;
+    ArrayList<Integer> sqlerrd = new ArrayList<>();
+    for (int i = 0; i < 6; i++) {
+        sqlerrd.add(0);
+    }
+    String wsAbendPgm = "ABNDPROC";
+    int wsCicsResp;
+    int wsCicsResp2;
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+
+    // Initialize hostAccountRow
+    hostAccountRow.setHvAccountSortcode(dfhcommarea.getCommTscode());
+    hostAccountRow.setHvAccountAccNo(dfhcommarea.getCommTaccno());
+
+    // Execute SQL query
+    try (Connection connection = DriverManager.getConnection(DatabaseConnection.getConnectionUrl(), DatabaseConnection.getUsername(), DatabaseConnection.getPassword());
+         PreparedStatement preparedStatement = connection.prepareStatement("SELECT ACCOUNT_EYECATCHER, ACCOUNT_CUSTOMER_NUMBER, ACCOUNT_SORTCODE, ACCOUNT_NUMBER, ACCOUNT_TYPE, ACCOUNT_INTEREST_RATE, ACCOUNT_OPENED, ACCOUNT_OVERDRAFT_LIMIT, ACCOUNT_LAST_STATEMENT, ACCOUNT_NEXT_STATEMENT, ACCOUNT_AVAILABLE_BALANCE, ACCOUNT_ACTUAL_BALANCE FROM ACCOUNT WHERE (ACCOUNT_SORTCODE = ? AND ACCOUNT_NUMBER = ?)";) {
+        preparedStatement.setInt(1, hostAccountRow.getHvAccountSortcode());
+        preparedStatement.setInt(2, hostAccountRow.getHvAccountAccNo());
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            // Set values from the result set
+            hostAccountRow.setHvAccountEyecatcher(resultSet.getString(1));
+            hostAccountRow.setHvAccountCustNo(resultSet.getString(2));
+            hostAccountRow.setHvAccountSortcode(resultSet.getString(3));
+            hostAccountRow.setHvAccountAccNo(resultSet.getString(4));
+            hostAccountRow.setHvAccountAccType(resultSet.getString(5));
+            hostAccountRow.setHvAccountIntRate(resultSet.getBigDecimal(6));
+            hostAccountRow.setHvAccountOpened(resultSet.getString(7));
+            hostAccountRow.setHvAccountOverdraftLim(resultSet.getInt(8));
+            hostAccountRow.setHvAccountLastStmt(resultSet.getString(9));
+            hostAccountRow.setHvAccountNextStmt(resultSet.getString(10));
+            hostAccountRow.setHvAccountAvailBal(resultSet.getBigDecimal(11));
+            hostAccountRow.setHvAccountActualBal(resultSet.getBigDecimal(12));
+        } else {
+            // Handle case when no record found
+        }
+    } catch (SQLException e) {
+        // Handle SQL exceptions
+    }
+
+    // Update account
+    try (Connection connection = DriverManager.getConnection(DatabaseConnection.getConnectionUrl(), DatabaseConnection.getUsername(), DatabaseConnection.getPassword());
+         PreparedStatement preparedStatement = connection.prepareStatement("UPDATE ACCOUNT SET ACCOUNT_EYECATCHER = ?, ACCOUNT_CUSTOMER_NUMBER = ?, ACCOUNT_SORTCODE = ?, ACCOUNT_NUMBER = ?, ACCOUNT_TYPE = ?, ACCOUNT_INTEREST_RATE = ?, ACCOUNT_OPENED = ?, ACCOUNT_OVERDRAFT_LIMIT = ?, ACCOUNT_LAST_STATEMENT = ?, ACCOUNT_NEXT_STATEMENT = ?, ACCOUNT_AVAILABLE_BALANCE = ?, ACCOUNT_ACTUAL_BALANCE = ? WHERE (ACCOUNT_SORTCODE = ? AND ACCOUNT_NUMBER = ?)");) {
+        preparedStatement.setString(1, hostAccountRow.getHvAccountEyecatcher());
+        preparedStatement.setString(2, hostAccountRow.getHvAccountCustNo());
+        preparedStatement.setString(3, hostAccountRow.getHvAccountSortcode());
+        preparedStatement.setString(4, hostAccountRow.getHvAccountAccNo());
+        preparedStatement.setString(5, hostAccountRow.getHvAccountAccType());
+        preparedStatement.setBigDecimal(6, hostAccountRow.getHvAccountIntRate());
+        preparedStatement.setString(7, hostAccountRow.getHvAccountOpened());
+        preparedStatement.setInt(8, hostAccountRow.getHvAccountOverdraftLim());
+        preparedStatement.setString(9, hostAccountRow.getHvAccountLastStmt());
+        preparedStatement.setString(10, hostAccountRow.getHvAccountNextStmt());
+        preparedStatement.setBigDecimal(11, hostAccountRow.getHvAccountAvailBal());
+        preparedStatement.setBigDecimal(12, hostAccountRow.getHvAccountActualBal());
+        preparedStatement.setString(13, hostAccountRow.getHvAccountSortcode());
+        preparedStatement.setInt(14, hostAccountRow.getHvAccountAccNo());
+        int rowsAffected = preparedStatement.executeUpdate();
+        if (rowsAffected == 0) {
+            // Handle case when no record updated
+        }
+    } catch (SQLException e) {
+        // Handle SQL exceptions
+    }
+
+    // Set values from hostAccountRow to dfhcommarea
+    dfhcommarea.setCommTavbal(hostAccountRow.getHvAccountAvailBal());
+    dfhcommarea.setCommTactbal(hostAccountRow.getHvAccountActualBal());
+    dfhcommarea.setCommSuccess('Y');
+}
+```

@@ -1,0 +1,129 @@
+public void editDataEd010(Switches switches) {
+    String dobddiChar = "";
+    String dobmmiChar = "";
+
+    if (custno2l > 0) {
+        switches.setMessageo("Please clear screen before creating new user");
+        switches.setCusttitl(-1);
+        switches.setValidDataSw('N');
+        return;
+    }
+    if (custtitl < 1 || custtiti == null || custtiti.equals("")) {
+        switches.setMessageo("");
+        switches.setMessageo("Valid titles are: Mr,Mrs,Miss,Ms,Dr,Professor," + "Drs,Lord,Sir,Lady");
+        switches.setCusttitl(-1);
+        switches.setValidDataSw('N');
+        return;
+    }
+    switches.setMessageo("");
+    if (custtitl > 0) {
+        // TODO: Empty block may need to be addressed
+
+    }
+    if (christnl < 1 || christni == null || christni.equals("____________________") || christni.equals("")) {
+        switches.setMessageo("Please supply a valid First Name  ");
+        switches.setChristnl(-1);
+        switches.setValidDataSw('N');
+        return;
+    }
+    if (custsnl < 1 || custsni == null || custsni.equals("____________________") || custsni.equals("")) {
+        switches.setMessageo("Please supply a valid Surname ");
+        switches.setCustsnl(-1);
+        switches.setValidDataSw('N');
+        return;
+    }
+    if (custad1i.charAt(0) == '_' || custad1l < 1 || custad1i.equals("")) {
+        switches.setMessageo("Please supply a valid Address Line 1 ");
+        switches.setCustad1l(-1);
+        switches.setValidDataSw('N');
+        return;
+    }
+    if (dobddl < 1 || dobddi == null || dobddi.equals("__")) {
+        switches.setMessageo("Please supply a valid Date of Birth DD");
+        switches.setDobddl(-1);
+        switches.setValidDataSw('N');
+        return;
+    }
+
+    if (dobmml < 1 || dobmmi.equals("__")) {
+        switches.setMessageo("");
+        switches.setMessageo("Please supply a valid Date of Birth MM");
+        switches.setValidDataSw('N');
+        dobmml = -1;
+        return;
+    }
+    if (dobyyl < 4 || dobyyi.equals("____")) {
+        switches.setMessageo("");
+        switches.setMessageo("Please supply a valid Date of Birth YYYY");
+        switches.setValidDataSw('N');
+        dobyyl = -1;
+        return;
+    }
+    if (!dobddi.matches("\\d+")) {
+        switches.setMessageo("");
+        switches.setMessageo("Non numeric Date of Birth DD entered      ");
+        switches.setValidDataSw('N');
+        dobddl = -1;
+        return;
+    }
+    if (!dobmmi.matches("\\d+")) {
+        switches.setMessageo("");
+        switches.setMessageo("Non numeric Date of Birth MM entered      ");
+        switches.setValidDataSw('N');
+        dobmml = -1;
+        return;
+    }
+    if (!dobyyi.matches("\\d+")) {
+        switches.setMessageo("");
+        switches.setMessageo("Non numeric Date of Birth YYYY entered  ");
+        switches.setValidDataSw('N');
+        dobyyl = -1;
+        return;
+    }
+    dobddiChar = dobddi;
+    if (((DobddiReform) (dateReformed)).getDobddiNum() < 01 || ((DobddiReform) (dateReformed)).getDobddiNum() > 31) {
+        switches.setMessageo("");
+        switches.setMessageo("Please supply a valid Date of Birth (DD)    ");
+        switches.setValidDataSw('N');
+        dobddl = -1;
+        return;
+    }
+    dobmmiChar = dobmmi;
+    if (((DobmmiReform) (dateReformed)).getDobmmiNum() < 01 || ((DobmmiReform) (dateReformed)).getDobmmiNum() > 12) {
+        switches.setMessageo("");
+        switches.setMessageo("Please supply a valid Date of Birth (MM)    ");
+        switches.setValidDataSw('N');
+        dobmml = -1;
+        return;
+    }
+
+    if (switches.getCusttitl() < 1 || switches.getChristnl() < 1 || switches.getCustsnl() < 1
+            || switches.getCustad1l() < 1 || switches.getDobddl() < 1 || switches.getDobmml() < 1
+            || switches.getDobyyl() < 1) {
+        messageO = String.valueOf(' ').repeat(80);
+        messageO = "Missing expected data.               ";
+        if (switches.getCusttitl() < 1) {
+            switches.setCusttitl(-1);
+        }
+        if (switches.getChristnl() < 1) {
+            switches.setChristnl(-1);
+        }
+        if (switches.getCustsnl() < 1) {
+            switches.setCustsnl(-1);
+        }
+        if (switches.getCustad1l() < 1) {
+            switches.setCustad1l(-1);
+        }
+        if (switches.getDobddl() < 1) {
+            switches.setDobddl(-1);
+        }
+        if (switches.getDobmml() < 1) {
+            switches.setDobmml(-1);
+        }
+        if (switches.getDobyyl() < 1) {
+            switches.setDobyyl(-1);
+        }
+        switches.setValidDataSw('N');
+    }
+
+}

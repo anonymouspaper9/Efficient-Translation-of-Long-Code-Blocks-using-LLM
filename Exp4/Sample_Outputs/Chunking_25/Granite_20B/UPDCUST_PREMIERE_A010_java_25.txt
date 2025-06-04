@@ -1,0 +1,26 @@
+public void premiereA010(Dfhcommarea dfhcommarea) {
+    char wsTitleValid = ' ';
+
+    String wsUnstrTitle = " ";
+    wsTitleValid = ' ';
+    int sortcode = 987654;
+    DesiredCustKey desiredCustKey = new DesiredCustKey();
+    dfhcommarea.setCommScode(String.valueOf(sortcode));
+    wsUnstrTitle = dfhcommarea.getCommName().trim();
+    wsTitleValid = ' ';
+
+    if (wsUnstrTitle.equals("Professor")) {
+
+        wsTitleValid = ' ';
+
+    } else if (wsUnstrTitle.equals("Lady     ")) {
+        wsTitleValid = 'Y';
+    } else if (wsUnstrTitle.equals("         ")) {
+        wsTitleValid = 'Y';
+    } else {
+        wsTitleValid = 'N';
+    }
+
+    wsTitleValid = ' ';
+
+}

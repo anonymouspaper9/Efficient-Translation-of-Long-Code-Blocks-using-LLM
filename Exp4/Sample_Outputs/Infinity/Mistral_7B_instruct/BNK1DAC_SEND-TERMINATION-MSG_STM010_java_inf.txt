@@ -1,0 +1,56 @@
+```java
+public void sendTerminationMsgStm010() {
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    String endOfSessionMessage = "Session Ended";
+    String wsAbendPgm = "ABNDPROC";
+    WsFailInfo wsFailInfo = new WsFailInfo();
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+
+    /* This is prompt example 2 */
+    if (WS_CICS_RESP != DFHRESP.NORMAL) {
+        abndinfoRec.setAbndRespcode(EIBRESP);
+        abndinfoRec.setAbndResp2Code(EIBRESP2);
+        abndinfoRec.setAbndApplid(EIBTASKN);
+        abndinfoRec.setAbndTranid(EIBTRNID);
+        populateTimeDatePtd010(wsTimeNowGrp);
+        abndinfoRec.setAbndDate(wsTimeNowGrp.getWsOrigDate());
+        abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm());
+        abndinfoRec.setAbndUtimeKey(getWsUTime());
+        abndinfoRec.setAbndFreeform("STM010 - SEND TEXT FAIL." + "EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2=" + abndinfoRec.getAbndResp2Code());
+
+        try {
+            JdbcConnection.connection.createStatement().executeUpdate("INSERT INTO BANK(LOCATION)values('HBNK')");
+        } catch (SQLException exception) {
+            abndinfoRec.setAbndSqlcode(0);
+            wsFailInfo.setWsCicsResp(WS_CICS_RESP);
+            wsFailInfo.setWsCicsResp2(WS_CICS_RESP2);
+            wsFailInfo.setWsCicsFailMsg("BNK1DAC - STM010 - SEND TEXT FAIL");
+            abendThisTaskAtt010(wsFailInfo);
+            return;
+        }
+
+        try {
+            CallableStatement cs = JdbcConnection.connection.prepareCall("{CALL CICS ASSIGN(APPLID(?))}");
+            cs.setString(1, wsAbendPgm);
+            cs.execute();
+            cs.close();
+        } catch (SQLException exception) {
+            System.out.println(exception);
+            return;
+        }
+
+        abndinfoRec.setAbndSqlcode(0);
+        try {
+            JdbcConnection.connection.createStatement().executeUpdate("LINK COMMAREA(?) PROGRAM(?)", abndinfoRec, wsAbendPgm);
+        } catch (SQLException exception) {
+            System.out.println(exception);
+            return;
+        }
+
+        wsFailInfo.setWsCicsResp(WS_CICS_RESP);
+        wsFailInfo.setWsCicsResp2(WS_CICS_RESP2);
+        wsFailInfo.setWsCicsFailMsg("BNK1DAC - STM010 - SEND TEXT FAIL");
+        abendThisTaskAtt010(wsFailInfo);
+    }
+}
+```

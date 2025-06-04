@@ -1,0 +1,43 @@
+public void invokeMainline(Dfhcommarea dfhcommarea) {
+    ErrorMsg errorMsg = new ErrorMsg();
+    WsHeader wsHeader = new WsHeader();
+
+    wsHeader.setWsTransid(Task.getTask().getTransId());
+    wsHeader.setWsTermid(Task.getTask().getTERMId());
+    wsHeader.setWsTasknum(Task.getTask().getTaskNumber());
+    if (dfhcommarea.getEibcalen() == 0) {
+        errorMsg.getEmVariable().setEmVariable(" NO COMMAREA RECEIVED");
+        this.writeErrorMessage(errorMsg);
+        Task.getTask().abend("LGCA");
+    }
+    dfhcommarea.setCaReturnCode(0);
+    wsHeader.setWsCalen(dfhcommarea.getEibcalen());
+    wsHeader.setWsAddrDfhcommarea(dfhcommarea.getEibdfhcommarea());
+    errorMsg.getEmVariable().setEmCusnum(String.valueOf(dfhcommarea.getCaCustomerNum()));
+    errorMsg.getEmVariable().setEmPolnum(String.valueOf(dfhcommarea.getCaPolicyNum()));
+
+    String caRequestId = dfhcommarea.getCaRequestId();
+    if (caRequestId.equals("01UEND")) {
+        wsRequiredCaLen = wsCaHeaderLen + wsFullEndowLen;
+        if (eibcalen < wsRequiredCaLen) {
+            dfhcommarea.setCaReturnCode("98");
+            return;
+        }
+    } else if (caRequestId.equals("01UHOU")) {
+        wsRequiredCaLen = wsCaHeaderLen + wsFullHouseLen;
+        if (eibcalen < wsRequiredCaLen) {
+            dfhcommarea.setCaReturnCode("98");
+            return;
+        }
+    } else if (caRequestId.equals("01UMOT")) {
+        wsRequiredCaLen = wsCaHeaderLen + wsFullMotorLen;
+        if (eibcalen < wsRequiredCaLen) {
+            dfhcommarea.setCaReturnCode("98");
+            return;
+        }
+    } else {
+        dfhcommarea.setCaReturnCode("99");
+    }
+    updatePolicyDb2Info();
+
+}

@@ -1,0 +1,43 @@
+public void mainlineGetClaimDb2Info1(CaPolicyRequest caPolicyRequest, Db2InIntegers db2InIntegers, Db2Policy db2Policy, ErrorMsg errorMsg){
+    Db2Claim db2Claim = new Db2Claim();
+    Db2OutIntegers db2OutIntegers = new Db2OutIntegers();
+    int wsCaHeadertrailerLen = 33;
+    int wsCommLen = 1102;
+    int wsFullClaimLen = 618;
+    String emSqlreq = "SELECT Claim FROM POLICY,CLAIM WHERE (POLICY.POLICYNUMBER = CLAIM.POLICYNUMBER AND CLAIM.ClaimNumber = ?)";
+    try {
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(emSqlreq);
+        ps.setInt(1, db2InIntegers.getDb2ClaimnumInt());
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            caPolicyRequest.setCaCustomerNum(db2InIntegers.getDb2CustomernumInt());
+            caPolicyRequest.setPolicy().setPolicynumber(db2InIntegers.getDb2PolicynumInt());
+            db2Claim.getClaim().setClaimnumber(db2InIntegers.getDb2ClaimnumInt());
+            db2Claim.getClaim().setClaimdate(rs.getDate("ClaimDate"));
+            db2Claim.getClaim().setPaid(rs.getInt("Paid"));
+            db2Claim.getClaim().setValue(rs.getInt("Value"));
+            db2Claim.getClaim().setCause(rs.getString("Cause"));
+            db2Claim.getClaim().setObservations(rs.getString("Observations"));
+            wsCaHeadertrailerLen = 33 + wsFullClaimLen;
+            if (wsCaHeadertrailerLen < wsRequiredCaLen) {
+                caPolicyRequest.setCaReturnCode(98);
+                return;
+            } else {
+                caPolicyRequest.setCaPolicyCommon(db2Policy.getDb2PolicyCommon().getBytes());
+                caPolicyRequest.setCaCustomerNum(db2InIntegers.getDb2CustomernumInt());
+                caPolicyRequest.setPolicy().setPolicynum(db2InIntegers.getDb2PolicynumInt());
+                caPolicyRequest.setClaim(db2Claim.getClaim().getBytes());
+                caPolicyRequest.setCaCFiller("FINAL");
+            }
+        } else {
+            if (rs.getErrorCode() == 100) {
+                caPolicyRequest.setCaReturnCode(1);
+            } else {
+                caPolicyRequest.setCaReturnCode(90);
+                mainlineWriteErrorMessage(dfhcommarea, errorMsg);
+            }
+        }
+    } catch (SQLException e) {
+        System.out.println(e);
+    }
+} 

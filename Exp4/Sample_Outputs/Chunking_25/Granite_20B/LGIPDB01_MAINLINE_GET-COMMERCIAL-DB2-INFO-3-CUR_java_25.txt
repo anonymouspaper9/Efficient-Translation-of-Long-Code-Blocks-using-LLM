@@ -1,0 +1,59 @@
+public void mainlineGetCommercialDb2Info3Cur(Db2Policy db2Policy, Dfhcommarea dfhcommarea, String icomPointer) {
+    Db2InIntegers db2InIntegers = new Db2InIntegers();
+    Db2Commercial db2Commercial = new Db2Commercial();
+    Db2OutIntegers db2OutIntegers = new Db2OutIntegers();
+
+    int wsCommLen = 1102;
+
+    db2InIntegers = new Db2InIntegers();
+    db2Commercial = new Db2Commercial();
+    db2OutIntegers = new Db2OutIntegers();
+    try {
+        ResultSet rs = JdbcConnection.connection.createStatement()
+                .executeQuery("SELECT * FROM POLICY where (LASTCHANGED = ?)");
+        rs.setString(1, db2Policy.getPolicy().getLastchanged());
+        rs.next();
+        db2InIntegers.setDb2CustomernumInt(rs.getInt("CUSTOMERNUMBER"));
+        db2InIntegers.setDb2PolicynumInt(rs.getInt("POLICYNUMBER"));
+        db2Policy.getPolicy().setIssuedate(rs.getString("ISSUEDATE"));
+        db2Policy.getPolicy().setExpirydate(rs.getString("EXPIRYDATE"));
+        db2Commercial.getCommercial().setAddress(rs.getString("ADDRESS"));
+        db2Commercial.getCommercial().setZipcode(rs.getString("POSTCODE"));
+        db2Commercial.getCommercial().setLatituden(rs.getString("LATITUDEN"));
+        db2Commercial.getCommercial().setLongitudew(rs.getString("LONGITUDEN"));
+        db2Commercial.getCommercial().setCustomer(rs.getString("CUSTOMERNUMBER"));
+        db2Commercial.getCommercial().setPropertytype(rs.getString("PROPERTYTYPE"));
+        db2OutIntegers.setDb2BFirePerilInt(rs.getInt("FIREPERIL"));
+        db2OutIntegers.setDb2BFirePremiumInt(rs.getInt("FIREP"));
+        db2OutIntegers.setDb2BCrimePerilInt(rs.getInt("CRIMEPERIL"));
+        db2OutIntegers.setDb2BCrimePremiumInt(rs.getInt("CRIMEP"));
+        db2OutIntegers.setDb2BFloodPerilInt(rs.getInt("FLOODPERIL"));
+        db2OutIntegers.setDb2BFloodPremiumInt(rs.getInt("FLOODP"));
+        db2OutIntegers.setDb2BWeatherPerilInt(rs.getInt("WEATHERPERIL"));
+        db2OutIntegers.setDb2BWeatherPremiumInt(rs.getInt("WEATHERP"));
+        db2OutIntegers.setDb2BStatusInt(rs.getInt("STATUS"));
+        db2Commercial.getCommercial().setRejectionreason(rs.getString("REJECTIONREASON"));
+    } catch (SQLException exception) {
+        System.out.println(exception);
+    }
+
+    if (sqlcode == 0) {
+        db2Commercial.getCommercial().setFireperil(db2OutIntegers.getDb2BFirePerilInt());
+        db2Commercial.getCommercial().setFirepremium(db2OutIntegers.getDb2BFirePremiumInt());
+        db2Commercial.getCommercial().setCrimeperil(db2OutIntegers.getDb2BCrimePerilInt());
+        db2Commercial.getCommercial().setCrimepremium(db2OutIntegers.getDb2BCrimePremiumInt());
+        db2Commercial.getCommercial().setFloodperil(db2OutIntegers.getDb2BFloodPerilInt());
+        db2Commercial.getCommercial().setFloodpremium(db2OutIntegers.getDb2BFloodPremiumInt());
+        db2Commercial.getCommercial().setWeatherperil(db2OutIntegers.getDb2BWeatherPerilInt());
+        db2Commercial.getCommercial().setWeatherpremium(db2OutIntegers.getDb2BWeatherPremiumInt());
+        db2Commercial.getCommercial().setStatus(db2OutIntegers.getDb2BStatusInt());
+        dfhcommarea.setCaCustomerNum(db2InIntegers.getDb2CustomernumInt());
+        ((CaPolicyRequest) (dfhcommarea)).getPolicy().setPolicynumber(db2InIntegers.getDb2PolicynumInt());
+        ((CaPolicyRequest) (dfhcommarea)).getCaPolicyCommon().setBytes(db2Policy.getDb2PolicyCommon().getBytes());
+        ((CaCommercial) (((CaPolicyRequest) (dfhcommarea)))).setCaBFiller(icomPointer);
+        if (icomRecordCount > 20) {
+            sqlcode = 17;
+        }
+    }
+
+}

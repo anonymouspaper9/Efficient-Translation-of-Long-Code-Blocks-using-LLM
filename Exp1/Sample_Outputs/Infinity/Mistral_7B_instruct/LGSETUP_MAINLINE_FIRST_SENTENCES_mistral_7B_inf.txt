@@ -1,0 +1,156 @@
+```java
+public void invokeMainline() {
+    int frstCustNum = 1;
+    String genAcount = "GENACUSTNUM";
+    String genApool = "GENA";
+    String genacnt100 = "GENA01ICUS00";
+    String genacnt199 = "GENA01ICUS99";
+    String genacnt200 = "GENA01ACUS00";
+    String genacnt299 = "GENA01ACUS99";
+    String genacnt300 = "GENA01IMOT00";
+    String genacnt399 = "GENA01IMOT99";
+    String genacnt400 = "GENA01AMOT00";
+    String genacnt499 = "GENA01AMOT99";
+    String genacnt500 = "GENA01DMOT00";
+    String genacnt599 = "GENA01DMOT99";
+    String genacnt600 = "GENA01UMOT00";
+    String genacnt699 = "GENA01UMOT99";
+    String genacnt700 = "GENA01IEND00";
+    String genacnt799 = "GENA01IEND99";
+    String genacnt800 = "GENA01AEND00";
+    String genacnt899 = "GENA01AEND99";
+    String genacnt900 = "GENA01DEND00";
+    String genacnt999 = "GENA01DEND99";
+    String genacnta00 = "GENA01UEND00";
+    String genacnta99 = "GENA01UEND99";
+    String genacntb00 = "GENA01IHOU00";
+    String genacntb99 = "GENA01IHOU99";
+    String genacntc00 = "GENA01AHOU00";
+    String genacntc99 = "GENA01AHOU99";
+    String genacntd00 = "GENA01DHOU00";
+    String genacntd99 = "GENA01DHOU99";
+    String genacnte00 = "GENA01UHOU00";
+    String genacnte99 = "GENA01UHOU99";
+    String genacntf00 = "GENA01ICOM00";
+    String genacntf99 = "GENA01ICOM99";
+    String genacntg00 = "GENA01ACOM00";
+    String genacntg99 = "GENA01ACOM99";
+    String genacnth00 = "GENA01DCOM00";
+    String genacnth99 = "GENA01DCOM99";
+    String genacnti00 = "GENA01UCUS00";
+    String genacnti99 = "GENA01UCUS99";
+    int lastCustNum = 11;
+    Stsq stsq = new Stsq();
+    String stsqErrs = "GENAERRS";
+    String stsqStat = "GENASTAT";
+    String stsqStrt = "GENASTRT";
+    String writeMsgE = "**** GENAPP CNTL";
+    String writeMsgH = "HIGH CUSTOMER=";
+    long writeMsgHigh;
+    String writeMsgL = "LOW CUSTOMER=";
+    long writeMsgLow;
+    WsRecv wsRecv = new WsRecv();
+    int wsRecvLen = 80;
+    int wsResp;
+
+    // CICS RECEIVE
+    String wsRecvData = wsRecv.getWsRecvData();
+    if (wsRecvData.length() > 5) {
+        wsRecvData = wsRecvData.substring(0, 5);
+        frstCustNum = Integer.parseInt(wsRecvData);
+    }
+
+    // CICS DELETEQ
+    for (int i = 0; i < 10; i++) {
+        String queue = switch (i) {
+            case 0 -> stsqStrt;
+            case 1 -> stsqStat;
+            case 2 -> stsqErrs;
+            case 3 -> stsq.getStsqName();
+            default -> "";
+        };
+        if (!queue.isEmpty()) {
+            try {
+                JdbcConnection.connection.createStatement().execute("DELETE FROM " + queue);
+            } catch (SQLException e) {
+                System.out.println(e);
+            }
+        }
+    }
+
+    // CICS WRITEQ
+    writeMsgHigh = Long.parseLong(String.valueOf(lastCustNum));
+    writeMsgLow = Long.parseLong(String.valueOf(frstCustNum));
+    try {
+        JdbcConnection.connection.createStatement().execute("INSERT INTO WRITE_MSG (LOW, HIGH) VALUES (" + writeMsgLow + ", " + writeMsgHigh + ")");
+    } catch (SQLException e) {
+        System.out.println(e);
+    }
+
+    // CICS DELETE
+    try {
+        JdbcConnection.connection.createStatement().execute("DELETE FROM COUNTER WHERE NAME = '" + genAcount + "' AND POOL = '" + genApool + "'");
+    } catch (SQLException e) {
+        System.out.println(e);
+    }
+
+    // CICS DEFINE
+    try {
+        JdbcConnection.connection.createStatement().execute("UPDATE COUNTER SET VALUE = " + lastCustNum + " WHERE NAME = '" + genAcount + "' AND POOL = '" + genApool + "'");
+    } catch (SQLException e) {
+        System.out.println(e);
+    }
+
+    // CICS DELETE
+    for (int i = 0; i < 10; i++) {
+        String counter = switch (i) {
+            case 0 -> genacnt100;
+            case 1 -> genacnt199;
+            case 2 -> genacnt200;
+            case 3 -> genacnt299;
+            case 4 -> genacnt300;
+            case 5 -> genacnt399;
+            case 6 -> genacnt400;
+            case 7 -> genacnt499;
+            case 8 -> genacnt500;
+            case 9 -> genacnt599;
+            default -> "";
+        };
+        if (!counter.isEmpty()) {
+            try {
+                JdbcConnection.connection.createStatement().execute("DELETE FROM COUNTER WHERE NAME = '" + counter + "' AND POOL = '" + genApool + "'");
+            } catch (SQLException e) {
+                System.out.println(e);
+            }
+        }
+    }
+
+    // CICS DEFINE
+    for (int i = 0; i < 10; i++) {
+        String counter = switch (i) {
+            case 0 -> genacnt100;
+            case 1 -> genacnt199;
+            case 2 -> genacnt200;
+            case 3 -> genacnt299;
+            case 4 -> genacnt300;
+            case 5 -> genacnt399;
+            case 6 -> genacnt400;
+            case 7 -> genacnt499;
+            case 8 -> genacnt500;
+            case 9 -> genacnt599;
+            default -> "";
+        };
+        if (!counter.isEmpty()) {
+            try {
+                JdbcConnection.connection.createStatement().execute("UPDATE COUNTER SET VALUE = 0 WHERE NAME = '" + counter + "' AND POOL = '" + genApool + "'");
+            } catch (SQLException e) {
+                System.out.println(e);
+            }
+        }
+    }
+
+    // CICS DELETE
+    for (int i = 0; i < 10; i++) {
+        String counter = switch (i) {
+            case 0 -> genacnt600;
+            case

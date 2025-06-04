@@ -1,0 +1,355 @@
+       ED010.
+      *
+      *    Perform validation on the incoming fields
+      *
+           IF CUSTNO2L > 0
+              MOVE 'Please clear screen before creating new user'
+                 TO MESSAGEO
+              MOVE -1  TO CUSTTITL
+              MOVE 'N' TO VALID-DATA-SW
+              GO TO ED999
+           END-IF
+
+           IF CUSTTITL < 1 OR CUSTTITI = SPACES
+           OR CUSTTITI = LOW-VALUES
+              MOVE SPACES TO MESSAGEO
+
+              STRING 'Valid titles are: Mr,Mrs,Miss,Ms,Dr,Professor,'
+                    DELIMITED BY SIZE,
+                     'Drs,Lord,Sir,Lady' DELIMITED BY SIZE
+              INTO MESSAGEO
+              MOVE -1 TO CUSTTITL
+              MOVE 'N' TO VALID-DATA-SW
+              GO TO ED999
+           END-IF.
+
+           MOVE SPACES TO MESSAGEO.
+
+           IF CUSTTITL > 0
+
+              EVALUATE CUSTTITI
+                 WHEN 'MR________'
+                    MOVE 'Mr' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'Mr________'
+                    MOVE 'Mr' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'MR        '
+                    MOVE 'Mr' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'Mr         '
+                    CONTINUE
+                 WHEN 'mr________'
+                    MOVE 'Mr' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'MRS_______'
+                    MOVE 'Mrs' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'Mrs_______'
+                    MOVE 'Mrs' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'MRS       '
+                    MOVE 'Mrs' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'Mrs       '
+                    CONTINUE
+                 WHEN 'mrs_______'
+                    MOVE 'Mrs' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'MISS______'
+                    MOVE 'Miss' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'Miss______'
+                    MOVE 'Miss' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'MISS      '
+                    MOVE 'Miss' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'Miss      '
+                    MOVE 'Miss' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'miss______'
+                    MOVE 'Miss' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'MS________'
+                    MOVE 'Ms' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'Ms________'
+                    MOVE 'Ms' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'ms________'
+                    MOVE 'Ms' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'MS        '
+                    MOVE 'Ms' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'Ms        '
+                    MOVE 'Ms' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'ms        '
+                    MOVE 'Ms' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'DR________'
+                    MOVE 'Dr' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'Dr________'
+                    MOVE 'Dr' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'DR        '
+                    MOVE 'Dr' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'Dr        '
+                    MOVE 'Dr' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'dr        '
+                    MOVE 'Dr' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'dr________'
+                    MOVE 'Dr' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'DRS_______'
+                    MOVE 'Drs' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'Drs_______'
+                    MOVE 'Drs' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'DRS       '
+                    MOVE 'Drs' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'Drs       '
+                    MOVE 'Drs' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'drs       '
+                    MOVE 'Drs' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'drs_______'
+                    MOVE 'Drs' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'PROFESSOR_'
+                    MOVE 'Professor' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'Professor_'
+                    MOVE 'Professor' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'PROFESSOR '
+                    MOVE 'Professor' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'Professor '
+                    MOVE 'Professor' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'LORD______'
+                    MOVE 'Lord' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'Lord______'
+                    MOVE 'Lord' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'LORD      '
+                    MOVE 'Lord' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'Lord      '
+                    MOVE 'Lord' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'lord      '
+                    MOVE 'Lord' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'lord______'
+                    MOVE 'Lord' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'LADY______'
+                    MOVE 'Lady' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'Lady______'
+                    MOVE 'Lady' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'LADY      '
+                    MOVE 'Lady' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'Lady      '
+                    MOVE 'Lady' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'lady      '
+                    MOVE 'Lady' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'lady______'
+                    MOVE 'Lady' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'SIR_______'
+                    MOVE 'Sir' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'Sir_______'
+                    MOVE 'Sir' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'SIR       '
+                    MOVE 'Sir' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'Sir       '
+                    MOVE 'Sir' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'sir       '
+                    MOVE 'Sir' TO CUSTTITI
+                    CONTINUE
+                 WHEN 'sir_______'
+                    MOVE 'Sir' TO CUSTTITI
+                    CONTINUE
+                 WHEN OTHER
+                    MOVE SPACES TO MESSAGEO
+
+                    STRING 'Valid titles are: Mr,Mrs,Miss,Ms,Dr,Drs,'
+                       DELIMITED BY SIZE,
+                       'Professor,Lord,Sir,Lady' DELIMITED BY SIZE
+                       INTO MESSAGEO
+                    MOVE 'N' TO VALID-DATA-SW
+                    MOVE -1 TO CUSTTITL
+                    GO TO ED999
+              END-EVALUATE
+           END-IF.
+
+           IF CHRISTNL < 1 OR CHRISTNI = '____________________'
+              OR CHRISTNI = SPACES
+              MOVE SPACES TO MESSAGEO
+              MOVE 'Please supply a valid First Name  ' TO
+                 MESSAGEO
+              MOVE -1 TO CHRISTNL
+
+              MOVE 'N' TO VALID-DATA-SW
+              GO TO ED999
+           END-IF.
+
+           IF CUSTSNL < 1 OR CUSTSNI = '____________________'
+              OR CUSTSNI = SPACES
+              MOVE SPACES TO MESSAGEO
+              MOVE 'Please supply a valid Surname ' TO
+                 MESSAGEO
+
+              MOVE -1 TO CUSTSNL
+              MOVE 'N' TO VALID-DATA-SW
+              GO TO ED999
+           END-IF.
+
+           IF CUSTAD1I(1:1)= '_'  OR CUSTAD1L < 1
+              OR CUSTAD1I = SPACES
+
+              MOVE SPACES TO MESSAGEO
+              MOVE 'Please supply a valid Address Line 1 ' TO
+                 MESSAGEO
+              MOVE 'N' TO VALID-DATA-SW
+              MOVE -1 TO CUSTAD1L
+              GO TO ED999
+           END-IF.
+
+           IF DOBDDL < 1 OR DOBDDI = '__'
+
+              MOVE SPACES TO MESSAGEO
+              MOVE 'Please supply a valid Date of Birth DD' TO
+                 MESSAGEO
+              MOVE 'N' TO VALID-DATA-SW
+              MOVE -1 TO DOBDDL
+              GO TO ED999
+           END-IF.
+
+           IF DOBMML < 1 OR DOBMMI = '__'
+
+              MOVE SPACES TO MESSAGEO
+              MOVE 'Please supply a valid Date of Birth MM' TO
+                 MESSAGEO
+              MOVE 'N' TO VALID-DATA-SW
+              MOVE -1 TO DOBMML
+              GO TO ED999
+           END-IF.
+
+           IF DOBYYL < 4 OR DOBYYI = '____'
+
+              MOVE SPACES TO MESSAGEO
+              MOVE 'Please supply a valid Date of Birth YYYY' TO
+                 MESSAGEO
+              MOVE 'N' TO VALID-DATA-SW
+              MOVE -1 TO DOBYYL
+              GO TO ED999
+           END-IF.
+
+           IF DOBDDI NOT NUMERIC
+
+              MOVE SPACES TO MESSAGEO
+              MOVE 'Non numeric Date of Birth DD entered      ' TO
+                 MESSAGEO
+              MOVE 'N' TO VALID-DATA-SW
+              MOVE -1 TO DOBDDL
+              GO TO ED999
+           END-IF.
+
+           IF DOBMMI NOT NUMERIC
+
+              MOVE SPACES TO MESSAGEO
+              MOVE 'Non numeric Date of Birth MM entered      ' TO
+                 MESSAGEO
+              MOVE 'N' TO VALID-DATA-SW
+              MOVE -1 TO DOBMML
+              GO TO ED999
+           END-IF.
+
+           IF DOBYYI NOT NUMERIC
+
+              MOVE SPACES TO MESSAGEO
+              MOVE 'Non numeric Date of Birth YYYY entered  ' TO
+                 MESSAGEO
+              MOVE 'N' TO VALID-DATA-SW
+              MOVE -1 TO DOBYYL
+              GO TO ED999
+           END-IF.
+
+           MOVE DOBDDI TO DOBDDI-CHAR.
+
+           IF DOBDDI-NUM < 01 OR DOBDDI-NUM > 31
+
+              MOVE SPACES TO MESSAGEO
+              MOVE 'Please supply a valid Date of Birth (DD)    ' TO
+                 MESSAGEO
+              MOVE 'N' TO VALID-DATA-SW
+              MOVE -1 TO DOBDDL
+              GO TO ED999
+           END-IF.
+
+           MOVE DOBMMI TO DOBMMI-CHAR.
+           IF DOBMMI-NUM < 01 OR DOBMMI-NUM > 12
+
+              MOVE SPACES TO MESSAGEO
+              MOVE 'Please supply a valid Date of Birth (MM)    ' TO
+                 MESSAGEO
+              MOVE 'N' TO VALID-DATA-SW
+              MOVE -1 TO DOBMML
+              GO TO ED999
+           END-IF.
+
+           IF CUSTTITL < 1 OR CHRISTNL < 1 OR CUSTSNL < 1
+           OR CUSTAD1L < 1 OR DOBDDL < 1 OR DOBMML < 1
+           OR DOBYYL < 1
+              MOVE SPACES TO MESSAGEO
+              MOVE 'Missing expected data.               ' TO
+                 MESSAGEO
+              EVALUATE TRUE
+                 WHEN CUSTTITL < 1
+                    MOVE -1 TO CUSTTITL
+
+                 WHEN CHRISTNL < 1
+                    MOVE -1 TO CHRISTNL
+
+                 WHEN CUSTSNL < 1
+                    MOVE -1 TO CUSTSNL
+
+                 WHEN CUSTAD1L < 1
+                    MOVE -1 TO CUSTAD1L
+
+                 WHEN DOBDDL < 1
+                    MOVE -1 TO DOBDDL
+
+                 WHEN DOBMML < 1
+                    MOVE -1 TO DOBMML
+
+                 WHEN DOBYYL < 1
+                    MOVE -1 TO DOBYYL
+
+              END-EVALUATE
+
+              MOVE 'N' TO VALID-DATA-SW
+              GO TO ED999
+           END-IF.

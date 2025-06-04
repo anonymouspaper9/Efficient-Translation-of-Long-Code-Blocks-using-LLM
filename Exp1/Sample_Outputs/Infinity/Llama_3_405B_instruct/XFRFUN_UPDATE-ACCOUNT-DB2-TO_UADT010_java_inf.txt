@@ -1,0 +1,218 @@
+public void updateAccountDb2ToUadt010(Dfhcommarea dfhcommarea){
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    int db2DeadlockRetry;
+    int desiredAccNo;
+    int desiredSortCode;
+    HostAccountRow hostAccountRow = new HostAccountRow();
+    int sqlcodeDisplay;
+    ArrayList<Integer> sqlerrd = Stream.generate(() -> 0).limit(6).collect(Collectors.toCollection(ArrayList::new));
+    String wsAbendPgm = "ABNDPROC";
+    int wsCicsResp;
+    int wsCicsResp2;
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+    dfhcommarea.setCommSuccess('N');
+    hostAccountRow.initialize();
+    desiredAccNo = dfhcommarea.getCommTaccno();
+    desiredSortCode = dfhcommarea.getCommTscode();
+    hostAccountRow.setHvAccountSortcode(desiredSortCode);
+    hostAccountRow.setHvAccountAccNo(desiredAccNo);
+    try {
+        String sql = "SELECT ACCOUNT_EYECATCHER, ACCOUNT_CUSTOMER_NUMBER, ACCOUNT_SORTCODE, ACCOUNT_NUMBER, ACCOUNT_TYPE, ACCOUNT_INTEREST_RATE, ACCOUNT_OPENED, ACCOUNT_OVERDRAFT_LIMIT, ACCOUNT_LAST_STATEMENT, ACCOUNT_NEXT_STATEMENT, ACCOUNT_AVAILABLE_BALANCE, ACCOUNT_ACTUAL_BALANCE FROM ACCOUNT WHERE (ACCOUNT_SORTCODE = ? AND ACCOUNT_NUMBER = ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setString(1, hostAccountRow.getHvAccountSortcode());
+        ps.setString(2, hostAccountRow.getHvAccountAccNo());
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            hostAccountRow.setHvAccountEyecatcher(rs.getString(1));
+            hostAccountRow.setHvAccountCustNo(rs.getString(2));
+            hostAccountRow.setHvAccountSortcode(rs.getString(3));
+            hostAccountRow.setHvAccountAccNo(rs.getString(4));
+            hostAccountRow.setHvAccountAccType(rs.getString(5));
+            hostAccountRow.setHvAccountIntRate(rs.getBigDecimal(6));
+            hostAccountRow.setHvAccountOpened(rs.getString(7));
+            hostAccountRow.setHvAccountOverdraftLim(rs.getInt(8));
+            hostAccountRow.setHvAccountLastStmt(rs.getString(9));
+            hostAccountRow.setHvAccountNextStmt(rs.getString(10));
+            hostAccountRow.setHvAccountAvailBal(rs.getBigDecimal(11));
+            hostAccountRow.setHvAccountActualBal(rs.getBigDecimal(12));
+        }
+        rs.close();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        dfhcommarea.setCommSuccess('N');
+        checkForStormDrainDb2Cfsdd010(sqlcodeDisplay);
+        if (sqlcodeDisplay == 100) {
+            dfhcommarea.setCommFailCode('2');
+            System.out.println("UPDATE UNABLE TO READ TO ACC " + hostAccountRow.getHvAccountSortcode() + "/" + hostAccountRow.getHvAccountAccNo() + " ROLLBACK TO AVOID DATA INCONSISTENCY. SQLCODE=" + sqlcodeDisplay);
+            try {
+                JdbcConnection.connection.rollback();
+            }
+            catch(SQLException exception1) {
+                abndinfoRec.initialize();
+                abndinfoRec.setAbndRespcode(wsCicsResp);
+                abndinfoRec.setAbndResp2Code(wsCicsResp2);
+                abndinfoRec.setAbndApplid(wsAbendPgm);
+                abndinfoRec.setAbndTasknoKey(wsTimeNowGrp.getWsTimeNowGrpHh());
+                abndinfoRec.setAbndTranid(wsTimeNowGrp.getWsTimeNowGrpMm());
+                populateTimeDatePtd010();
+                abndinfoRec.setAbndDate(wsTimeNowGrp.getWsTimeNowGrpHh());
+                abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpMm());
+                abndinfoRec.setAbndUtimeKey(wsTimeNowGrp.getWsTimeNowGrpHh());
+                abndinfoRec.setAbndCode("HROL");
+                abndinfoRec.setAbndProgram(wsAbendPgm);
+                abndinfoRec.setAbndSqlcode(0);
+                abndinfoRec.setAbndFreeform("UAD010-TO - Error on SYNCPOINT ROLLBACK after failing to read TO account EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2=" + abndinfoRec.getAbndResp2Code());
+                System.out.println("XFRFUN error syncpoint rollback after failing to read TO account ,RESP=" + wsCicsResp + ",RESP2=" + wsCicsResp2);
+                System.exit(0);
+            }
+            return;
+        }
+        else {
+            dfhcommarea.setCommFailCode('3');
+            System.out.println("UPDATE UNABLE TO READ TO ACC " + hostAccountRow.getHvAccountSortcode() + hostAccountRow.getHvAccountAccNo() + " ABENDING TO AVOID DATA INCONSISTENCY. SQLCODE=" + sqlcodeDisplay + " SQLERRD(3) IS " + sqlerrd.get(2));
+            if (sqlcodeDisplay == -911) {
+                if (sqlerrd.get(2) == 13172872) {
+                    System.out.println("DEADLOCK DETECTED!");
+                    db2DeadlockRetry++;
+                    if (db2DeadlockRetry < 6) {
+                        try {
+                            JdbcConnection.connection.rollback();
+                        }
+                        catch(SQLException exception1) {
+                            abndinfoRec.initialize();
+                            abndinfoRec.setAbndRespcode(wsCicsResp);
+                            abndinfoRec.setAbndResp2Code(wsCicsResp2);
+                            abndinfoRec.setAbndApplid(wsAbendPgm);
+                            abndinfoRec.setAbndTasknoKey(wsTimeNowGrp.getWsTimeNowGrpHh());
+                            abndinfoRec.setAbndTranid(wsTimeNowGrp.getWsTimeNowGrpMm());
+                            populateTimeDatePtd010();
+                            abndinfoRec.setAbndDate(wsTimeNowGrp.getWsTimeNowGrpHh());
+                            abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpMm());
+                            abndinfoRec.setAbndUtimeKey(wsTimeNowGrp.getWsTimeNowGrpHh());
+                            abndinfoRec.setAbndCode("HROL");
+                            abndinfoRec.setAbndProgram(wsAbendPgm);
+                            abndinfoRec.setAbndSqlcode(0);
+                            abndinfoRec.setAbndFreeform("UAD010-TO(2) - Error on SYNCPOINT ROLLBACK after updating TO account EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2=" + abndinfoRec.getAbndResp2Code());
+                            System.out.println("XFRFUN error syncpoint rollback after updating TO account ,RESP=" + wsCicsResp + ",RESP2=" + wsCicsResp2);
+                            System.exit(0);
+                        }
+                        try {
+                            Thread.sleep(1000);
+                        }
+                        catch(InterruptedException exception1) {
+                            Thread.currentThread().interrupt();
+                        }
+                        updateAccountDb2Uad010(dfhcommarea, sqlcodeDisplay);
+                    }
+                }
+                if (sqlerrd.get(2) == 13172894) {
+                    System.out.println("TIMEOUT DETECTED!");
+                }
+                abndinfoRec.initialize();
+                abndinfoRec.setAbndRespcode(wsCicsResp);
+                abndinfoRec.setAbndResp2Code(wsCicsResp2);
+                abndinfoRec.setAbndApplid(wsAbendPgm);
+                abndinfoRec.setAbndTasknoKey(wsTimeNowGrp.getWsTimeNowGrpHh());
+                abndinfoRec.setAbndTranid(wsTimeNowGrp.getWsTimeNowGrpMm());
+                populateTimeDatePtd010();
+                abndinfoRec.setAbndDate(wsTimeNowGrp.getWsTimeNowGrpHh());
+                abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpMm());
+                abndinfoRec.setAbndUtimeKey(wsTimeNowGrp.getWsTimeNowGrpHh());
+                abndinfoRec.setAbndCode("RUF2");
+                abndinfoRec.setAbndProgram(wsAbendPgm);
+                abndinfoRec.setAbndSqlcode(0);
+                if (sqlerrd.get(2) == 13172894) {
+                    abndinfoRec.setAbndFreeform("UAD010-TO(3) - timeout detected  EIBRESP=" + abndinfoRec.getAbndRespcode() + "RESP2=" + abndinfoRec.getAbndResp2Code());
+                }
+                System.exit(0);
+            }
+        }
+    }
+    hostAccountRow.setHvAccountAvailBal(hostAccountRow.getHvAccountAvailBal().add(dfhcommarea.getCommAmt()));
+    hostAccountRow.setHvAccountActualBal(hostAccountRow.getHvAccountActualBal().add(dfhcommarea.getCommAmt()));
+    try {
+        String sql = "UPDATE ACCOUNT SET ACCOUNT_EYECATCHER = ?, ACCOUNT_CUSTOMER_NUMBER = ?, ACCOUNT_SORTCODE = ?, ACCOUNT_NUMBER = ?, ACCOUNT_TYPE = ?, ACCOUNT_INTEREST_RATE = ?, ACCOUNT_OPENED = ?, ACCOUNT_OVERDRAFT_LIMIT = ?, ACCOUNT_LAST_STATEMENT = ?, ACCOUNT_NEXT_STATEMENT = ?, ACCOUNT_AVAILABLE_BALANCE = ?, ACCOUNT_ACTUAL_BALANCE = ? WHERE (ACCOUNT_SORTCODE = ? AND ACCOUNT_NUMBER = ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setString(1, hostAccountRow.getHvAccountEyecatcher());
+        ps.setString(2, hostAccountRow.getHvAccountCustNo());
+        ps.setString(3, hostAccountRow.getHvAccountSortcode());
+        ps.setString(4, hostAccountRow.getHvAccountAccNo());
+        ps.setString(5, hostAccountRow.getHvAccountAccType());
+        ps.setBigDecimal(6, hostAccountRow.getHvAccountIntRate());
+        ps.setString(7, hostAccountRow.getHvAccountOpened());
+        ps.setInt(8, hostAccountRow.getHvAccountOverdraftLim());
+        ps.setString(9, hostAccountRow.getHvAccountLastStmt());
+        ps.setString(10, hostAccountRow.getHvAccountNextStmt());
+        ps.setBigDecimal(11, hostAccountRow.getHvAccountAvailBal());
+        ps.setBigDecimal(12, hostAccountRow.getHvAccountActualBal());
+        ps.setString(13, hostAccountRow.getHvAccountSortcode());
+        ps.setString(14, hostAccountRow.getHvAccountAccNo());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        sqlcodeDisplay = exception.getErrorCode();
+        System.out.println("UNABLE TO UPDATE TO ACCOUNT." + hostAccountRow.getHvAccountSortcode() + hostAccountRow.getHvAccountAccNo() + "THE SQLCODE=" + sqlcodeDisplay + " SQLERRD(3) " + sqlerrd.get(2));
+        checkForStormDrainDb2Cfsdd010(sqlcodeDisplay);
+        if (sqlcodeDisplay == -911) {
+            if (sqlerrd.get(2) == 13172872) {
+                System.out.println("DEADLOCK DETECTED!");
+                db2DeadlockRetry++;
+                if (db2DeadlockRetry < 6) {
+                    try {
+                        JdbcConnection.connection.rollback();
+                    }
+                    catch(SQLException exception1) {
+                        abndinfoRec.initialize();
+                        abndinfoRec.setAbndRespcode(wsCicsResp);
+                        abndinfoRec.setAbndResp2Code(wsCicsResp2);
+                        abndinfoRec.setAbndApplid(wsAbendPgm);
+                        abndinfoRec.setAbndTasknoKey(wsTimeNowGrp.getWsTimeNowGrpHh());
+                        abndinfoRec.setAbndTranid(wsTimeNowGrp.getWsTimeNowGrpMm());
+                        populateTimeDatePtd010();
+                        abndinfoRec.setAbndDate(wsTimeNowGrp.getWsTimeNowGrpHh());
+                        abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpMm());
+                        abndinfoRec.setAbndUtimeKey(wsTimeNowGrp.getWsTimeNowGrpHh());
+                        abndinfoRec.setAbndCode("HROL");
+                        abndinfoRec.setAbndProgram(wsAbendPgm);
+                        abndinfoRec.setAbndSqlcode(0);
+                        abndinfoRec.setAbndFreeform("UAD010-TO(4) - Error on SYNCPOINT ROLLBACK after Updating TO account EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2=" + abndinfoRec.getAbndResp2Code());
+                        System.out.println("XFRFUN error syncpoint rollback after updating TO account ,RESP=" + wsCicsResp + ",RESP2=" + wsCicsResp2);
+                        System.exit(0);
+                    }
+                    try {
+                        Thread.sleep(1000);
+                    }
+                    catch(InterruptedException exception1) {
+                        Thread.currentThread().interrupt();
+                    }
+                    updateAccountDb2Uad010(dfhcommarea, sqlcodeDisplay);
+                }
+            }
+            if (sqlerrd.get(2) == 13172872) {
+                System.out.println("TIMEOUT DETECTED!");
+            }
+        }
+        abndinfoRec.initialize();
+        abndinfoRec.setAbndRespcode(wsCicsResp);
+        abndinfoRec.setAbndResp2Code(wsCicsResp2);
+        abndinfoRec.setAbndApplid(wsAbendPgm);
+        abndinfoRec.setAbndTasknoKey(wsTimeNowGrp.getWsTimeNowGrpHh());
+        abndinfoRec.setAbndTranid(wsTimeNowGrp.getWsTimeNowGrpMm());
+        populateTimeDatePtd010();
+        abndinfoRec.setAbndDate(wsTimeNowGrp.getWsTimeNowGrpHh());
+        abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpMm());
+        abndinfoRec.setAbndUtimeKey(wsTimeNowGrp.getWsTimeNowGrpHh());
+        abndinfoRec.setAbndCode("RUF2");
+        abndinfoRec.setAbndProgram(wsAbendPgm);
+        abndinfoRec.setAbndSqlcode(0);
+        if (sqlerrd.get(2) == 13172872) {
+            abndinfoRec.setAbndFreeform("UAD010-TO(5) - timeout detected  EIBRESP=" + abndinfoRec.getAbndRespcode() + "RESP2=" + abndinfoRec.getAbndResp2Code());
+        }
+        System.exit(0);
+    }
+    dfhcommarea.setCommTavbal(hostAccountRow.getHvAccountAvailBal());
+    dfhcommarea.setCommTactbal(hostAccountRow.getHvAccountActualBal());
+    dfhcommarea.setCommSuccess('Y');
+}

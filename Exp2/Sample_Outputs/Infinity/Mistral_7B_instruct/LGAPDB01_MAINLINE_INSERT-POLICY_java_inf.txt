@@ -1,0 +1,70 @@
+
+```java
+public void mainlineInsertPolicy(CaPolicyRequest caPolicyRequest, Db2InIntegers db2InIntegers, ErrorMsg errorMsg, Policy policy) {
+    int db2PolicynumInt = 0;
+    String emSqlreq = "";
+    LocalDateTime caIssueDate = LocalDateTime.now();
+    LocalDateTime caExpiryDate = LocalDateTime.now();
+    String db2Policytype = "";
+    String caBrokersref = "";
+    int db2PaymentInt = 0;
+    int db2CustomernumInt = 0;
+    int db2BrokeridInt = 0;
+    String caLastChanged = "";
+
+    /* Set the values for the policy */
+    db2InIntegers.setDb2CustomernumInt(db2CustomernumInt);
+    db2InIntegers.setDb2PaymentInt(db2PaymentInt);
+    db2InIntegers.setDb2BrokeridInt(db2BrokeridInt);
+
+    caPolicyRequest.getPolicy().setIssuedate(caIssueDate);
+    caPolicyRequest.getPolicy().setExpirydate(caExpiryDate);
+    caPolicyRequest.getPolicy().setPolicytype(db2Policytype);
+    caPolicyRequest.getPolicy().setBrokersreference(caBrokersref);
+    caPolicyRequest.getPolicy().setPayment(db2PaymentInt);
+
+    try (Connection connection = JdbcConnection.connection) {
+        String sql = "INSERT INTO POLICY (POLICYNUMBER, CUSTOMERNUMBER, ISSUEDATE, EXPIRYDATE, POLICYTYPE, LASTCHANGED, BROKERID, BROKERSREFERENCE, PAYMENT) VALUES (DEFAULT, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?, ?, ?)";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setInt(1, db2CustomernumInt);
+        ps.setObject(2, caIssueDate);
+        ps.setObject(3, caExpiryDate);
+        ps.setString(4, db2Policytype);
+        ps.setInt(5, db2BrokeridInt);
+        ps.setString(6, caBrokersref);
+        ps.setInt(7, db2PaymentInt);
+        ps.executeUpdate();
+
+        ps = connection.prepareStatement("SELECT LASTCHANGED FROM POLICY WHERE POLICYNUMBER = ?", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        ps.setInt(1, db2PolicynumInt);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            caLastChanged = rs.getString(1);
+        }
+
+        ps = connection.prepareStatement("SELECT IDENTITY_VAL_LOCAL()");
+        rs = ps.executeQuery();
+        if (rs.next()) {
+            db2PolicynumInt = rs.getInt(1);
+        }
+
+        caPolicyRequest.getPolicy().setPolicynumber(db2PolicynumInt);
+        errorMsg.getEmVariable().setEmPolnum(String.valueOf(db2PolicynumInt));
+        caLastChanged = rs.getString(1);
+        errorMsg.getEmVariable().setLastChanged(caLastChanged);
+    } catch (SQLException e) {
+        int sqlCode = e.getErrorCode();
+        if (sqlCode == -530) {
+            db2InIntegers.setDb2CustomernumInt(Integer.parseInt("70"));
+            mainlineWriteErrorMessage(dfhcommarea, errorMsg);
+        } else if (sqlCode != 0) {
+            db2InIntegers.setDb2CustomernumInt(Integer.parseInt("90"));
+            mainlineWriteErrorMessage(dfhcommarea, errorMsg);
+        }
+        return;
+    }
+
+    db2PolicynumInt = caPolicyRequest.getPolicy().getPolicynumber();
+    errorMsg.getEmVariable().setEmPolnum(String.valueOf(db2PolicynumInt));
+}
+```

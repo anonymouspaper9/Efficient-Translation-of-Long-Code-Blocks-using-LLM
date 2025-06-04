@@ -1,0 +1,49 @@
+public void receiveMapRm010() {
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+    WsFailInfo wsFailInfo = new WsFailInfo();
+    String wsAbendPgm = "ABNDPROC";
+
+    try {
+        HttpRequest jdeclHttpRequest = HttpRequest.getHttpRequestInstance();
+        jdeclHttpRequest.setNoServerConvert();
+        jdeclHttpRequest.setCharacterset("IBM037");
+        jdeclHttpRequest.setMap("BNK1CD");
+        jdeclHttpRequest.setMapset("BNK1CDM");
+        jdeclHttpRequest.receive(bnk1cdi);
+    } catch (Exception e) {
+
+        abndinfoRec = new AbndinfoRec();
+        wsTimeNowGrp = new WsTimeNowGrp();
+        wsFailInfo = new WsFailInfo();
+        wsAbendPgm = "ABNDPROC";
+        abndinfoRec.setAbndRespcode(eibresp);
+        abndinfoRec.setAbndResp2Code(eibresp2);
+        abndinfoRec.setAbndApplid(Region.getAPPLID());
+        abndinfoRec.setAbndTasknoKey(eibtaskn);
+        abndinfoRec.setAbndTranid(eibtrnid);
+        this.populateTimeDate();
+        abndinfoRec.setAbndDate(this.getWsOrigDate());
+        String wsTimeNowGrpMm = String.valueOf(wsTimeNowGrp.getWsTimeNowGrpMm());
+        String wsTimeNowGrpHh = String.valueOf(wsTimeNowGrp.getWsTimeNowGrpHh());
+        abndinfoRec.setAbndTime(wsTimeNowGrpHh + ":" + wsTimeNowGrpMm + ":" + wsTimeNowGrpMm);
+        abndinfoRec.setAbndUtimeKey(this.getWsUTime());
+        abndinfoRec.setAbndCode("HBNK");
+        abndinfoRec.setAbndProgram(Task.getTask().getProgramName());
+        abndinfoRec.setAbndSqlcode(0);
+        String jdeclVar1 = "RM010 - RECEIVE MAP FAIL.EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2="
+                + abndinfoRec.getAbndResp2Code();
+        abndinfoRec.setAbndFreeform(jdeclVar1);
+        Object jdeclTask = Task.getTask();
+        Channel jdeclChannelObj = jdeclTask.getCurrentChannel();
+        Program jdeclProgObj = new Program();
+        jdeclProgObj.setName(wsAbendPgm);
+        jdeclProgObj.link(abndinfoRec);
+        wsFailInfo.setWsCicsFailMsg("BNKMENU - RM010 - RECEIVE MAP FAIL ");
+        wsFailInfo.setWsCicsRespDisp(this.getWsCicsResp());
+        wsFailInfo.setWsCicsResp2Disp(this.getWsCicsResp2());
+        Task.getTask().abend(wsFailInfo.getWsCicsFailMsg());
+
+    }
+
+}

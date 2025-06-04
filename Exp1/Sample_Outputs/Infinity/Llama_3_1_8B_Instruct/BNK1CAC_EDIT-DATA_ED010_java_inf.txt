@@ -1,0 +1,87 @@
+public void editDataEd010(Switches switches){
+    String intrtiComp1 = "";
+    int wsNumCountPoint;
+    int wsNumCountTotal;
+    String wsReverse = "";
+    /* This is prompt example 2 */
+    if (switches.getValidDataSw() == 'N'){
+        switches.setValidDataSw('Y');
+        return;
+    }
+    if (!custNoI.matches("\\d{10}")){
+        switches.setValidDataSw('N');
+        switches.setMessageO("Please enter a 10 digit Customer Number ");
+        switches.setValidDataSw('N');
+        switches.setCustNol(-1);
+        return;
+    }
+    if (!custNoI.matches("\\d+")){
+        switches.setValidDataSw('N');
+        switches.setMessageO("Please enter a numeric Customer number ");
+        switches.setValidDataSw('N');
+        switches.setCustNol(-1);
+        return;
+    }
+    if (acctYpi.equals("________") || acctYpl < 1){
+        switches.setValidDataSw('N');
+        switches.setMessageO("Account Type should be ISA,CURRENT,LOAN,Saving or MORTGAGE");
+        switches.setValidDataSw('N');
+        switches.setAcctYpl(-1);
+        return;
+    }
+    if (intrti.equals("")){
+        switches.setValidDataSw('N');
+        switches.setMessageO("Please supply a numeric interest rate");
+        switches.setValidDataSw('N');
+        switches.setIntrtl(-1);
+        return;
+    }
+    if (!intrti.matches("\\d+(\\.\\d{1,2})?")){
+        switches.setValidDataSw('N');
+        switches.setMessageO("Please supply a numeric interest rate");
+        switches.setValidDataSw('N');
+        switches.setIntrtl(-1);
+        return;
+    }
+    if (intrtiComp1.length() > 5){
+        switches.setValidDataSw('N');
+        switches.setMessageO("Only up to two decimal places are supported");
+        switches.setValidDataSw('N');
+        switches.setIntrtl(-1);
+        return;
+    }
+    if (intrtiComp1.length() == 0){
+        switches.setValidDataSw('N');
+        switches.setMessageO("Please supply a zero or positive interest rate");
+        switches.setValidDataSw('N');
+        switches.setIntrtl(-1);
+        return;
+    }
+    if (intrtiComp1.length() > 5){
+        switches.setValidDataSw('N');
+        switches.setMessageO("Please supply an interest rate less than 9999.99%");
+        switches.setValidDataSw('N');
+        switches.setIntrtl(-1);
+        return;
+    }
+    if (overdri.equals("________") || overdrl < 1){
+        switches.setValidDataSw('N');
+        switches.setMessageO("Overdraft Limit must be numeric positive int");
+        switches.setValidDataSw('N');
+        switches.setOverdrl(-1);
+        return;
+    }
+    if (!overdri.matches("\\d+")){
+        switches.setValidDataSw('N');
+        switches.setMessageO("The Overdraft Limit must be numeric ");
+        switches.setValidDataSw('N');
+        switches.setOverdrl(-1);
+        return;
+    }
+    if (custNol < 1 || acctYpl < 1){
+        switches.setValidDataSw('N');
+        switches.setMessageO("Missing expected data.               ");
+        switches.setValidDataSw('N');
+        return;
+    }
+} 

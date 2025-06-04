@@ -1,0 +1,432 @@
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+       ED010.
+           EXEC CICS BIF
+                DEEDIT
+                FIELD(CUSTNOI)
+           END-EXEC.
+           IF CUSTNOL < 1 OR CUSTNOI = '__________'
+              MOVE SPACES TO MESSAGEO
+              STRING 'Please enter a 10 digit Customer Number '
+                    DELIMITED BY SIZE,
+                     ' ' DELIMITED BY SIZE
+                 INTO MESSAGEO
+              MOVE 'N' TO VALID-DATA-SW
+              MOVE -1 TO CUSTNOL
+              GO TO ED999
+           END-IF.
+           IF CUSTNOI NOT NUMERIC
+              MOVE SPACES TO MESSAGEO
+              STRING 'Please enter a numeric Customer number '
+                    DELIMITED BY SIZE,
+                     ' ' DELIMITED BY SIZE
+                 INTO MESSAGEO
+              MOVE 'N' TO VALID-DATA-SW
+              MOVE -1 TO CUSTNOL
+              GO TO ED999
+           END-IF.
+           IF ACCTYPI = '________' OR ACCTYPL < 1
+              MOVE SPACES TO MESSAGEO
+              STRING 'Account Type should be ISA,CURRENT,LOAN,'
+                 DELIMITED BY SIZE,
+                    'SAVING or MORTGAGE' DELIMITED BY SIZE
+                 INTO MESSAGEO
+              MOVE 'N' TO VALID-DATA-SW
+              move -1 to acctypl
+              GO TO ED999
+           END-IF.
+           MOVE SPACES TO MESSAGEO.
+           IF ACCTYPL > 0
+              EVALUATE ACCTYPI
+                 WHEN 'ISA_____'
+                    MOVE 'ISA     ' TO ACCTYPI
+                    CONTINUE
+                 WHEN 'isa_____'
+                    MOVE 'ISA     ' TO ACCTYPI
+                    CONTINUE
+                 WHEN 'ISA     '
+                    CONTINUE
+                 WHEN 'isa     '
+                    MOVE 'ISA     ' TO ACCTYPI
+                    CONTINUE
+                 WHEN 'CURRENT_'
+                    MOVE 'CURRENT ' TO ACCTYPI
+                    CONTINUE
+                 WHEN 'current_'
+                    MOVE 'CURRENT ' TO ACCTYPI
+                    CONTINUE
+                 WHEN 'CURRENT '
+                    CONTINUE
+                 WHEN 'current '
+                    MOVE 'CURRENT ' TO ACCTYPI
+                    CONTINUE
+                 WHEN 'LOAN____'
+                    MOVE 'LOAN    ' TO ACCTYPI
+                    CONTINUE
+                 WHEN 'loan____'
+                    MOVE 'LOAN    ' TO ACCTYPI
+                    CONTINUE
+                 WHEN 'loan    '
+                    MOVE 'LOAN    ' TO ACCTYPI
+                    CONTINUE
+                 WHEN 'LOAN    '
+                    CONTINUE
+                 WHEN 'SAVING__'
+                    MOVE 'SAVING  ' TO ACCTYPI
+                    CONTINUE
+                 WHEN 'saving__'
+                    MOVE 'SAVING  ' TO ACCTYPI
+                    CONTINUE
+                 WHEN 'saving  '
+                    MOVE 'SAVING  ' TO ACCTYPI
+                    CONTINUE
+                 WHEN 'SAVING  '
+                    CONTINUE
+                 WHEN 'MORTGAGE'
+                    CONTINUE
+                 WHEN 'mortgage'
+                    MOVE 'MORTGAGE' TO ACCTYPI
+                    CONTINUE
+                 WHEN OTHER
+                    MOVE SPACES TO MESSAGEO
+                    STRING 'Account Type should be ISA,CURRENT,LOAN,'
+                       DELIMITED BY SIZE,
+                       'SAVING or MORTGAGE' DELIMITED BY SIZE
+                       INTO MESSAGEO
+                    MOVE 'N' TO VALID-DATA-SW
+                    MOVE -1 TO ACCTYPL
+                    GO TO ED999
+              END-EVALUATE
+           END-IF.
+           IF INTRTL = ZERO
+              MOVE SPACES TO MESSAGEO
+              STRING 'Please supply a numeric interest rate'
+                    DELIMITED BY SIZE,
+              INTO MESSAGEO
+              MOVE 'N' TO VALID-DATA-SW
+              MOVE -1 TO INTRTL
+              GO TO ED999
+           END-IF
+           IF INTRTI(1:INTRTL) IS NOT NUMERIC
+              MOVE ZERO TO WS-NUM-COUNT-TOTAL
+              INSPECT INTRTI(1:INTRTL) TALLYING
+                 WS-NUM-COUNT-TOTAL FOR ALL '0'
+                 WS-NUM-COUNT-TOTAL FOR ALL '1'
+                 WS-NUM-COUNT-TOTAL FOR ALL '2'
+                 WS-NUM-COUNT-TOTAL FOR ALL '3'
+                 WS-NUM-COUNT-TOTAL FOR ALL '4'
+                 WS-NUM-COUNT-TOTAL FOR ALL '5'
+                 WS-NUM-COUNT-TOTAL FOR ALL '6'
+                 WS-NUM-COUNT-TOTAL FOR ALL '7'
+                 WS-NUM-COUNT-TOTAL FOR ALL '8'
+                 WS-NUM-COUNT-TOTAL FOR ALL '9'
+                 WS-NUM-COUNT-TOTAL FOR ALL '.'
+                 WS-NUM-COUNT-TOTAL FOR ALL '-'
+                 WS-NUM-COUNT-TOTAL FOR ALL '+'
+                 WS-NUM-COUNT-TOTAL FOR ALL ' '
+              IF WS-NUM-COUNT-TOTAL < INTRTL
+                 MOVE SPACES TO MESSAGEO
+                 STRING 'Please supply a numeric interest rate'
+                      DELIMITED BY SIZE,
+                 INTO MESSAGEO
+                 MOVE 'N' TO VALID-DATA-SW
+                 MOVE -1 TO INTRTL
+                 GO TO ED999
+              END-IF
+              MOVE ZERO TO WS-NUM-COUNT-POINT
+              INSPECT INTRTI(1:INTRTL) TALLYING
+                 WS-NUM-COUNT-POINT for ALL '.'
+              IF WS-NUM-COUNT-POINT > 1
+                 MOVE SPACES TO MESSAGEO
+                 STRING 'Use one decimal point for interest rate only'
+                      DELIMITED BY SIZE,
+                 INTO MESSAGEO
+                 MOVE 'N' TO VALID-DATA-SW
+                 MOVE -1 TO INTRTL
+                 GO TO ED999
+              END-If
+              IF WS-NUM-COUNT-POINT = 1
+                 MOVE ZERO TO WS-NUM-COUNT-TOTAL
+                 INSPECT INTRTI(1:INTRTL) TALLYING
+                    WS-NUM-COUNT-TOTAL FOR CHARACTERS AFTER '.'
+                 IF WS-NUM-COUNT-TOTAL > 2
+                    MOVE ZERO TO WS-NUM-COUNT-TOTAL WS-NUM-COUNT-POINT
+                    INSPECT INTRTI(1:INTRTL) TALLYING
+                       WS-NUM-COUNT-POINT FOR CHARACTERS BEFORE '.'
+                    ADD 2 TO WS-NUM-COUNT-POINT
+                       GIVING WS-NUM-COUNT-POINT
+                    INSPECT INTRTI(WS-NUM-COUNT-POINT:INTRTL) TALLYING
+                       WS-NUM-COUNT-TOTAL FOR ALL '0'
+                       WS-NUM-COUNT-TOTAL FOR ALL '1'
+                       WS-NUM-COUNT-TOTAL FOR ALL '2'
+                       WS-NUM-COUNT-TOTAL FOR ALL '3'
+                       WS-NUM-COUNT-TOTAL FOR ALL '4'
+                       WS-NUM-COUNT-TOTAL FOR ALL '5'
+                       WS-NUM-COUNT-TOTAL FOR ALL '6'
+                       WS-NUM-COUNT-TOTAL FOR ALL '7'
+                       WS-NUM-COUNT-TOTAL FOR ALL '8'
+                       WS-NUM-COUNT-TOTAL FOR ALL '9'
+                       WS-NUM-COUNT-TOTAL FOR ALL '-'
+                       WS-NUM-COUNT-TOTAL FOR ALL '+'
+                       AFTER '.'
+                    IF WS-NUM-COUNT-TOTAL > 2
+                       MOVE SPACES TO MESSAGEO
+                       STRING
+                         'Only up to two decimal places are supported'
+                         DELIMITED BY SIZE,
+                       INTO MESSAGEO
+                       MOVE 'N' TO VALID-DATA-SW
+                       MOVE -1 TO INTRTL
+                       GO TO ED999
+                    END-IF
+                 END-IF
+              END-IF
+           END-IF
+           COMPUTE INTRTI-COMP-1 = FUNCTION NUMVAL(INTRTI)
+           IF INTRTI-COMP-1 < 0
+              MOVE SPACES TO MESSAGEO
+              STRING 'Please supply a zero or positive interest rate'
+                    DELIMITED BY SIZE,
+              INTO MESSAGEO
+              MOVE 'N' TO VALID-DATA-SW
+              MOVE -1 TO INTRTL
+              GO TO ED999
+           END-IF
+           IF INTRTI-COMP-1 > 9999.99
+              MOVE SPACES TO MESSAGEO
+              STRING 'Please supply an interest rate less than 9999.99%'
+                    DELIMITED BY SIZE,
+              INTO MESSAGEO
+              MOVE 'N' TO VALID-DATA-SW
+              MOVE -1 TO INTRTL
+              GO TO ED999
+           END-IF
+           MOVE FUNCTION REVERSE(OVERDRI) TO WS-REVERSE
+           MOVE ZERO TO WS-NUM-COUNT-TOTAL
+           INSPECT WS-REVERSE TALLYING WS-NUM-COUNT-TOTAL
+           FOR LEADING SPACES
+           SUBTRACT WS-NUM-COUNT-TOTAL FROM OVERDRL
+             GIVING OVERDRL
+           MOVE ZERO TO WS-NUM-COUNT-TOTAL
+           INSPECT OVERDRI(1:OVERDRL) TALLYING
+              WS-NUM-COUNT-TOTAL FOR ALL '0'
+              WS-NUM-COUNT-TOTAL FOR ALL '1'
+              WS-NUM-COUNT-TOTAL FOR ALL '2'
+              WS-NUM-COUNT-TOTAL FOR ALL '3'
+              WS-NUM-COUNT-TOTAL FOR ALL '4'
+              WS-NUM-COUNT-TOTAL FOR ALL '5'
+              WS-NUM-COUNT-TOTAL FOR ALL '6'
+              WS-NUM-COUNT-TOTAL FOR ALL '7'
+              WS-NUM-COUNT-TOTAL FOR ALL '8'
+              WS-NUM-COUNT-TOTAL FOR ALL '9'.
+           IF WS-NUM-COUNT-TOTAL < OVERDRL
+              MOVE SPACES TO MESSAGEO
+              MOVE 'Overdraft Limit must be numeric positive int' TO
+                 MESSAGEO
+              MOVE 'N' TO VALID-DATA-SW
+              MOVE -1 TO OVERDRL
+              GO TO ED999
+           END-IF.
+           EXEC CICS BIF
+                DEEDIT
+                FIELD(OVERDRI)
+           END-EXEC.
+           IF OVERDRL < 1 OR OVERDRI = '________' or overdri = spaces
+              MOVE ZERO TO OVERDRI
+           END-IF.
+           IF OVERDRI NOT NUMERIC
+              MOVE SPACES TO MESSAGEO
+              MOVE 'The Overdraft Limit must be numeric ' TO
+                 MESSAGEO
+              MOVE 'N' TO VALID-DATA-SW
+              MOVE -1 TO OVERDRL
+              GO TO ED999
+           END-IF.
+           IF CUSTNOL < 1 OR ACCTYPL < 1
+              MOVE SPACES TO MESSAGEO
+              MOVE 'Missing expected data.               ' TO
+                 MESSAGEO
+              MOVE 'N' TO VALID-DATA-SW
+              GO TO ED999
+           END-IF.
+
+## Variable Map:
+WS-REVERSE gettermapping wsReverse
+WS-REVERSE settermapping wsReverse = val
+WS-REVERSE PIC X(8) JavaType String
+WS-NUM-COUNT-TOTAL gettermapping wsNumCountTotal
+WS-NUM-COUNT-TOTAL settermapping wsNumCountTotal = val
+WS-NUM-COUNT-TOTAL PIC S9(8) JavaType int
+WS-NUM-COUNT-POINT gettermapping wsNumCountPoint
+WS-NUM-COUNT-POINT settermapping wsNumCountPoint = val
+WS-NUM-COUNT-POINT PIC S9(8) JavaType int
+VALID-DATA-SW gettermapping switches.getValidDataSw()
+VALID-DATA-SW settermapping switches.setValidDataSw(val)
+VALID-DATA-SW PIC X JavaType char
+INTRTI-COMP-1 gettermapping intrtiComp1
+INTRTI-COMP-1 settermapping intrtiComp1
+INTRTI-COMP-1 GROUP JavaType String
+
+
+## Class Map:
+public void editDataEd010(Switches switches){
+    String intrtiComp1 = "";
+    int wsNumCountPoint;
+    int wsNumCountTotal;
+    String wsReverse = "";
+}
+
+
+Output:

@@ -1,0 +1,161 @@
+public void premiereA010() {
+    int sortcode = 987654;
+    CustomerVsamStatus customerVsamStatus = new CustomerVsamStatus();
+    int returnCode = 0;
+    SttesterControl sttesterControl = new SttesterControl();
+
+    String timestampFunction = "";
+
+    int wsReviewDateAdd = 0;
+    int wsNewReviewDateInt = 0;
+    int wsNewReviewYyyymmdd = 0;
+    CustomerControlRecord customerControlRecord = new CustomerControlRecord();
+    CustomerRecordStructure customerRecordStructure = new CustomerRecordStructure();
+    try {
+        Bankdata.getInstance().openCustomerFile(Bankdata.OpenMode.WRITE);
+    } catch (ZFileException exception) {
+        System.out.println("Error opening CUSTOMER file, status=" + exception.getErrnoMsg());
+        returnCode = 12;
+        return;
+    }
+    timestampFunction = "Populating Customer + Account files";
+    this.timestamp(timestampFunction);
+    commitCount = 0;
+    customerControlRecord.setLastCustomerNumber(0);
+    customerControlRecord.setNumberOfCustomers(0);
+    this.setLastAccountNumber(0);
+    this.setNumberOfAccounts(0);
+    for (nextKey = startKey; nextKey <= endKey; nextKey += stepKey) {
+
+        wsReviewDateAdd = 0;
+        customerRecordStructure = new CustomerRecordStructure();
+        customerControlRecord = new CustomerControlRecord();
+        int surnamesPtr = 0;
+        int forenamesPtr = 0;
+        sortcode = 987654;
+        int streetNameTPtr = 0;
+        int streetNameRPtr = 0;
+        int townPtr = 0;
+        Initials initials = new Initials();
+        int initialsPtr = 0;
+        TitleWords titleWords = new TitleWords();
+        customerRecordStructure.getCustomerRecord().setCustomerEyecatcherValue();
+        customerRecordStructure.getCustomerRecord().setCustomerNumber(nextKey);
+        customerControlRecord.setLastCustomerNumber(nextKey);
+        customerControlRecord.setNumberOfCustomers(customerControlRecord.getNumberOfCustomers() + 1);
+        titleNumber = 36 - 1;
+        forenamesPtr = forenamesCnt - 1;
+        initialsPtr = initialsCnt - 1;
+        surnamesPtr = surnamesCnt - 1;
+        houseNumber = 99;
+        streetNameTPtr = streetNameTCnt - 1;
+        streetNameRPtr = streetNameRCnt - 1;
+        townPtr = townCount - 1;
+        customerRecordStructure.getCustomerRecord().setCustomerName("");
+        String jdeclVar1 = titleWords.getTitleWord().get(titleNumber) + " " + this.getForename().get(forenamesPtr) + " "
+                + initials.getInitialCharacter().get(initialsPtr) + " " + this.getSurname().get(surnamesPtr);
+        customerRecordStructure.getCustomerRecord().setCustomerName(jdeclVar1);
+        customerRecordStructure.getCustomerRecord().setCustomerAddress("");
+        String jdeclVar2 = String.valueOf(houseNumber) + " " + this.getStreetNameTree().get(streetNameTPtr) + " "
+                + this.getStreetNameRoad().get(streetNameRPtr) + ", " + this.getTown().get(townPtr);
+        customerRecordStructure.getCustomerRecord().setCustomerAddress(jdeclVar2);
+        ((CustomerDobGroup) (customerRecordStructure.getCustomerRecord())).setCustomerBirthDay(28 - 1);
+        ((CustomerDobGroup) (customerRecordStructure.getCustomerRecord())).setCustomerBirthMonth(12 - 1);
+        ((CustomerDobGroup) (customerRecordStructure.getCustomerRecord())).setCustomerBirthYear(2000 - 1900);
+        customerRecordStructure.getCustomerRecord().setCustomerSortcode(sortcode);
+        customerRecordStructure.getCustomerRecord().setCustomerCreditScore(999);
+        wsReviewDateAdd = 21 - 1;
+
+        wsNewReviewDateInt = this.getWsTodayInt() + wsReviewDateAdd;
+        wsNewReviewYyyymmdd = Integer.parseInt(Integer.toString(wsNewReviewDateInt));
+        customerRecordStructure.getCustomerRecord().setCustomerCsReviewYear(wsNewReviewYyyymmdd / 10000);
+        customerRecordStructure.getCustomerRecord().setCustomerCsReviewMonth((wsNewReviewYyyymmdd % 10000) / 100);
+        customerRecordStructure.getCustomerRecord().setCustomerCsReviewDay(wsNewReviewYyyymmdd % 100);
+        try {
+            customerRecordStructure.writeTo(Bankdata.getInstance().getCustomerFile());
+        } catch (ZFileException exception) {
+            System.out.println("Error writing to VSAM file, status=" + exception.getErrnoMsg());
+            returnCode = 12;
+            return;
+        }
+        this.defineAcc();
+        commitCount++;
+        if (commitCount > 1000) {
+            System.out.println("Commit every 1,000 records or so");
+            try {
+                JdbcConnection.connection.commit();
+            } catch (SQLException exception) {
+                System.out.println(exception);
+                return;
+            }
+            commitCount = 0;
+        }
+    }
+    customerControlRecord.setCustomerControlSortcode(0);
+    customerControlRecord.setCustomerControlNumber(9999999999L);
+    customerControlRecord.setCustomerControlEyecatcherV();
+    customerRecordStructure.getCustomerRecord().setBytes(customerControlRecord.getBytes());
+    try {
+        customerRecordStructure.writeTo(Bankdata.getInstance().getCustomerFile());
+    } catch (ZFileException exception) {
+        System.out.println("Error writing to VSAM file, status=" + exception.getErrnoMsg());
+        returnCode = 12;
+        return;
+    }
+
+    sortcode = 987654;
+    customerVsamStatus = new CustomerVsamStatus();
+    returnCode = 0;
+    try {
+        customerFile.open();
+    } catch (ZFileException exception) {
+        System.out.println("Error opening CUSTOMER-FILE file");
+        System.out.println("Message: " + exception.getMessage());
+        returnCode = 12;
+        return;
+    }
+    sttesterControl.setControlName("");
+    sttesterControl.setControlValueNum(this.getLastAccountNumber());
+    sttesterControl.setControlValueStr("");
+    String sql = "INSERT INTO CONTROL(CONTROL_NAME, CONTROL_VALUE_NUM, CONTROL_VALUE_STR) values(?, ?, ?)";
+    try {
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setString(1, sttesterControl.getControlName());
+        ps.setInt(2, sttesterControl.getControlValueNum());
+        ps.setString(3, sttesterControl.getControlValueStr());
+        ps.executeUpdate();
+        ps.close();
+    } catch (SQLException exception) {
+        System.out.println("Error inserting last account control record " + sttesterControl.getControlName() + ", "
+                + sttesterControl.getControlValueNum());
+        System.out.println("Message: " + exception.getMessage());
+    }
+    sttesterControl.setControlName("");
+    sttesterControl.setControlValueNum(this.getNumberOfAccounts());
+    sttesterControl.setControlValueStr("");
+    sql = "INSERT INTO CONTROL(CONTROL_NAME, CONTROL_VALUE_NUM, CONTROL_VALUE_STR) values(?, ?, ?)";
+    try {
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setString(1, sttesterControl.getControlName());
+        ps.setInt(2, sttesterControl.getControlValueNum());
+        ps.setString(3, sttesterControl.getControlValueStr());
+        ps.executeUpdate();
+        ps.close();
+    } catch (SQLException exception) {
+        System.out.println("Error inserting account count control record " + sttesterControl.getControlName() + ", "
+                + sttesterControl.getControlValueNum());
+        System.out.println("Message: " + exception.getMessage());
+    }
+    try {
+        customerFile.close();
+    } catch (ZFileException exception) {
+        System.out.println("Error closing CUSTOMER-FILE file");
+        System.out.println("Message: " + exception.getMessage());
+        returnCode = 12;
+        return;
+    }
+
+    timestampFunction = "Finishing BANKDATA";
+    this.timestamp();
+
+}

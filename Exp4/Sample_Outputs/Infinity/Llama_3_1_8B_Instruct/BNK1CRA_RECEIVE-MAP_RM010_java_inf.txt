@@ -1,0 +1,36 @@
+public void receiveMapRm010(){
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    String wsAbendPgm = "ABNDPROC";
+    WsFailInfo wsFailInfo = new WsFailInfo();
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+    try {
+        CICSConnection cicsConnection = CICSConnection.getConnection();
+        cicsConnection.receiveMap("BNK1CD", "BNK1CDM", abndinfoRec);
+    }
+    catch(CICSException exception) {
+        if (exception.getEibResp() != CICSConstants.DFHRSP(NORMAL)) {
+            abndinfoRec.setAbndRespcode(exception.getEibResp());
+            abndinfoRec.setAbndResp2Code(exception.getEibResp2());
+            abndinfoRec.setAbndSqlcode(0);
+            abndinfoRec.setAbndProgram(wsAbendPgm);
+            abndinfoRec.setAbndFreeform("RM010 - RECEIVE MAP FAIL.");
+            abndinfoRec.setAbndDate(getWsOrigDate());
+            wsTimeNowGrp.setWsTimeNowGrpHh(getWsTimeNowGrpHh());
+            wsTimeNowGrp.setWsTimeNowGrpMm(getWsTimeNowGrpMm());
+            String abndTime = wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm();
+            abndinfoRec.setAbndTime(abndTime);
+            abndinfoRec.setAbndUtimeKey(getWsUTime());
+            abndinfoRec.setAbndTranid("HBNK");
+            abndinfoRec.setAbndApplid("ABND-APPLID");
+            abndinfoRec.setAbndCode("HBNK");
+            abndinfoRec.setAbndTasknoKey(0);
+            abndinfoRec.setAbndSqlcode(0);
+            wsFailInfo.setWsCicsRespDisp(getWsCicsResp());
+            wsFailInfo.setWsCicsResp2Disp(getWsCicsResp2());
+            wsFailInfo.setWsCicsFailMsg("BNKMENU - RM010 - RECEIVE MAP FAIL ");
+            abndinfoRec.setBytes(wsFailInfo.getBytes());
+            CICSConnection cicsConnection = CICSConnection.getConnection();
+            cicsConnection.link("ABNDPROC", abndinfoRec);
+        }
+    }
+} 

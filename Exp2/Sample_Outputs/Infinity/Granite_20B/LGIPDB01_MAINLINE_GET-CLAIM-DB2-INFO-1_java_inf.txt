@@ -1,0 +1,48 @@
+public void mainlineGetClaimDb2Info1(CaPolicyRequest caPolicyRequest, Db2InIntegers db2InIntegers, Db2Policy db2Policy,
+        ErrorMsg errorMsg) {
+    Db2Claim db2Claim = new Db2Claim();
+    Db2OutIntegers db2OutIntegers = new Db2OutIntegers();
+    int wsCaHeadertrailerLen = 33;
+    int wsCommLen = 1102;
+    int wsFullClaimLen = 618;
+    errorMsg.getEmVariable().setEmSqlreq(" SELECT Claim ");
+    try {
+        ResultSet rs = JdbcConnection.connection.prepareStatement(errorMsg.getEmVariable().getEmSqlreq())
+                .executeQuery();
+        while (rs.next()) {
+            db2InIntegers.setDb2CustomernumInt(rs.getInt("CUSTOMERNUMBER"));
+            db2InIntegers.setDb2ClaimnumInt(rs.getInt("CLAIMNUMBER"));
+            db2InIntegers.setDb2PolicynumInt(rs.getInt("POLICYNUMBER"));
+            db2Claim.getClaim().setClaimdate(rs.getDate("CLAIMDATE"));
+            db2Claim.getClaim().setPaid(rs.getInt("PAID"));
+            db2Claim.getClaim().setValue(rs.getInt("VALUE"));
+            db2Claim.getClaim().setCause(rs.getString("CAUSE"));
+            db2Claim.getClaim().setObservations(rs.getString("OBSERVATIONS"));
+        }
+        rs.close();
+    } catch (SQLException exception) {
+        if (exception.getErrorCode() == 100) {
+            caPolicyRequest.setCaReturnCode(Integer.parseInt("01"));
+        } else {
+            caPolicyRequest.setCaReturnCode(Integer.parseInt("90"));
+            mainlineWriteErrorMessage(dfhcommarea, errorMsg);
+        }
+    }
+    if (caPolicyRequest.getCaReturnCode() == 0) {
+        this.setWsRequiredCaLen(this.getWsRequiredCaLen() + wsCaHeadertrailerLen);
+        this.setWsRequiredCaLen(this.getWsRequiredCaLen() + wsFullClaimLen);
+        if (eibcalen < this.getWsRequiredCaLen()) {
+            caPolicyRequest.setCaReturnCode(Integer.parseInt("98"));
+            Task.getTask().abend(caPolicyRequest.getCaReturnCode());
+        } else {
+            caPolicyRequest.setCaCustomerNum(db2InIntegers.getDb2CustomernumInt());
+            caPolicyRequest.getPolicy().setPolicynumber(db2InIntegers.getDb2PolicynumInt());
+            db2Claim.getClaim().setClaimnumber(db2InIntegers.getDb2ClaimnumInt());
+            db2Claim.getClaim().setPaid(db2OutIntegers.getDb2CPaidInt());
+            db2Claim.getClaim().setValue(db2OutIntegers.getDb2CValueInt());
+            caPolicyRequest.getPolicy().getDb2PolicyCommon().setBytes(db2Policy.getDb2PolicyCommon().getBytes());
+            ((CaClaim) (caPolicyRequest)).setBytes(((CaClaim) (db2Claim)).getBytes());
+            ((CaClaim) (caPolicyRequest)).setCaCFiller("FINAL");
+        }
+    }
+}

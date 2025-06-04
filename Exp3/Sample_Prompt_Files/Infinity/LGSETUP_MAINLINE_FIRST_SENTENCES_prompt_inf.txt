@@ -1,0 +1,848 @@
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+       MAINLINE SECTION.                                                
+           EXEC CICS RECEIVE
+                INTO(WS-RECV)
+                LENGTH(WS-RECV-LEN)
+                RESP(WS-RESP)
+           END-EXEC                                                     
+           If WS-RECV-LEN > 5                                           
+             Subtract 5 From WS-RECV-LEN                                
+             Move WS-RECV-DATA(1:WS-RECV-LEN)  To LastCustNum           
+           End-if                                                       
+           EXEC CICS DELETEQ
+                TS
+                QUEUE(STSQ-ERRS)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DELETEQ
+                TS
+                QUEUE(STSQ-STRT)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DELETEQ
+                TS
+                QUEUE(STSQ-STAT)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DELETEQ
+                TS
+                QUEUE(STSQ-NAME)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           Move FrstCustNum  to WRITE-MSG-LOW                           
+           Move LastCustNum  to WRITE-MSG-HIGH                          
+             EXEC CICS WRITEQ
+                  TS
+                  NOSUSPEND
+                  FROM(WRITE-MSG-E)
+                  LENGTH(20)
+                  QUEUE(STSQ-NAME)
+                  RESP(WS-RESP)
+             END-EXEC                                                   
+             EXEC CICS WRITEQ
+                  TS
+                  NOSUSPEND
+                  FROM(WRITE-MSG-L)
+                  LENGTH(23)
+                  QUEUE(STSQ-NAME)
+                  RESP(WS-RESP)
+             END-EXEC                                                   
+             EXEC CICS WRITEQ
+                  TS
+                  NOSUSPEND
+                  FROM(WRITE-MSG-H)
+                  LENGTH(24)
+                  QUEUE(STSQ-NAME)
+                  RESP(WS-RESP)
+             END-EXEC                                                   
+           EXEC CICS DELETE
+                COUNTER(GENAcount)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENAcount)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(LastCustNum)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNT100)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNT100)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNT199)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNT199)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNT200)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNT200)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNT299)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNT299)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNT300)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNT300)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNT399)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNT399)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNT400)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNT400)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNT499)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNT499)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNT500)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNT500)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNT599)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNT599)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNT600)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNT600)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNT699)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNT699)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNT700)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNT700)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNT799)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNT799)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNT800)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNT800)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNT899)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNT899)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNT900)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNT900)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNT999)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNT999)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNTA00)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNTA00)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNTA99)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNTA99)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNTB00)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNTB00)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNTB99)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNTB99)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNTC00)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNTC00)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNTC99)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNTC99)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNTD00)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNTD00)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNTD99)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNTD99)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNTE00)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNTE00)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNTE99)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNTE99)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNTF00)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNTF00)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNTF99)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNTF99)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNTG00)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNTG00)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNTG99)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNTG99)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNTH00)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNTH00)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNTH99)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNTH99)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNTI00)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNTI00)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+           EXEC CICS DELETE
+                COUNTER(GENACNTI99)
+                POOL(GENApool)
+                RESP(WS-RESP)
+           END-EXEC.                                                    
+           EXEC CICS DEFINE
+                COUNTER(GENACNTI99)
+                POOL(GENApool)
+                RESP(WS-RESP)
+                VALUE(0)
+           END-EXEC.                                                    
+             EXEC CICS SEND
+                  TEXT
+                  WAIT
+                  ERASE
+                  FREEKB
+                  FROM(WRITE-MSG-H)
+                  LENGTH(24)
+             END-EXEC                                                   
+           EXEC CICS RETURN
+           END-EXEC.                                                    
+
+## Variable Map:
+WS-RESP gettermapping wsResp
+WS-RESP settermapping wsResp = val
+WS-RESP PIC S9(8) JavaType int
+WS-RECV-LEN gettermapping wsRecvLen
+WS-RECV-LEN settermapping wsRecvLen = val
+WS-RECV-LEN PIC S9(4) JavaType int
+WS-RECV-DATA gettermapping wsRecv.getWsRecvData()
+WS-RECV-DATA settermapping wsRecv.setWsRecvData(val)
+WS-RECV-DATA PIC X(74) JavaType String
+WS-RECV gettermapping wsRecv.getBytes()
+WS-RECV settermapping wsRecv.setBytes(val)
+WS-RECV GROUP JavaType WsRecv
+WRITE-MSG-LOW gettermapping writeMsgLow
+WRITE-MSG-LOW settermapping writeMsgLow = val
+WRITE-MSG-LOW PIC 9(10) JavaType long
+WRITE-MSG-L gettermapping writeMsgL
+WRITE-MSG-L settermapping writeMsgL = val
+WRITE-MSG-L PIC X(13) JavaType String
+WRITE-MSG-High gettermapping writeMsgHigh
+WRITE-MSG-High settermapping writeMsgHigh = val
+WRITE-MSG-High PIC 9(10) JavaType long
+WRITE-MSG-H gettermapping writeMsgH
+WRITE-MSG-H settermapping writeMsgH = val
+WRITE-MSG-H PIC X(14) JavaType String
+WRITE-MSG-E gettermapping writeMsgE
+WRITE-MSG-E settermapping writeMsgE = val
+WRITE-MSG-E PIC X(20) JavaType String
+STSQ-STRT gettermapping stsqStrt
+STSQ-STRT settermapping stsqStrt = val
+STSQ-STRT PIC X(8) JavaType String
+STSQ-STAT gettermapping stsqStat
+STSQ-STAT settermapping stsqStat = val
+STSQ-STAT PIC X(8) JavaType String
+STSQ-NAME gettermapping stsq.getStsqName()
+STSQ-NAME settermapping stsq.setStsqName(val)
+STSQ-NAME PIC X(8) JavaType String
+STSQ-ERRS gettermapping stsqErrs
+STSQ-ERRS settermapping stsqErrs = val
+STSQ-ERRS PIC X(8) JavaType String
+LastCustNum gettermapping lastCustNum
+LastCustNum settermapping lastCustNum = val
+LastCustNum PIC S9(8) JavaType int
+GENApool gettermapping genApool
+GENApool settermapping genApool = val
+GENApool PIC X(8) JavaType String
+GENAcount gettermapping genAcount
+GENAcount settermapping genAcount = val
+GENAcount PIC X(16) JavaType String
+GENACNTI99 gettermapping genacnti99
+GENACNTI99 settermapping genacnti99 = val
+GENACNTI99 PIC X(16) JavaType String
+GENACNTI00 gettermapping genacnti00
+GENACNTI00 settermapping genacnti00 = val
+GENACNTI00 PIC X(16) JavaType String
+GENACNTH99 gettermapping genacnth99
+GENACNTH99 settermapping genacnth99 = val
+GENACNTH99 PIC X(16) JavaType String
+GENACNTH00 gettermapping genacnth00
+GENACNTH00 settermapping genacnth00 = val
+GENACNTH00 PIC X(16) JavaType String
+GENACNTG99 gettermapping genacntg99
+GENACNTG99 settermapping genacntg99 = val
+GENACNTG99 PIC X(16) JavaType String
+GENACNTG00 gettermapping genacntg00
+GENACNTG00 settermapping genacntg00 = val
+GENACNTG00 PIC X(16) JavaType String
+GENACNTF99 gettermapping genacntf99
+GENACNTF99 settermapping genacntf99 = val
+GENACNTF99 PIC X(16) JavaType String
+GENACNTF00 gettermapping genacntf00
+GENACNTF00 settermapping genacntf00 = val
+GENACNTF00 PIC X(16) JavaType String
+GENACNTE99 gettermapping genacnte99
+GENACNTE99 settermapping genacnte99 = val
+GENACNTE99 PIC X(16) JavaType String
+GENACNTE00 gettermapping genacnte00
+GENACNTE00 settermapping genacnte00 = val
+GENACNTE00 PIC X(16) JavaType String
+GENACNTD99 gettermapping genacntd99
+GENACNTD99 settermapping genacntd99 = val
+GENACNTD99 PIC X(16) JavaType String
+GENACNTD00 gettermapping genacntd00
+GENACNTD00 settermapping genacntd00 = val
+GENACNTD00 PIC X(16) JavaType String
+GENACNTC99 gettermapping genacntc99
+GENACNTC99 settermapping genacntc99 = val
+GENACNTC99 PIC X(16) JavaType String
+GENACNTC00 gettermapping genacntc00
+GENACNTC00 settermapping genacntc00 = val
+GENACNTC00 PIC X(16) JavaType String
+GENACNTB99 gettermapping genacntb99
+GENACNTB99 settermapping genacntb99 = val
+GENACNTB99 PIC X(16) JavaType String
+GENACNTB00 gettermapping genacntb00
+GENACNTB00 settermapping genacntb00 = val
+GENACNTB00 PIC X(16) JavaType String
+GENACNTA99 gettermapping genacnta99
+GENACNTA99 settermapping genacnta99 = val
+GENACNTA99 PIC X(16) JavaType String
+GENACNTA00 gettermapping genacnta00
+GENACNTA00 settermapping genacnta00 = val
+GENACNTA00 PIC X(16) JavaType String
+GENACNT999 gettermapping genacnt999
+GENACNT999 settermapping genacnt999 = val
+GENACNT999 PIC X(16) JavaType String
+GENACNT900 gettermapping genacnt900
+GENACNT900 settermapping genacnt900 = val
+GENACNT900 PIC X(16) JavaType String
+GENACNT899 gettermapping genacnt899
+GENACNT899 settermapping genacnt899 = val
+GENACNT899 PIC X(16) JavaType String
+GENACNT800 gettermapping genacnt800
+GENACNT800 settermapping genacnt800 = val
+GENACNT800 PIC X(16) JavaType String
+GENACNT799 gettermapping genacnt799
+GENACNT799 settermapping genacnt799 = val
+GENACNT799 PIC X(16) JavaType String
+GENACNT700 gettermapping genacnt700
+GENACNT700 settermapping genacnt700 = val
+GENACNT700 PIC X(16) JavaType String
+GENACNT699 gettermapping genacnt699
+GENACNT699 settermapping genacnt699 = val
+GENACNT699 PIC X(16) JavaType String
+GENACNT600 gettermapping genacnt600
+GENACNT600 settermapping genacnt600 = val
+GENACNT600 PIC X(16) JavaType String
+GENACNT599 gettermapping genacnt599
+GENACNT599 settermapping genacnt599 = val
+GENACNT599 PIC X(16) JavaType String
+GENACNT500 gettermapping genacnt500
+GENACNT500 settermapping genacnt500 = val
+GENACNT500 PIC X(16) JavaType String
+GENACNT499 gettermapping genacnt499
+GENACNT499 settermapping genacnt499 = val
+GENACNT499 PIC X(16) JavaType String
+GENACNT400 gettermapping genacnt400
+GENACNT400 settermapping genacnt400 = val
+GENACNT400 PIC X(16) JavaType String
+GENACNT399 gettermapping genacnt399
+GENACNT399 settermapping genacnt399 = val
+GENACNT399 PIC X(16) JavaType String
+GENACNT300 gettermapping genacnt300
+GENACNT300 settermapping genacnt300 = val
+GENACNT300 PIC X(16) JavaType String
+GENACNT299 gettermapping genacnt299
+GENACNT299 settermapping genacnt299 = val
+GENACNT299 PIC X(16) JavaType String
+GENACNT200 gettermapping genacnt200
+GENACNT200 settermapping genacnt200 = val
+GENACNT200 PIC X(16) JavaType String
+GENACNT199 gettermapping genacnt199
+GENACNT199 settermapping genacnt199 = val
+GENACNT199 PIC X(16) JavaType String
+GENACNT100 gettermapping genacnt100
+GENACNT100 settermapping genacnt100 = val
+GENACNT100 PIC X(16) JavaType String
+FrstCustNum gettermapping frstCustNum
+FrstCustNum settermapping frstCustNum = val
+FrstCustNum PIC S9(8) JavaType int
+
+
+## Class Map:
+public void invokeMainline(){
+    int frstCustNum = 1;
+    String genAcount = "GENACUSTNUM";
+    String genApool = "GENA";
+    String genacnt100 = "GENA01ICUS00";
+    String genacnt199 = "GENA01ICUS99";
+    String genacnt200 = "GENA01ACUS00";
+    String genacnt299 = "GENA01ACUS99";
+    String genacnt300 = "GENA01IMOT00";
+    String genacnt399 = "GENA01IMOT99";
+    String genacnt400 = "GENA01AMOT00";
+    String genacnt499 = "GENA01AMOT99";
+    String genacnt500 = "GENA01DMOT00";
+    String genacnt599 = "GENA01DMOT99";
+    String genacnt600 = "GENA01UMOT00";
+    String genacnt699 = "GENA01UMOT99";
+    String genacnt700 = "GENA01IEND00";
+    String genacnt799 = "GENA01IEND99";
+    String genacnt800 = "GENA01AEND00";
+    String genacnt899 = "GENA01AEND99";
+    String genacnt900 = "GENA01DEND00";
+    String genacnt999 = "GENA01DEND99";
+    String genacnta00 = "GENA01UEND00";
+    String genacnta99 = "GENA01UEND99";
+    String genacntb00 = "GENA01IHOU00";
+    String genacntb99 = "GENA01IHOU99";
+    String genacntc00 = "GENA01AHOU00";
+    String genacntc99 = "GENA01AHOU99";
+    String genacntd00 = "GENA01DHOU00";
+    String genacntd99 = "GENA01DHOU99";
+    String genacnte00 = "GENA01UHOU00";
+    String genacnte99 = "GENA01UHOU99";
+    String genacntf00 = "GENA01ICOM00";
+    String genacntf99 = "GENA01ICOM99";
+    String genacntg00 = "GENA01ACOM00";
+    String genacntg99 = "GENA01ACOM99";
+    String genacnth00 = "GENA01DCOM00";
+    String genacnth99 = "GENA01DCOM99";
+    String genacnti00 = "GENA01UCUS00";
+    String genacnti99 = "GENA01UCUS99";
+    int lastCustNum = 11;
+    Stsq stsq = new Stsq();
+    String stsqErrs = "GENAERRS";
+    String stsqStat = "GENASTAT";
+    String stsqStrt = "GENASTRT";
+    String writeMsgE = "**** GENAPP CNTL";
+    String writeMsgH = "HIGH CUSTOMER=";
+    long writeMsgHigh;
+    String writeMsgL = "LOW CUSTOMER=";
+    long writeMsgLow;
+    WsRecv wsRecv = new WsRecv();
+    int wsRecvLen = 80;
+    int wsResp;
+}
+
+
+Output:

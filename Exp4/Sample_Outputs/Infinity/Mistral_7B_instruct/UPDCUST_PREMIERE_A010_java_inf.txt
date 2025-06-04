@@ -1,0 +1,32 @@
+```java
+public void premiereA010(Dfhcommarea dfhcommarea) {
+    DesiredCustKey desiredCustKey = new DesiredCustKey();
+    String wsUnstrTitle = dfhcommarea.getCommName();
+    char[] wsTitleValid = new char[1];
+    wsTitleValid[0] = 'N';
+
+    // This is prompt example
+    String[] titleList = {"Professor", "Mr", "Mrs", "Miss", "Ms", "Dr", "Drs", "Lord", "Sir", "Lady", " ", ""};
+    for (String title : titleList) {
+        if (wsUnstrTitle.contains(title)) {
+            wsTitleValid[0] = 'Y';
+            break;
+        }
+    }
+
+    if (wsTitleValid[0] == 'N') {
+        dfhcommarea.setCommUpdSuccess('N');
+        dfhcommarea.setCommUpdFailCd('T');
+        return;
+    }
+
+    int sortcode = Integer.parseInt(dfhcommarea.getCommScode());
+    desiredCustKey.setDesiredSortCode(sortcode);
+
+    // Perform UPDATE-CUSTOMER-VSAM
+    updateCustomerVsamUcv010(desiredCustKey, dfhcommarea);
+
+    // Perform GET-ME-OUT-OF-HERE
+    getMeOutOfHereGmooh010();
+}
+```

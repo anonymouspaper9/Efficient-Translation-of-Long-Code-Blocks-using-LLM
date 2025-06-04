@@ -1,0 +1,58 @@
+
+```java
+public void mainlineGetCommercialDb2Info3Cur(Db2Policy db2Policy, Dfhcommarea dfhcommarea, String icomPointer) {
+    Db2Commercial db2Commercial = new Db2Commercial();
+    Db2InIntegers db2InIntegers = new Db2InIntegers();
+    Db2OutIntegers db2OutIntegers = new Db2OutIntegers();
+    int wsCommLen = 1102;
+
+    // Set the address of the DFHCOMMAREA to ICOM-Pointer
+    dfhcommarea.setBytes(icomPointer.getBytes());
+
+    // Execute the SQL query
+    try (Connection connection = JdbcConnection.connection;
+         PreparedStatement ps = connection.prepareStatement("SELECT * FROM DB2_TABLE")) {
+        ResultSet rs = ps.executeQuery();
+
+        // Loop through the results
+        while (rs.next()) {
+            // Set the values from the result set to the corresponding variables
+            db2InIntegers.setDb2CustomernumInt(rs.getInt("CUSTOMERNUM"));
+            db2InIntegers.setDb2PolicynumInt(rs.getInt("POLICYNUM"));
+            db2Policy.getPolicy().setLastchanged(rs.getDate("LASTCHANGED"));
+            db2Policy.getPolicy().setIssuedate(rs.getDate("ISSUEDATE"));
+            db2Policy.getPolicy().setExpirydate(rs.getDate("EXPIRYDATE"));
+            db2Commercial.setBytes(rs.getBytes("COMMERCIAL"));
+
+            // Set the premiums and perils
+            db2OutIntegers.setDb2BWeatherPerilInt(rs.getInt("WEATHER_PERIL"));
+            db2OutIntegers.setDb2BWeatherPremiumInt(rs.getInt("WEATHER_PREMIUM"));
+            db2Commercial.getCommercial().setWeatherperil(rs.getInt("WEATHER_PERIL"));
+            db2Commercial.getCommercial().setWeatherpremium(rs.getInt("WEATHER_PREMIUM"));
+
+            // ... Repeat for other premiums and perils
+
+            // Set other properties
+            db2Commercial.getCommercial().setStatus(rs.getInt("STATUS"));
+            db2Commercial.getCommercial().setCustomer(rs.getString("CUSTOMER"));
+            db2Commercial.getCommercial().setPropertytype(rs.getString("PROPTTYPE"));
+            db2Commercial.getCommercial().setZipcode(rs.getString("POSTCODE"));
+            db2Commercial.getCommercial().setLongitudew(rs.getString("LONGITUDE"));
+            db2Commercial.getCommercial().setLatituden(rs.getString("LATITUDE"));
+
+            // ... Repeat for other properties
+        }
+    } catch (SQLException e) {
+        System.out.println(e);
+    }
+
+    // Add 1 to ICOM-Record-Count
+    int recordCount = dfhcommarea.getIcomRecordCount();
+    dfhcommarea.setIcomRecordCount(recordCount + 1);
+
+    // If ICOM-Record-Count > 20, set SQLCODE to 17
+    if (recordCount > wsCommLen) {
+        dfhcommarea.setSqlcode(17);
+    }
+}
+```

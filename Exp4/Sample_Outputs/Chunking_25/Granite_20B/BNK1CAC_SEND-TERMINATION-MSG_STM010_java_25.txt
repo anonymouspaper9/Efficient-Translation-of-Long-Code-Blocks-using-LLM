@@ -1,0 +1,33 @@
+public void sendTerminationMsgStm010() {
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+
+    String wsAbendPgm = "ABNDPROC";
+    String endOfSessionMessage = "Session Ended";
+    try {
+        Task.getTask().getChannel("CHANNEL-NAME0001").delete();
+    } catch (CicsConditionException e) {
+
+        wsTimeNowGrp = new WsTimeNowGrp();
+        abndinfoRec = new AbndinfoRec();
+        abndinfoRec.setAbndDate(this.getWsOrigDate());
+        abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":"
+                + wsTimeNowGrp.getWsTimeNowGrpMm());
+        abndinfoRec.setAbndUtimeKey(this.getWsUTime());
+        abndinfoRec.setAbndCode("HBNK");
+        abndinfoRec.setAbndProgram(Task.getTask().getProgramName());
+        abndinfoRec.setAbndSqlcode(0);
+        abndinfoRec.setAbndRespcode(0);
+        abndinfoRec.setAbndResp2Code(0);
+        abndinfoRec.setAbndFreeform("STM010 - SEND TEXT FAIL EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2="
+                + abndinfoRec.getAbndResp2Code());
+
+        try {
+            Task.getTask().link(wsAbendPgm);
+        } catch (CicsConditionException e) {
+            throw e;
+        }
+        throw e;
+    }
+
+}

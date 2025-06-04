@@ -1,0 +1,401 @@
+public void invokeMainline(){
+    int countAdd = 0;
+    int countDel = 0;
+    int countErrors = 0;
+    int countInq = 0;
+    int countSuccess = 0;
+    int countUpd = 0;
+    int countVal = 0;
+    String genAcount = "GENACUSTNUM";
+    int genAerrorsV = 0;
+    String genApool = "GENA";
+    int genAsuccesV = 0;
+    int genaCountV = 0;
+    String genacnt100 = "GENA01ICUS00";
+    int genacnt100V = 0;
+    String genacnt199 = "GENA01ICUS99";
+    int genacnt199V = 0;
+    String genacnt200 = "GENA01ACUS00";
+    int genacnt200V = 0;
+    String genacnt299 = "GENA01ACUS99";
+    int genacnt299V = 0;
+    String genacnt300 = "GENA01IMOT00";
+    int genacnt300V = 0;
+    String genacnt399 = "GENA01IMOT99";
+    int genacnt399V = 0;
+    String genacnt400 = "GENA01AMOT00";
+    int genacnt400V = 0;
+    String genacnt499 = "GENA01AMOT99";
+    int genacnt499V = 0;
+    String genacnt500 = "GENA01DMOT00";
+    int genacnt500V = 0;
+    String genacnt599 = "GENA01DMOT99";
+    int genacnt599V = 0;
+    String genacnt600 = "GENA01UMOT00";
+    int genacnt600V = 0;
+    String genacnt699 = "GENA01UMOT99";
+    int genacnt699V = 0;
+    String genacnt700 = "GENA01IEND00";
+    int genacnt700V = 0;
+    String genacnt799 = "GENA01IEND99";
+    int genacnt799V = 0;
+    String genacnt800 = "GENA01AEND00";
+    int genacnt800V = 0;
+    String genacnt899 = "GENA01AEND99";
+    int genacnt899V = 0;
+    String genacnt900 = "GENA01DEND00";
+    int genacnt900V = 0;
+    String genacnt999 = "GENA01DEND99";
+    int genacnt999V = 0;
+    String genacnta00 = "GENA01UEND00";
+    int genacnta00V = 0;
+    String genacnta99 = "GENA01UEND99";
+    int genacnta99V = 0;
+    String genacntb00 = "GENA01IHOU00";
+    int genacntb00V = 0;
+    String genacntb99 = "GENA01IHOU99";
+    int genacntb99V = 0;
+    String genacntc00 = "GENA01AHOU00";
+    int genacntc00V = 0;
+    String genacntc99 = "GENA01AHOU99";
+    int genacntc99V = 0;
+    String genacntd00 = "GENA01DHOU00";
+    int genacntd00V = 0;
+    String genacntd99 = "GENA01DHOU99";
+    int genacntd99V = 0;
+    String genacnte00 = "GENA01UHOU00";
+    int genacnte00V = 0;
+    String genacnte99 = "GENA01UHOU99";
+    int genacnte99V = 0;
+    String genacntf00 = "GENA01ICOM00";
+    int genacntf00V = 0;
+    String genacntf99 = "GENA01ICOM99";
+    int genacntf99V = 0;
+    String genacntg00 = "GENA01ACOM00";
+    int genacntg00V = 0;
+    String genacntg99 = "GENA01ACOM99";
+    int genacntg99V = 0;
+    String genacnth00 = "GENA01DCOM00";
+    int genacnth00V = 0;
+    String genacnth99 = "GENA01DCOM99";
+    int genacnth99V = 0;
+    String genacnti99 = "GENAOTHER   ";
+    int genacnti99V = 0;
+    int nRateVal = 0;
+    SymbList symbList = new SymbList();
+    String tsQpre = "GENA";
+    int wsAbstime = 0;
+    String wsApplid = "";
+    String wsDate = "";
+    WsHeader wsHeader = new WsHeader();
+    int wsResp = 0;
+    String wsTime = "";
+    String wsTsQname = "";
+    wsHeader.setWsTransid(EIBTRNID);
+    wsHeader.setWsTermid(EIBTRMID);
+    wsHeader.setWsTasknum(EIBTASKN);
+    wsHeader.setWsCalen(EIBCALEN);
+    try {
+        wsAbstime = JdbcConnection.connection.createStatement().executeQuery("SELECT CURRENT_TIMESTAMP FROM SYSIBM.SYSDUMMY1").getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT CHAR(CURRENT_DATE, ISO) FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        wsDate = rs.getString(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT CHAR(CURRENT_TIME, ISO) FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        wsTime = rs.getString(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    mainlineTranRateInterval(tsQpre, wsTime);
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT COUNT(*) FROM GENA WHERE GENApool = '" + genApool + "'");
+        rs.next();
+        countVal = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    symbList.setS3(String.valueOf(countVal));
+    genaCountV = countVal;
+    String temp = tsQpre + "X05V";
+    wsTsQname = temp;
+    nRateVal = Integer.parseInt(symbList.getS3());
+    mainlineTranRateCounts(nRateVal, wsTsQname);
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT COUNT(*) FROM GENA WHERE GENApool = '" + genApool + "' AND GENACNT100 = '" + genacnt100 + "'");
+        rs.next();
+        countVal = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    countSuccess = countSuccess + countVal;
+    countInq = countInq + countVal;
+    genacnt100V = countVal;
+    symbList.setS3(String.valueOf(countVal));
+    temp = tsQpre + "100V";
+    wsTsQname = temp;
+    nRateVal = Integer.parseInt(symbList.getS3());
+    mainlineTranRateCounts(nRateVal, wsTsQname);
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT COUNT(*) FROM GENA WHERE GENApool = '" + genApool + "' AND GENACNT199 = '" + genacnt199 + "'");
+        rs.next();
+        countVal = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    countErrors = countErrors + countVal;
+    genacnt199V = countVal;
+    symbList.setS4(String.valueOf(countVal));
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT COUNT(*) FROM GENA WHERE GENApool = '" + genApool + "' AND GENACNT200 = '" + genacnt200 + "'");
+        rs.next();
+        countVal = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    countSuccess = countSuccess + countVal;
+    countAdd = countAdd + countVal;
+    genacnt200V = countVal;
+    symbList.setS5(String.valueOf(countVal));
+    temp = tsQpre + "200V";
+    wsTsQname = temp;
+    nRateVal = Integer.parseInt(symbList.getS5());
+    mainlineTranRateCounts(nRateVal, wsTsQname);
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT COUNT(*) FROM GENA WHERE GENApool = '" + genApool + "' AND GENACNT299 = '" + genacnt299 + "'");
+        rs.next();
+        countVal = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    countErrors = countErrors + countVal;
+    genacnt299V = countVal;
+    symbList.setS6(String.valueOf(countVal));
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT COUNT(*) FROM GENA WHERE GENApool = '" + genApool + "' AND GENACNT300 = '" + genacnt300 + "'");
+        rs.next();
+        countVal = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    countSuccess = countSuccess + countVal;
+    countInq = countInq + countVal;
+    genacnt300V = countVal;
+    symbList.setS7(String.valueOf(countVal));
+    temp = tsQpre + "300V";
+    wsTsQname = temp;
+    nRateVal = Integer.parseInt(symbList.getS7());
+    mainlineTranRateCounts(nRateVal, wsTsQname);
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT COUNT(*) FROM GENA WHERE GENApool = '" + genApool + "' AND GENACNT399 = '" + genacnt399 + "'");
+        rs.next();
+        countVal = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    countErrors = countErrors + countVal;
+    genacnt399V = countVal;
+    symbList.setS8(String.valueOf(countVal));
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT COUNT(*) FROM GENA WHERE GENApool = '" + genApool + "' AND GENACNT400 = '" + genacnt400 + "'");
+        rs.next();
+        countVal = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    countSuccess = countSuccess + countVal;
+    countAdd = countAdd + countVal;
+    genacnt400V = countVal;
+    symbList.setS9(String.valueOf(countVal));
+    temp = tsQpre + "400V";
+    wsTsQname = temp;
+    nRateVal = Integer.parseInt(symbList.getS9());
+    mainlineTranRateCounts(nRateVal, wsTsQname);
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT COUNT(*) FROM GENA WHERE GENApool = '" + genApool + "' AND GENACNT499 = '" + genacnt499 + "'");
+        rs.next();
+        countVal = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    countErrors = countErrors + countVal;
+    genacnt499V = countVal;
+    symbList.setS10(String.valueOf(countVal));
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT COUNT(*) FROM GENA WHERE GENApool = '" + genApool + "' AND GENACNT500 = '" + genacnt500 + "'");
+        rs.next();
+        countVal = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    countSuccess = countSuccess + countVal;
+    countDel = countDel + countVal;
+    genacnt500V = countVal;
+    symbList.setS11(String.valueOf(countVal));
+    temp = tsQpre + "500V";
+    wsTsQname = temp;
+    nRateVal = Integer.parseInt(symbList.getS11());
+    mainlineTranRateCounts(nRateVal, wsTsQname);
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT COUNT(*) FROM GENA WHERE GENApool = '" + genApool + "' AND GENACNT599 = '" + genacnt599 + "'");
+        rs.next();
+        countVal = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    countErrors = countErrors + countVal;
+    genacnt599V = countVal;
+    symbList.setS12(String.valueOf(countVal));
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT COUNT(*) FROM GENA WHERE GENApool = '" + genApool + "' AND GENACNT600 = '" + genacnt600 + "'");
+        rs.next();
+        countVal = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    countSuccess = countSuccess + countVal;
+    countUpd = countUpd + countVal;
+    genacnt600V = countVal;
+    symbList.setS13(String.valueOf(countVal));
+    temp = tsQpre + "600V";
+    wsTsQname = temp;
+    nRateVal = Integer.parseInt(symbList.getS13());
+    mainlineTranRateCounts(nRateVal, wsTsQname);
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT COUNT(*) FROM GENA WHERE GENApool = '" + genApool + "' AND GENACNT699 = '" + genacnt699 + "'");
+        rs.next();
+        countVal = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    countErrors = countErrors + countVal;
+    genacnt699V = countVal;
+    symbList.setS14(String.valueOf(countVal));
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT COUNT(*) FROM GENA WHERE GENApool = '" + genApool + "' AND GENACNT700 = '" + genacnt700 + "'");
+        rs.next();
+        countVal = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    countSuccess = countSuccess + countVal;
+    countInq = countInq + countVal;
+    genacnt700V = countVal;
+    symbList.setS15(String.valueOf(countVal));
+    temp = tsQpre + "700V";
+    wsTsQname = temp;
+    nRateVal = Integer.parseInt(symbList.getS15());
+    mainlineTranRateCounts(nRateVal, wsTsQname);
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT COUNT(*) FROM GENA WHERE GENApool = '" + genApool + "' AND GENACNT799 = '" + genacnt799 + "'");
+        rs.next();
+        countVal = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    countErrors = countErrors + countVal;
+    genacnt799V = countVal;
+    symbList.setS16(String.valueOf(countVal));
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT COUNT(*) FROM GENA WHERE GENApool = '" + genApool + "' AND GENACNT800 = '" + genacnt800 + "'");
+        rs.next();
+        countVal = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    countSuccess = countSuccess + countVal;
+    countAdd = countAdd + countVal;
+    genacnt800V = countVal;
+    symbList.setS17(String.valueOf(countVal));
+    temp = tsQpre + "800V";
+    wsTsQname = temp;
+    nRateVal = Integer.parseInt(symbList.getS17());
+    mainlineTranRateCounts(nRateVal, wsTsQname);
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT COUNT(*) FROM GENA WHERE GENApool = '" + genApool + "' AND GENACNT899 = '" + genacnt899 + "'");
+        rs.next();
+        countVal = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    countErrors = countErrors + countVal;
+    genacnt899V = countVal;
+    symbList.setS18(String.valueOf(countVal));
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT COUNT(*) FROM GENA WHERE GENApool = '" + genApool + "' AND GENACNT900 = '" + genacnt900 + "'");
+        rs.next();
+        countVal = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    countSuccess = countSuccess + countVal;
+    countDel = countDel + countVal;
+    genacnt900V = countVal;
+    symbList.setS19(String.valueOf(countVal));
+    temp = tsQpre + "900V";
+    wsTsQname = temp;
+    nRateVal = Integer.parseInt(symbList.getS19());
+    mainlineTranRateCounts(nRateVal, wsTsQname);
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT COUNT(*) FROM GENA WHERE GENApool = '" + genApool + "' AND GENACNT999 = '" + genacnt999 + "'");
+        rs.next();
+        countVal = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    countErrors = countErrors + countVal;
+    genacnt999V = countVal;
+    symbList.setS20(String.valueOf(countVal));
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT COUNT(*) FROM GENA WHERE GENApool = '" + genApool + "' AND GENACNTA00 = '" + genac

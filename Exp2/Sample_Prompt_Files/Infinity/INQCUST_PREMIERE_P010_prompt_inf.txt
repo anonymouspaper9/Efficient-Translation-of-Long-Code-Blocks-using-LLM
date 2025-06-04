@@ -1,0 +1,303 @@
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+       P010.
+           EXEC CICS HANDLE
+                ABEND
+                LABEL(ABEND-HANDLING)
+           END-EXEC.
+           MOVE 'N' TO INQCUST-INQ-SUCCESS
+           MOVE '0' TO INQCUST-INQ-FAIL-CD
+           MOVE SORTCODE TO REQUIRED-SORT-CODE.
+           MOVE INQCUST-CUSTNO TO REQUIRED-CUST-NUMBER.
+           IF INQCUST-CUSTNO = 0000000000 OR INQCUST-CUSTNO = 9999999999
+              PERFORM READ-CUSTOMER-NCS
+      D       DISPLAY 'CUST NO RETURNED FROM NCS=' NCS-CUST-NO-VALUE
+              IF INQCUST-INQ-SUCCESS = 'Y'
+                MOVE NCS-CUST-NO-VALUE TO REQUIRED-CUST-NUMBER
+              ELSE
+                PERFORM GET-ME-OUT-OF-HERE
+              END-IF
+           END-IF.
+           IF INQCUST-CUSTNO = 0000000000
+              PERFORM GENERATE-RANDOM-CUSTOMER
+              MOVE RANDOM-CUSTOMER TO REQUIRED-CUST-NUMBER
+           END-IF.
+           MOVE 'N' TO EXIT-VSAM-READ.
+           MOVE 'N' TO EXIT-DB2-READ.
+           MOVE 'N' TO WS-D-RETRIED.
+           MOVE 'N' TO WS-V-RETRIED.
+           PERFORM READ-CUSTOMER-VSAM
+             UNTIL EXIT-VSAM-READ = 'Y'.
+           IF INQCUST-INQ-SUCCESS = 'Y'
+             MOVE '0' TO INQCUST-INQ-FAIL-CD
+             MOVE CUSTOMER-EYECATCHER OF OUTPUT-DATA
+                TO INQCUST-EYE
+             MOVE CUSTOMER-SORTCODE OF OUTPUT-DATA
+                TO INQCUST-SCODE
+             MOVE CUSTOMER-NUMBER OF OUTPUT-DATA
+                TO INQCUST-CUSTNO
+             MOVE CUSTOMER-NAME OF OUTPUT-DATA
+                TO INQCUST-NAME
+             MOVE CUSTOMER-ADDRESS OF OUTPUT-DATA
+                TO INQCUST-ADDR
+             MOVE CUSTOMER-DATE-OF-BIRTH OF OUTPUT-DATA
+                TO INQCUST-DOB
+             MOVE CUSTOMER-CREDIT-SCORE OF OUTPUT-DATA
+                TO INQCUST-CREDIT-SCORE
+             MOVE CUSTOMER-CS-REVIEW-DATE OF OUTPUT-DATA
+                TO INQCUST-CS-REVIEW-DT
+           END-IF.
+           PERFORM GET-ME-OUT-OF-HERE.
+
+## Variable Map:
+WS-V-RETRIED gettermapping wsVRetried
+WS-V-RETRIED settermapping wsVRetried = val
+WS-V-RETRIED PIC X JavaType char
+WS-D-RETRIED gettermapping wsDRetried
+WS-D-RETRIED settermapping wsDRetried = val
+WS-D-RETRIED PIC X JavaType char
+SORTCODE gettermapping sortcode
+SORTCODE settermapping sortcode = val
+SORTCODE PIC 9(6) JavaType int
+REQUIRED-SORT-CODE gettermapping customerKy.getRequiredSortCode()
+REQUIRED-SORT-CODE settermapping customerKy.setRequiredSortCode(val)
+REQUIRED-SORT-CODE PIC 9(6) JavaType int
+REQUIRED-CUST-NUMBER gettermapping customerKy.getRequiredCustNumber()
+REQUIRED-CUST-NUMBER settermapping customerKy.setRequiredCustNumber(val)
+REQUIRED-CUST-NUMBER PIC 9(10) JavaType long
+RANDOM-CUSTOMER gettermapping this.getRandomCustomer()
+RANDOM-CUSTOMER settermapping this.setRandomCustomer(val)
+RANDOM-CUSTOMER PIC 9(10) JavaType long
+NCS-CUST-NO-VALUE gettermapping this.getNcsCustNoValue()
+NCS-CUST-NO-VALUE settermapping this.setNcsCustNoValue(val)
+NCS-CUST-NO-VALUE PIC 9(16) JavaType long
+INQCUST-SCODE gettermapping dfhcommarea.getInqcustScode()
+INQCUST-SCODE settermapping dfhcommarea.setInqcustScode(val)
+INQCUST-SCODE PIC X(6) JavaType String
+INQCUST-NAME gettermapping dfhcommarea.getInqcustName()
+INQCUST-NAME settermapping dfhcommarea.setInqcustName(val)
+INQCUST-NAME PIC X(60) JavaType String
+INQCUST-INQ-SUCCESS gettermapping dfhcommarea.getInqcustInqSuccess()
+INQCUST-INQ-SUCCESS settermapping dfhcommarea.setInqcustInqSuccess(val)
+INQCUST-INQ-SUCCESS PIC X JavaType char
+INQCUST-INQ-FAIL-CD gettermapping dfhcommarea.getInqcustInqFailCd()
+INQCUST-INQ-FAIL-CD settermapping dfhcommarea.setInqcustInqFailCd(val)
+INQCUST-INQ-FAIL-CD PIC X JavaType char
+INQCUST-EYE gettermapping dfhcommarea.getInqcustEye()
+INQCUST-EYE settermapping dfhcommarea.setInqcustEye(val)
+INQCUST-EYE PIC X(4) JavaType String
+INQCUST-DOB gettermapping dfhcommarea.getInqcustDob().getBytes()
+INQCUST-DOB settermapping dfhcommarea.getInqcustDob().setBytes(val)
+INQCUST-DOB GROUP JavaType InqcustDob
+INQCUST-CUSTNO gettermapping dfhcommarea.getInqcustCustno()
+INQCUST-CUSTNO settermapping dfhcommarea.setInqcustCustno(val)
+INQCUST-CUSTNO PIC 9(10) JavaType long
+INQCUST-CS-REVIEW-DT gettermapping dfhcommarea.getInqcustCsReviewDt().getBytes()
+INQCUST-CS-REVIEW-DT settermapping dfhcommarea.getInqcustCsReviewDt().setBytes(val)
+INQCUST-CS-REVIEW-DT GROUP JavaType InqcustCsReviewDt
+INQCUST-CREDIT-SCORE gettermapping dfhcommarea.getInqcustCreditScore()
+INQCUST-CREDIT-SCORE settermapping dfhcommarea.setInqcustCreditScore(val)
+INQCUST-CREDIT-SCORE PIC 999 JavaType int
+INQCUST-ADDR gettermapping dfhcommarea.getInqcustAddr()
+INQCUST-ADDR settermapping dfhcommarea.setInqcustAddr(val)
+INQCUST-ADDR PIC X(160) JavaType String
+EXIT-VSAM-READ gettermapping exitVsamRead
+EXIT-VSAM-READ settermapping exitVsamRead = val
+EXIT-VSAM-READ PIC X JavaType char
+EXIT-DB2-READ gettermapping exitDb2Read
+EXIT-DB2-READ settermapping exitDb2Read = val
+EXIT-DB2-READ PIC X JavaType char
+CUSTOMER-SORTCODE gettermapping customerRecord.getCustomerSortcode()
+CUSTOMER-SORTCODE settermapping customerRecord.setCustomerSortcode(val)
+CUSTOMER-SORTCODE PIC 9(6) JavaType int
+CUSTOMER-NUMBER gettermapping customerRecord.getCustomerNumber()
+CUSTOMER-NUMBER settermapping customerRecord.setCustomerNumber(val)
+CUSTOMER-NUMBER PIC 9(10) JavaType long
+CUSTOMER-NAME gettermapping customerRecord.getCustomerName()
+CUSTOMER-NAME settermapping customerRecord.setCustomerName(val)
+CUSTOMER-NAME PIC X(60) JavaType String
+CUSTOMER-EYECATCHER gettermapping customerRecord.getCustomerEyecatcher()
+CUSTOMER-EYECATCHER settermapping customerRecord.setCustomerEyecatcher(val)
+CUSTOMER-EYECATCHER PIC X(4) JavaType String
+CUSTOMER-DATE-OF-BIRTH gettermapping this.getCustomerDateOfBirth()
+CUSTOMER-DATE-OF-BIRTH settermapping this.setCustomerDateOfBirth(val)
+CUSTOMER-DATE-OF-BIRTH PIC 9(8) JavaType int
+CUSTOMER-CS-REVIEW-DATE gettermapping this.getCustomerCsReviewDate()
+CUSTOMER-CS-REVIEW-DATE settermapping this.setCustomerCsReviewDate(val)
+CUSTOMER-CS-REVIEW-DATE PIC 9(8) JavaType int
+CUSTOMER-CREDIT-SCORE gettermapping customerRecord.getCustomerCreditScore()
+CUSTOMER-CREDIT-SCORE settermapping customerRecord.setCustomerCreditScore(val)
+CUSTOMER-CREDIT-SCORE PIC 999 JavaType int
+CUSTOMER-ADDRESS gettermapping customerRecord.getCustomerAddress()
+CUSTOMER-ADDRESS settermapping customerRecord.setCustomerAddress(val)
+CUSTOMER-ADDRESS PIC X(160) JavaType String
+READ-CUSTOMER-VSAM_RCV010, readCustomerVsamRcv010(customerKy, customerRecord, dfhcommarea, wsVRetried)
+READ-CUSTOMER-NCS_RCN010, readCustomerNcsRcn010(dfhcommarea)
+GET-ME-OUT-OF-HERE_GMOFH010, getMeOutOfHereGmofh010()
+GENERATE-RANDOM-CUSTOMER_GRC010, generateRandomCustomerGrc010()
+
+## Class Map:
+public void premiereP010(Dfhcommarea dfhcommarea){
+    CustomerKy customerKy = new CustomerKy();
+    CustomerRecord customerRecord = new CustomerRecord();
+    char exitDb2Read = 'N';
+    char exitVsamRead = 'N';
+    int sortcode = 987654;
+    char wsDRetried = 'N';
+    char wsVRetried = 'N';
+}
+
+
+Output:

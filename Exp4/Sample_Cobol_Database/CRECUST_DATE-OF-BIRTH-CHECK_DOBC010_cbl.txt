@@ -1,0 +1,53 @@
+       DOBC010.
+      *
+      *    Ensure that the Date Of Birth is valid
+      *
+           IF COMM-BIRTH-YEAR < 1601
+              MOVE 'Y' TO WS-DATE-OF-BIRTH-ERROR
+              MOVE 'O' TO COMM-FAIL-CODE
+              GO TO DOBC999
+           END-IF.
+
+           MOVE COMM-BIRTH-YEAR TO CEEDAYS-YEAR.
+           MOVE COMM-BIRTH-MONTH TO CEEDAYS-MONTH.
+           MOVE COMM-BIRTH-DAY TO CEEDAYS-DAY.
+
+           CALL "CEEDAYS" USING DATE-OF-BIRTH-FOR-CEEDAYS
+                                DATE-OF-BIRTH-FORMAT,
+                                WS-DATE-OF-BIRTH-LILLIAN,
+                                FC.
+
+           IF NOT CEE000 OF FC THEN
+              MOVE 'Y' TO WS-DATE-OF-BIRTH-ERROR
+              MOVE 'Z' TO COMM-FAIL-CODE
+              DISPLAY 'CEEDAYS failed, FORMAT LENGTH 10 with msg '
+                 MSG-NO OF FC
+                 ' for date YYYYMMDD' DATE-OF-BIRTH-FOR-CEEDAYS
+              GO TO DOBC999
+           END-IF.
+
+           CALL "CEELOCT" USING WS-TODAY-LILLIAN,
+                                WS-TODAY-SECONDS,
+                                WS-TODAY-GREGORIAN,
+                                FC.
+
+           IF NOT CEE000 OF FC THEN
+              MOVE 'Y' TO WS-DATE-OF-BIRTH-ERROR
+              DISPLAY 'CEEDLOCT failed with msg '
+                 MSG-NO OF FC
+              GO TO DOBC999
+           END-IF.
+
+           SUBTRACT COMM-BIRTH-YEAR FROM WS-TODAY-G-YEAR
+              GIVING WS-CUSTOMER-AGE
+
+           IF WS-CUSTOMER-AGE > 150
+              MOVE 'Y' TO WS-DATE-OF-BIRTH-ERROR
+              MOVE 'O' TO COMM-FAIL-CODE
+              GO TO DOBC999
+           END-IF.
+
+           IF WS-TODAY-LILLIAN < WS-DATE-OF-BIRTH-LILLIAN
+                        MOVE 'Y' TO WS-DATE-OF-BIRTH-ERROR
+              MOVE 'Y' TO COMM-FAIL-CODE
+           END-IF.

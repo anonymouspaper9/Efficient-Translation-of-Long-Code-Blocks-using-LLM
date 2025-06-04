@@ -1,0 +1,65 @@
+       MAINLINE SECTION.                                                
+                                                                        
+      *----------------------------------------------------------------*
+      * Common code                                                    *
+      *----------------------------------------------------------------*
+      * initialize working storage variables                            
+           INITIALIZE WS-HEADER.                                        
+      * set up general variable                                         
+           MOVE EIBTRNID TO WS-TRANSID.                                 
+           MOVE EIBTRMID TO WS-TERMID.                                  
+           MOVE EIBTASKN TO WS-TASKNUM.                                 
+      *----------------------------------------------------------------*
+                                                                        
+      * initialize DB2 host variables                                   
+           INITIALIZE DB2-IN-INTEGERS.                                  
+                                                                        
+      *----------------------------------------------------------------*
+      * Check commarea and obtain required details                     *
+      *----------------------------------------------------------------*
+      * If NO commarea received issue an ABEND                          
+           IF EIBCALEN IS EQUAL TO ZERO                                 
+               MOVE ' NO COMMAREA RECEIVED' TO EM-VARIABLE              
+               PERFORM WRITE-ERROR-MESSAGE                              
+               EXEC CICS ABEND ABCODE('LGCA') NODUMP END-EXEC           
+           END-IF                                                       
+                                                                        
+      * initialize commarea return code to zero                         
+           MOVE '00' TO CA-RETURN-CODE                                  
+           MOVE EIBCALEN TO WS-CALEN.                                   
+           SET WS-ADDR-DFHCOMMAREA TO ADDRESS OF DFHCOMMAREA.           
+                                                                        
+      * Check commarea is large enough                                  
+           IF EIBCALEN IS LESS THAN WS-CA-HEADER-LEN                    
+             MOVE '98' TO CA-RETURN-CODE                                
+             EXEC CICS RETURN END-EXEC                                  
+           END-IF                                                       
+                                                                        
+      * Convert commarea customer & policy nums to DB2 integer format   
+           MOVE CA-CUSTOMER-NUM TO DB2-CUSTOMERNUM-INT                  
+           MOVE CA-POLICY-NUM   TO DB2-POLICYNUM-INT                    
+      * and save in error msg field incase required                     
+           MOVE CA-CUSTOMER-NUM TO EM-CUSNUM                            
+           MOVE CA-POLICY-NUM   TO EM-POLNUM                            
+                                                                        
+      *----------------------------------------------------------------*
+      * Check request-id in commarea and if recognised ...             *
+      * Call routine to delete row from policy table                   *
+      *----------------------------------------------------------------*
+                                                                        
+           IF ( CA-REQUEST-ID NOT EQUAL TO '01DEND' AND                 
+                CA-REQUEST-ID NOT EQUAL TO '01DHOU' AND                 
+                CA-REQUEST-ID NOT EQUAL TO '01DCOM' AND                 
+                CA-REQUEST-ID NOT EQUAL TO '01DMOT' ) Then              
+      *        Request is not recognised or supported                   
+               MOVE '99' TO CA-RETURN-CODE                              
+           ELSE                                                         
+               PERFORM DELETE-POLICY-DB2-INFO                           
+               EXEC CICS LINK PROGRAM(LGDPVS01)                         
+                    Commarea(DFHCOMMAREA)                               
+                    LENGTH(32500)                                       
+               END-EXEC                                                 
+           END-IF.                                                      
+                                                                        
+      * Return to caller                                                
+           EXEC CICS RETURN END-EXEC.                                   

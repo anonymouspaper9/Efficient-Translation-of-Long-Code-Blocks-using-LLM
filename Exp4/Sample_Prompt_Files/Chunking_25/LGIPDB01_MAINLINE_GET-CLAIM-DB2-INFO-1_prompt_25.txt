@@ -1,0 +1,815 @@
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+           DISPLAY "SNIPPET-1"
+           DISPLAY "SNIPPET-2"
+           IF SQLCODE = 0                                               
+             DISPLAY "SNIPPET-3"
+           ELSE                                                         
+             IF SQLCODE EQUAL 100                                       
+               MOVE '01' TO CA-RETURN-CODE                              
+             ELSE                                                       
+               MOVE '90' TO CA-RETURN-CODE                              
+               PERFORM WRITE-ERROR-MESSAGE                              
+             END-IF                                                     
+           END-IF.                                                      
+           EXIT.                                                        
+
+## Variable Map:
+CA-RETURN-CODE gettermapping caPolicyRequest.getCaReturnCode()
+CA-RETURN-CODE settermapping caPolicyRequest.setCaReturnCode(val)
+CA-RETURN-CODE PIC 9(2) JavaType int
+
+
+## Class Map:
+public void mainlineGetClaimDb2Info1(CaPolicyRequest caPolicyRequest, Db2InIntegers db2InIntegers, Db2Policy db2Policy, ErrorMsg errorMsg){
+}
+
+
+Output:
+=====================
+
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+           MOVE ' SELECT Claim ' TO EM-SQLREQ                           
+
+## Variable Map:
+EM-SQLREQ gettermapping errorMsg.getEmVariable().getEmSqlreq()
+EM-SQLREQ settermapping errorMsg.getEmVariable().setEmSqlreq(val)
+EM-SQLREQ PIC X(16) JavaType String
+
+
+## Class Map:
+public void mainlineGetClaimDb2Info1(CaPolicyRequest caPolicyRequest, Db2InIntegers db2InIntegers, Db2Policy db2Policy, ErrorMsg errorMsg){
+}
+
+
+Output:
+=====================
+
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+           EXEC SQL                                                     
+             SELECT                                                     
+                   POLICY.CustomerNumber,                               
+                   ClaimNumber,                                         
+                   CLAIM.PolicyNumber,                                  
+                   ClaimDate,                                           
+                   Paid,                                                
+                   Value,                                               
+                   Cause,                                               
+                   Observations                                         
+             INTO  :DB2-Customernum-int,                                
+                   :DB2-Claimnum-int,                                   
+                   :DB2-POLICYNUM-INT,                                  
+                   :DB2-C-Date,                                         
+                   :DB2-C-Paid-Int,                                     
+                   :DB2-C-Value-Int,                                    
+                   :DB2-C-Cause,                                        
+                   :DB2-C-Observations                                  
+             FROM  POLICY,CLAIM                                         
+             WHERE ( POLICY.POLICYNUMBER =                              
+                        CLAIM.POLICYNUMBER   AND                        
+                     CLAIM.ClaimNumber =                                
+                        :DB2-ClaimNum-INT             )                 
+           END-EXEC                                                     
+
+## Variable Map:
+DB2-POLICYNUM-INT gettermapping db2InIntegers.getDb2PolicynumInt()
+DB2-POLICYNUM-INT settermapping db2InIntegers.setDb2PolicynumInt(val)
+DB2-POLICYNUM-INT PIC S9(9) JavaType int
+DB2-CUSTOMERNUM-INT gettermapping db2InIntegers.getDb2CustomernumInt()
+DB2-CUSTOMERNUM-INT settermapping db2InIntegers.setDb2CustomernumInt(val)
+DB2-CUSTOMERNUM-INT PIC S9(9) JavaType int
+DB2-CLAIMNUM-INT gettermapping db2InIntegers.getDb2ClaimnumInt()
+DB2-CLAIMNUM-INT settermapping db2InIntegers.setDb2ClaimnumInt(val)
+DB2-CLAIMNUM-INT PIC S9(9) JavaType int
+DB2-C-Value-int gettermapping db2OutIntegers.getDb2CValueInt()
+DB2-C-Value-int settermapping db2OutIntegers.setDb2CValueInt(val)
+DB2-C-Value-int PIC S9(9) JavaType int
+DB2-C-Paid-int gettermapping db2OutIntegers.getDb2CPaidInt()
+DB2-C-Paid-int settermapping db2OutIntegers.setDb2CPaidInt(val)
+DB2-C-Paid-int PIC S9(9) JavaType int
+DB2-C-Observations gettermapping db2Claim.getClaim().getObservations()
+DB2-C-Observations settermapping db2Claim.getClaim().setObservations(val)
+DB2-C-Observations PIC X(255) JavaType String
+DB2-C-Date gettermapping db2Claim.getClaim().getClaimdate()
+DB2-C-Date settermapping db2Claim.getClaim().setClaimdate(val)
+DB2-C-Date PIC X(10) JavaType Date
+DB2-C-Cause gettermapping db2Claim.getClaim().getCause()
+DB2-C-Cause settermapping db2Claim.getClaim().setCause(val)
+DB2-C-Cause PIC X(255) JavaType String
+
+
+## Class Map:
+public void mainlineGetClaimDb2Info1(CaPolicyRequest caPolicyRequest, Db2InIntegers db2InIntegers, Db2Policy db2Policy, ErrorMsg errorMsg){
+    Db2OutIntegers db2OutIntegers = new Db2OutIntegers();
+    Db2Claim db2Claim = new Db2Claim();
+}
+
+
+Output:
+=====================
+
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+             ADD WS-CA-HEADERTRAILER-LEN TO WS-REQUIRED-CA-LEN          
+             ADD WS-FULL-CLAIM-LEN       TO WS-REQUIRED-CA-LEN          
+             IF EIBCALEN IS LESS THAN WS-REQUIRED-CA-LEN                
+               MOVE '98' TO CA-RETURN-CODE                              
+               EXEC CICS RETURN
+               END-EXEC                                
+             ELSE                                                       
+               MOVE DB2-Customernum-int      TO CA-CUSTOMER-NUM         
+               MOVE DB2-PolicyNum-int        TO CA-POLICY-NUM           
+               MOVE DB2-Claimnum-int         TO DB2-C-Num               
+               MOVE DB2-C-Paid-Int           TO DB2-C-Paid              
+               MOVE DB2-C-Value-Int          TO DB2-C-Value             
+               MOVE DB2-POLICY-COMMON  TO CA-POLICY-COMMON              
+               MOVE DB2-Claim          TO CA-Claim(1:WS-COMM-LEN)       
+             END-IF                                                     
+             MOVE 'FINAL' TO CA-C-FILLER(1:5)                           
+
+## Variable Map:
+WS-REQUIRED-CA-LEN gettermapping this.getWsRequiredCaLen()
+WS-REQUIRED-CA-LEN settermapping this.setWsRequiredCaLen(val)
+WS-REQUIRED-CA-LEN PIC S9(4) JavaType int
+WS-FULL-CLAIM-LEN gettermapping wsFullClaimLen
+WS-FULL-CLAIM-LEN settermapping wsFullClaimLen = val
+WS-FULL-CLAIM-LEN PIC S9(4) JavaType int
+WS-COMM-LEN gettermapping wsCommLen
+WS-COMM-LEN settermapping wsCommLen = val
+WS-COMM-LEN PIC S9(4) JavaType int
+WS-CA-HEADERTRAILER-LEN gettermapping wsCaHeadertrailerLen
+WS-CA-HEADERTRAILER-LEN settermapping wsCaHeadertrailerLen = val
+WS-CA-HEADERTRAILER-LEN PIC S9(4) JavaType int
+DB2-POLICYNUM-INT gettermapping db2InIntegers.getDb2PolicynumInt()
+DB2-POLICYNUM-INT settermapping db2InIntegers.setDb2PolicynumInt(val)
+DB2-POLICYNUM-INT PIC S9(9) JavaType int
+DB2-POLICY-COMMON gettermapping db2Policy.getDb2PolicyCommon().getBytes()
+DB2-POLICY-COMMON settermapping db2Policy.getDb2PolicyCommon().setBytes(val)
+DB2-POLICY-COMMON GROUP JavaType Db2PolicyCommon
+DB2-CUSTOMERNUM-INT gettermapping db2InIntegers.getDb2CustomernumInt()
+DB2-CUSTOMERNUM-INT settermapping db2InIntegers.setDb2CustomernumInt(val)
+DB2-CUSTOMERNUM-INT PIC S9(9) JavaType int
+DB2-CLAIMNUM-INT gettermapping db2InIntegers.getDb2ClaimnumInt()
+DB2-CLAIMNUM-INT settermapping db2InIntegers.setDb2ClaimnumInt(val)
+DB2-CLAIMNUM-INT PIC S9(9) JavaType int
+DB2-CLAIM gettermapping db2Claim.getBytes()
+DB2-CLAIM settermapping db2Claim.setBytes(val)
+DB2-CLAIM GROUP JavaType Db2Claim
+DB2-C-Value-int gettermapping db2OutIntegers.getDb2CValueInt()
+DB2-C-Value-int settermapping db2OutIntegers.setDb2CValueInt(val)
+DB2-C-Value-int PIC S9(9) JavaType int
+DB2-C-Value gettermapping db2Claim.getClaim().getValue()
+DB2-C-Value settermapping db2Claim.getClaim().setValue(val)
+DB2-C-Value PIC 9(8) JavaType int
+DB2-C-Paid-int gettermapping db2OutIntegers.getDb2CPaidInt()
+DB2-C-Paid-int settermapping db2OutIntegers.setDb2CPaidInt(val)
+DB2-C-Paid-int PIC S9(9) JavaType int
+DB2-C-Paid gettermapping db2Claim.getClaim().getPaid()
+DB2-C-Paid settermapping db2Claim.getClaim().setPaid(val)
+DB2-C-Paid PIC 9(8) JavaType int
+DB2-C-Num gettermapping db2Claim.getClaim().getClaimnumber()
+DB2-C-Num settermapping db2Claim.getClaim().setClaimnumber(val)
+DB2-C-Num PIC 9(10) JavaType int
+CA-RETURN-CODE gettermapping caPolicyRequest.getCaReturnCode()
+CA-RETURN-CODE settermapping caPolicyRequest.setCaReturnCode(val)
+CA-RETURN-CODE PIC 9(2) JavaType int
+CA-POLICY-NUM gettermapping caPolicyRequest.getPolicy().getPolicynumber()
+CA-POLICY-NUM settermapping caPolicyRequest.getPolicy().setPolicynumber(val)
+CA-POLICY-NUM PIC 9(10) JavaType int
+CA-POLICY-COMMON gettermapping ((CaPolicyRequest)(dfhcommarea)).getCaPolicyCommon().getBytes()
+CA-POLICY-COMMON settermapping ((CaPolicyRequest)(dfhcommarea)).getCaPolicyCommon().setBytes(val)
+CA-POLICY-COMMON GROUP JavaType CaPolicyCommon
+CA-CUSTOMER-NUM gettermapping caPolicyRequest.getCaCustomerNum()
+CA-CUSTOMER-NUM settermapping caPolicyRequest.setCaCustomerNum(val)
+CA-CUSTOMER-NUM PIC 9(10) JavaType long
+CA-CLAIM gettermapping ((CaClaim)(((CaPolicyRequest)(dfhcommarea)))).getBytes()
+CA-CLAIM settermapping ((CaClaim)(((CaPolicyRequest)(dfhcommarea)))).setBytes(val)
+CA-CLAIM GROUP JavaType CaClaim
+CA-C-FILLER gettermapping ((CaClaim)(caPolicyRequest)).getCaCFiller()
+CA-C-FILLER settermapping ((CaClaim)(caPolicyRequest)).setCaCFiller(val)
+CA-C-FILLER PIC X(31854) JavaType String
+
+
+## Class Map:
+public void mainlineGetClaimDb2Info1(CaPolicyRequest caPolicyRequest, Db2InIntegers db2InIntegers, Db2Policy db2Policy, ErrorMsg errorMsg){
+    int wsCommLen = 1102;
+    int wsFullClaimLen = 618;
+    Db2Claim db2Claim = new Db2Claim();
+    Db2OutIntegers db2OutIntegers = new Db2OutIntegers();
+    int wsCaHeadertrailerLen = 33;
+}
+
+
+Output:
+=====================
+

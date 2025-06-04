@@ -1,0 +1,47 @@
+public void dateOfBirthCheckDobc010(CommDobGroup7 commDobGroup) {
+    String wsTodaySeconds = "";
+    WsTodayGregorian wsTodayGregorian = new WsTodayGregorian();
+    DateOfBirthFormat dateOfBirthFormat = new DateOfBirthFormat();
+    DateOfBirthForCeedays dateOfBirthForCeedays = new DateOfBirthForCeedays();
+    Fc fc = new Fc();
+
+    if (commDobGroup.getCommBirthYear() < 1601) {
+        this.setWsDateOfBirthError('Y');
+        commDobGroup.setCommFailCode('O');
+        return;
+    }
+    dateOfBirthForCeedays.setCeedaysYear(commDobGroup.getCommBirthYear());
+    dateOfBirthForCeedays.setCeedaysMonth(commDobGroup.getCommBirthMonth());
+    dateOfBirthForCeedays.setCeedaysDay(commDobGroup.getCommBirthDay());
+    try {
+        java.time.format.DateTimeFormatter jdeclFormatter = java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd");
+        java.time.LocalDate jdeclLocalDate = java.time.LocalDate.parse(dateOfBirthForCeedays.toString(),
+                jdeclFormatter);
+        java.time.format.DateTimeFormatter jdeclFormatter2 = java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd");
+        java.time.LocalDate jdeclLocalDate2 = java.time.LocalDate.parse(jdeclFormatter2.format(jdeclLocalDate));
+        wsDateOfBirthLillian = (int) java.time.temporal.ChronoUnit.DAYS.between(jdeclLocalDate2,
+                java.time.LocalDate.now());
+    } catch (RuntimeException e) {
+        throw e;
+    }
+    try {
+        java.time.format.DateTimeFormatter jdeclFormatter = java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd");
+        java.time.LocalDate jdeclLocalDate = java.time.LocalDate.parse(wsTodaySeconds, jdeclFormatter);
+        java.time.format.DateTimeFormatter jdeclFormatter2 = java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd");
+        java.time.LocalDate jdeclLocalDate2 = java.time.LocalDate.parse(jdeclFormatter2.format(jdeclLocalDate));
+        wsTodayLillian = (int) java.time.temporal.ChronoUnit.DAYS.between(jdeclLocalDate2, java.time.LocalDate.now());
+    } catch (RuntimeException e) {
+        throw e;
+    }
+    wsCustomerAge = wsTodayGregorian.getWsTodayGYear() - commDobGroup.getCommBirthYear();
+    if (wsCustomerAge > 150) {
+        this.setWsDateOfBirthError('Y');
+        commDobGroup.setCommFailCode('O');
+        return;
+    }
+    if (wsTodayLillian < wsDateOfBirthLillian) {
+        this.setWsDateOfBirthError('Y');
+        commDobGroup.setCommFailCode('Y');
+    }
+
+}

@@ -1,0 +1,33 @@
+public void restoreTermDefRtd010(Dfhcommarea dfhcommarea, WsFailInfo wsFailInfo){
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    String wsAbendPgm = "ABNDPROC";
+    WsCommArea wsCommArea = new WsCommArea();
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+    int wsUctrans = 0;
+    try {
+        String sql = "SET TERMINAL UC";
+        CicsConnection connection = CicsConnection.getConnection();
+        connection.execute(sql);
+    }
+    catch(CicsException exception) {
+        abndinfoRec.setAbndRespcode(exception.getRespCode());
+        abndinfoRec.setAbndResp2Code(exception.getResp2Code());
+        abndinfoRec.setAbndSqlcode(0);
+        abndinfoRec.setAbndProgram(wsAbendPgm);
+        abndinfoRec.setAbndFreeform("RTD010 - SET TERMINAL UC FAIL EIBRESP=" + exception.getRespCode() + " RESP2=" + exception.getResp2Code());
+        abndinfoRec.setAbndDate(wsCommArea.getWsOrigDate());
+        String time = wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":" + wsTimeNowGrp.getWsTimeNowGrpSs();
+        abndinfoRec.setAbndTime(time);
+        abndinfoRec.setAbndUtimeKey(wsCommArea.getWsUTime());
+        abndinfoRec.setAbndTranid(wsCommArea.getWsCommTerm());
+        abndinfoRec.setAbndTasknoKey(wsCommArea.getWsCommAreaId());
+        abndinfoRec.setAbndCode("HBNK");
+        abndinfoRec.setAbndApplid(wsAbendPgm);
+        abndinfoRec.setAbndSqlcode(0);
+        wsFailInfo.setWsCicsRespDisp(abndinfoRec.getAbndRespcode());
+        wsFailInfo.setWsCicsResp2Disp(abndinfoRec.getAbndResp2Code());
+        wsFailInfo.setWsCicsFailMsg("BNK1CCS - RTD010 - SET TERMINAL UC FAIL");
+        abendThisTaskAtt010(dfhcommarea, wsFailInfo);
+        return;
+    }
+} 

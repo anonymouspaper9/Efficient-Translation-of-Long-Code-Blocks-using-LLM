@@ -1,0 +1,10 @@
+public void updateAccountDb2Uad010(Dfhcommarea dfhcommarea, int sqlcodeDisplay) {
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    int desiredAccNo;
+    int desiredSortCode;
+    String wsAbendPgm = "ABNDPROC";
+    int wsCicsResp;
+    int wsCicsResp2;
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+    /* Unable to translate CICS API due to use of an unsupported option */
+}

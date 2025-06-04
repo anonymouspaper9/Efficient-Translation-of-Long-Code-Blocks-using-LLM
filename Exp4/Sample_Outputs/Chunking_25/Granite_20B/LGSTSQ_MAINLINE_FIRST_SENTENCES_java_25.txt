@@ -1,0 +1,75 @@
+public void invokeMainline(Dfhcommarea dfhcommarea) throws java.lang.Exception, java.lang.Exception {
+    Stsq stsq = new Stsq();
+    String stdqName = "CSMT";
+    int wsRecvLen = 80;
+    WriteMsg writeMsg = new WriteMsg();
+
+    char wsFlag = ' ';
+
+    String wsStartcode = "";
+    String wsInvokeprog = "";
+    String wsPrinsysid = "";
+    WsRecv wsRecv = new WsRecv();
+    writeMsg = new WriteMsg();
+    writeMsg.setWriteMsgSysid(Region.getSYSID());
+    wsStartcode = Task.getTask().getSTARTCODE();
+    wsInvokeprog = Task.getTask().getInvokingProgramName();
+    ConversationPrincipalFacility conversationPrincipalFacility;
+    Object o = Task.getTask().getPrincipalFacility();
+    if (o instanceof ConversationPrincipalFacility) {
+        conversationPrincipalFacility = (ConversationPrincipalFacility) o;
+        wsPrinsysid = conversationPrincipalFacility.getPrinSysId();
+    }
+
+    wsInvokeprog = "";
+    Filler1375 filler1375 = new Filler1375();
+    String tempo = "";
+    writeMsg = new WriteMsg();
+    Filler1372 filler1372 = new Filler1372();
+    wsInvokeprog = "";
+    wsFlag = 'C';
+    writeMsg.setWriteMsgMsg(dfhcommarea.getCommaData());
+    wsRecvLen = dfhcommarea.getEibcalen();
+    if (wsInvokeprog.equals("")) {
+        wsRecvLen = wsRecvLen - 5;
+        wsRecv.setWsRecvData(dfhcommarea.getStringData());
+        writeMsg.setWriteMsgMsg(wsRecv.getWsRecvData());
+    }
+    stsq.setStsqName("GENAERRS");
+    if (writeMsg.getWriteMsgMsg().substring(0, 2).equals("Q=")) {
+        filler1375.setStsqExt(writeMsg.getWriteMsgMsg().substring(2, 6));
+        tempo = writeMsg.getWriteMsgMsg().substring(6);
+        writeMsg.setWriteMsgMsg(tempo);
+        wsRecvLen = wsRecvLen - 7;
+    }
+    wsRecvLen = wsRecvLen + 5;
+
+    stsq = new Stsq();
+    wsRecvLen = 80;
+    writeMsg = new WriteMsg();
+    try {
+        TDQ jdeclTdQueue = new TDQ();
+        jdeclTdQueue.setName(stdqName);
+        jdeclTdQueue.writeString(writeMsg.getWriteMsg());
+    } catch (IOErrorException | ISCInvalidRequestException | LengthErrorException | NoSpaceException
+            | NotAuthorisedException | NotOpenException | InvalidSystemIdException e) {
+        throw Exception;
+    }
+    try {
+        TSQ jdeclTsq = new TSQ();
+        jdeclTsq.setName(stsq.getStsqName());
+        jdeclTsq.writeString(writeMsg.getWriteMsg());
+    } catch (IOErrorException | ISCInvalidRequestException | LengthErrorException | NoSpaceException
+            | NotAuthorisedException | NotOpenException | InvalidSystemIdException e) {
+        throw Exception;
+    }
+
+    if (wsFlag == 'R') {
+        Object jdeclTask = Task.getTask();
+        HttpResponse jdeclResp = new HttpResponse();
+        jdeclResp.setErasePage(true);
+        jdeclResp.setActionEventual();
+        jdeclResp.sendFrom(writeMsg.getFillerX());
+    }
+
+}

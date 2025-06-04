@@ -1,0 +1,36 @@
+```java
+public void premiereP010(Dfhcommarea dfhcommarea) {
+    int requiredSortCode = 0;
+    int sortcode = 987654;
+    WsOrigDateGrp wsOrigDateGrp = new WsOrigDateGrp();
+
+    requiredSortCode = sortcode;
+    populateTimeDatePtd010();
+    creditCheckCc010(dfhcommarea);
+
+    if (this.getWsCreditCheckError().equals("Y")) {
+        dfhcommarea.setCommCreditScore(0);
+        String wsOrigDateDD = wsOrigDateGrp.getWsOrigDateDd();
+        String wsOrigDateMM = wsOrigDateGrp.getWsOrigDateMm();
+        String wsOrigDateYYYY = wsOrigDateGrp.getWsOrigDateYyyy();
+        dfhcommarea.setCommCsReviewDate(Integer.parseInt(wsOrigDateYYYY) * 10000 + Integer.parseInt(wsOrigDateMM) * 100 + Integer.parseInt(wsOrigDateDD));
+        dfhcommarea.setCommSuccess('N');
+        dfhcommarea.setCommFailCode('G');
+        System.out.println("WS-CREDIT-CHECK-ERROR = Y, RESP=" + this.getWsCicsResp() + " RESP2=" + this.getWsCicsResp2());
+        System.out.println("   Exiting CRECUST. COMMAREA=" + dfhcommarea.getBytes());
+        getMeOutOfHereGmofh010();
+    }
+
+    dateOfBirthCheckDobc010(commDobGroup);
+
+    if (this.getWsDateOfBirthError().equals("Y")) {
+        dfhcommarea.setCommSuccess('N');
+        getMeOutOfHereGmofh010();
+    }
+
+    enqNamedCounterEnc010(dfhcommarea);
+    updNcsUn010();
+    writeCustomerVsamWcv010(dfhcommarea);
+    getMeOutOfHereGmofh010();
+}
+```

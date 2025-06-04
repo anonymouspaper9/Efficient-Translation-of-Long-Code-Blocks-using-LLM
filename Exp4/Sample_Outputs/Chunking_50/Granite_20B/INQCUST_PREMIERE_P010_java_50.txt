@@ -1,0 +1,24 @@
+public void premiereP010(Dfhcommarea dfhcommarea) {
+    CustomerKy customerKy = new CustomerKy();
+    char exitVsamRead = 'N';
+    char exitDb2Read = 'N';
+    int sortcode = 987654;
+    char wsVRetried = 'N';
+    char wsDRetried = 'N';
+
+    CustomerRecord customerRecord = new CustomerRecord();
+
+    if (dfhcommarea.getInqcustInqSuccess() == 'Y') {
+        dfhcommarea.setInqcustInqFailCd('0');
+        dfhcommarea.setInqcustEye(customerRecord.getCustomerEyecatcher());
+        dfhcommarea.setInqcustScode(String.valueOf(customerRecord.getCustomerSortcode()));
+        dfhcommarea.setInqcustCustno(customerRecord.getCustomerNumber());
+        dfhcommarea.setInqcustName(customerRecord.getCustomerName());
+        dfhcommarea.setInqcustAddr(customerRecord.getCustomerAddress());
+        dfhcommarea.getInqcustDob().setBytes(String.valueOf(this.getCustomerDateOfBirth()).getBytes());
+        dfhcommarea.setInqcustCreditScore(customerRecord.getCustomerCreditScore());
+        dfhcommarea.getInqcustCsReviewDt().setBytes(String.valueOf(this.getCustomerCsReviewDate()).getBytes());
+    }
+    getMeOutOfHere();
+
+}

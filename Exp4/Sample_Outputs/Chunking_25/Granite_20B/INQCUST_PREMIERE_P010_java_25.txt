@@ -1,0 +1,50 @@
+public void premiereP010(Dfhcommarea dfhcommarea) {
+    char exitVsamRead = 'N';
+    CustomerRecord customerRecord = new CustomerRecord();
+
+    CustomerKy customerKy = new CustomerKy();
+    int sortcode = 987654;
+    dfhcommarea.setInqcustInqSuccess('N');
+    dfhcommarea.setInqcustInqFailCd('0');
+    customerKy.setRequiredSortCode(sortcode);
+    customerKy.setRequiredCustNumber(dfhcommarea.getInqcustCustno());
+
+    customerKy = new CustomerKy();
+    char exitDb2Read = 'N';
+    char wsVRetried = 'N';
+    char wsDRetried = 'N';
+    if (dfhcommarea.getInqcustCustno() == 0000000000 || dfhcommarea.getInqcustCustno() == 9999999999) {
+        this.readCustomerNcs();
+        System.out.println("CUST NO RETURNED FROM NCS=" + this.getNcsCustNoValue());
+        if (dfhcommarea.getInqcustInqSuccess() == 'Y') {
+            customerKy.setRequiredCustNumber(this.getNcsCustNoValue());
+        } else {
+            this.getMeOutOfHere();
+        }
+    }
+    if (dfhcommarea.getInqcustCustno() == 0000000000) {
+        this.generateRandomCustomer();
+        customerKy.setRequiredCustNumber(this.getRandomCustomer());
+    }
+    exitVsamRead = 'N';
+    exitVsamRead = 'N';
+    while (exitVsamRead != 'Y') {
+        customerRecord.readCustomerVsam();
+    }
+    if (dfhcommarea.getInqcustInqSuccess() == 'Y') {
+        dfhcommarea.setInqcustInqFailCd('0');
+        dfhcommarea.setInqcustEye(customerRecord.getCustomerEyecatcher());
+        dfhcommarea.setInqcustScode(String.valueOf(customerRecord.getCustomerSortcode()));
+        dfhcommarea.setInqcustCustno(customerRecord.getCustomerNumber());
+        dfhcommarea.setInqcustName(customerRecord.getCustomerName());
+        dfhcommarea.setInqcustAddr(customerRecord.getCustomerAddress());
+        this.setCustomerDateOfBirth(customerRecord.getCustomerDateOfBirth());
+        dfhcommarea.getInqcustDob().setBytes(this.getCustomerDateOfBirth());
+        dfhcommarea.setInqcustCreditScore(customerRecord.getCustomerCreditScore());
+        this.setCustomerCsReviewDate(customerRecord.getCustomerCsReviewDate());
+        dfhcommarea.getInqcustCsReviewDt().setBytes(this.getCustomerCsReviewDate());
+    }
+
+    getMeOutOfHere();
+
+}

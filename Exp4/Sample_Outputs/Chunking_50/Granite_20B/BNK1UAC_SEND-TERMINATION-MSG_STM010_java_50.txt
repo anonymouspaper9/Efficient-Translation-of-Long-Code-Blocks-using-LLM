@@ -1,0 +1,45 @@
+public void sendTerminationMsgStm010() {
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    WsFailInfo wsFailInfo = new WsFailInfo();
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+    String wsAbendPgm = "ABNDPROC";
+
+    String endOfSessionMessage = "Session Ended";
+    try {
+        Task.getTask().getChannel("CHANNEL-NAME0001").delete();
+    } catch (CicsConditionException e) {
+
+        abndinfoRec = new AbndinfoRec();
+        wsFailInfo = new WsFailInfo();
+        wsTimeNowGrp = new WsTimeNowGrp();
+        wsAbendPgm = "ABNDPROC";
+        abndinfoRec.setAbndRespcode(Task.getTask().getTask().getApplicationContext().getPlatform().getAbendCode());
+        abndinfoRec.setAbndResp2Code(Task.getTask().getTask().getApplicationContext().getPlatform().getAbendCode2());
+        abndinfoRec.setAbndTasknoKey(Task.getTask().getTask().getTaskNumber());
+        abndinfoRec.setAbndTranid(Task.getTask().getTask().getTransactionName());
+        this.populateTimeDate();
+        abndinfoRec.setAbndDate(this.getWsOrigDate());
+        String wsTimeNow = String.format("%02d", wsTimeNowGrp.getWsTimeNowGrpHh()) + ":"
+                + String.format("%02d", wsTimeNowGrp.getWsTimeNowGrpMm()) + ":"
+                + String.format("%02d", wsTimeNowGrp.getWsTimeNowGrpMm());
+        abndinfoRec.setAbndTime(wsTimeNow);
+        abndinfoRec.setAbndUtimeKey(this.getWsUTime());
+        abndinfoRec.setAbndCode("HBNK");
+        abndinfoRec.setAbndProgram(Task.getTask().getTask().getProgramName());
+        abndinfoRec.setAbndSqlcode(0);
+        String jdeclVar1 = "STM010 - SEND TEXT FAIL. EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2="
+                + abndinfoRec.getAbndResp2Code();
+        abndinfoRec.setAbndFreeform(jdeclVar1);
+        Object jdeclTask = Task.getTask();
+        Channel jdeclChannelObj = jdeclTask.getCurrentChannel();
+        Program jdeclProgObj = new Program();
+        jdeclProgObj.setName(wsAbendPgm);
+        jdeclProgObj.link(jdeclChannelObj, abndinfoRec);
+        wsFailInfo.setWsCicsFailMsg("BNK1UAC - STM010 - SEND TEXT FAIL");
+        wsFailInfo.setWsCicsRespDisp(abndinfoRec.getAbndRespcode());
+        wsFailInfo.setWsCicsResp2Disp(abndinfoRec.getAbndResp2Code());
+
+        throw e;
+    }
+
+}

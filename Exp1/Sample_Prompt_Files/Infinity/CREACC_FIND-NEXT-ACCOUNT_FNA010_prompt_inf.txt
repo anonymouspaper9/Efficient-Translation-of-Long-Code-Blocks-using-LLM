@@ -1,0 +1,525 @@
+translate code from cobol to java
+
+
+Input:
+DEMO-TASKA.
+ 
+ * This is prompt example 1 *  
+MOVE 'HELLO WORLD' TO VA-TAB  
+MOVE '45' TO CA-PAYMENT  
+IF MAN-BOOKER IS EQUAL TO 24
+ EXEC SQL
+   INSERT INTO ADDR
+             ( NUMBER,
+               NAME)
+      VALUES ( :SAN-NUM,
+               :SHAP-VALUE)              
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0
+   PERFORM TRAN-RATE-INTERVAL
+   EXEC STATEMENT1 END-EXEC
+ END-IF
+ENDIF
+ EXEC SQL
+        SET :SAN-NUM = IDENTITY_VAL_LOCAL() 
+ END-EXEC 
+ 
+ MOVE  SAN-NUM TO PY-RES-INT
+ MOVE 25 TO MAN-BOOKER
+ MOVE 20 TO AGE
+ DISPLAY AGE
+ EXIT.
+
+## Variable Map:
+VA-TAB gettermapping recordBook.getRetailName().getTabValue()
+VA-TAB settermapping recordBook.getRetailName().setTabValue(val)
+VA-TAB PIC X(20) JavaType String
+MAN-BOOKER gettermapping markDanson.getPost().getManBooker() 
+MAN-BOOKER settermapping markDanson.getPost().setManBooker(val) 
+MAN-BOOKER PIC 9(3) JavaType int
+CA-PAYMENT gettermapping this.getCaPayment()
+CA-PAYMENT settermapping this.setCaPayment(val)
+CA-PAYMENT PIC 9(2) JavaType int
+PY-RES-INT gettermapping this.getPyResInt()
+PY-RES-INT settermapping this.setPyResInt(val)
+PY-RES-INT PIC 99 JavaType int
+SHAP-VALUE gettermapping this.retail.getShapValue()
+SHAP-VALUE settermapping this.retail.setShapValue(val)
+SHAP-VALUE PIC X(4) JavaType String
+SAN-NUM gettermapping sanNum
+SAN-NUM settermapping sanNum
+SAN-NUM PIC 9(2) JavaType int
+AGE gettermapping spa.getInt("age")
+AGE settermapping spa.setInt("age", val)
+AGE PIC 9(2) JavaType int
+TRAN-RATE-INTERVAL, markDanson.tranInterval(reportVal)
+
+## Class Map:
+void demoTaskA(int sanNum){
+    bookShop markDanson =  new BookShop();
+}
+
+Output:
+void demoTaskA(int sanNum) {
+    bookShop markDanson =  new BookShop();
+    /* This is prompt example 1 */ 
+    recordBook.getRetailName().setTabValue("HELLO WORLD");
+    this.setCaPayment(Integer.parseInt("45"));        
+   
+    if (markDanson.getPost().getManBooker() == 24) {
+    try {
+        String sql = "INSERT INTO ADDR(NUMBER, NAME)values(?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, sanNum);
+        ps.setString(2, this.retail.getShapValue());
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        markDanson.tranInterval(reportVal);
+        return;
+    }
+    }
+    try{
+        ResultSet rs =  JdbcConnection.connection.createStatement().executeQuery("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1");
+        rs.next();
+        sanNum = rs.getInt(1);
+    }
+    catch(SQLException exception){
+        System.out.println(exception);
+        return;
+    }
+    this.setPyResInt(sanNum);  
+    markDanson.getPost().setManBooker(25);
+    spa.setInt("age", 20);
+    System.out.println( spa.getInt("age") );
+}
+
+Input:
+BUZZ-VAL. 
+* This is prompt example 2 * 
+ IF CAN-BANK-VAL IS EQUAL TO 87
+ EXEC SQL
+   INSERT INTO BANK
+             ( NUM,
+               LOCATION)
+      VALUES ( DEFAULT,
+               :SYS-GERM)
+ END-EXEC
+ IF SQLCODE NOT EQUAL 0   
+   MOVE '10' TO CA-SUM-ASSURED
+   PERFORM PRINT-FUNCTION
+   EXEC STATEMENT2 END-EXEC
+ END-IF
+END-IF
+EXIT.
+
+## Variable Map:
+SYS-GERM gettermapping sysGerm
+SYS-GERM settermapping sysGerm
+SYS-GERM PIC X(5) JavaType String
+CAN-BANK-VAL gettermapping bankVar.getCanBankVal()
+CAN-BANK-VAL settermapping bankVar.setCanBankVal(val)
+CAN-BANK-VAL 9(3) JavaType int
+CA-SUM-ASSURED gettermapping this.getCaSumAssured()
+CA-SUM-ASSURED settermapping this.setCaSumAssured(val)
+CA-SUM-ASSURED PIC 99 JavaType int
+PRINT-FUNCTION, this.printFunction(errReport)
+
+## Class Map:
+void buzzVal(String caRhNum){        
+    int poll = 0;
+}
+
+Output:
+void buzzVal(String caRhNum){
+    int poll = 0;
+   /* This is prompt example 2 */
+   if (bankVar.getCanBankVal() == 87){
+     try {
+        String sql = "INSERT INTO BANK(LOCATION)values(?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, sysGerm);
+        ps.executeUpdate();
+        ps.close();
+    }
+    catch(SQLException exception) {
+        this.setCaSumAssured(Integer.parseInt("10"));     
+        this.printFunction(errReport);
+        return;
+     } 
+   }
+}
+
+Input:
+       FNA010.
+           MOVE 1 TO NCS-ACC-NO-INC.
+           INITIALIZE OUTPUT-DATA.
+           MOVE SPACES TO HV-CONTROL-NAME
+           MOVE ZERO TO HV-CONTROL-VALUE-NUM
+           MOVE SPACES TO HV-CONTROL-VALUE-STR
+           STRING REQUIRED-SORT-CODE DELIMITED BY SIZE
+           '-' DELIMITED BY SIZE
+           'ACCOUNT-LAST' DELIMITED BY SIZE
+           INTO HV-CONTROL-NAME
+           EXEC SQL
+              SELECT CONTROL_NAME,
+                       CONTROL_VALUE_NUM,
+                       CONTROL_VALUE_STR
+              INTO :HV-CONTROL-NAME,
+                      :HV-CONTROL-VALUE-NUM,
+                      :HV-CONTROL-VALUE-STR
+              FROM CONTROL
+              WHERE CONTROL_NAME = :HV-CONTROL-NAME
+           END-EXEC.
+           IF SQLCODE IS NOT EQUAL TO ZERO
+             MOVE SQLCODE TO SQLCODE-DISPLAY
+             INITIALIZE ABNDINFO-REC
+             MOVE EIBRESP    TO ABND-RESPCODE
+             MOVE EIBRESP2   TO ABND-RESP2CODE
+             EXEC CICS ASSIGN
+                  APPLID(ABND-APPLID)
+             END-EXEC
+             MOVE EIBTASKN   TO ABND-TASKNO-KEY
+             MOVE EIBTRNID   TO ABND-TRANID
+             PERFORM POPULATE-TIME-DATE2
+             MOVE WS-ORIG-DATE TO ABND-DATE
+             STRING WS-TIME-NOW-GRP-HH DELIMITED BY SIZE,
+                    ':' DELIMITED BY SIZE,
+                     WS-TIME-NOW-GRP-MM DELIMITED BY SIZE,
+                     ':' DELIMITED BY SIZE,
+                     WS-TIME-NOW-GRP-MM DELIMITED BY SIZE
+                     INTO ABND-TIME
+             END-STRING
+             MOVE WS-U-TIME   TO ABND-UTIME-KEY
+             MOVE 'HNCS'      TO ABND-CODE
+             EXEC CICS ASSIGN
+                  PROGRAM(ABND-PROGRAM)
+             END-EXEC
+             MOVE SQLCODE-DISPLAY    TO ABND-SQLCODE
+             STRING 'FNAND010 - ACCOUNT NCS '
+                    DELIMITED BY SIZE,
+                    NCS-ACC-NO-NAME DELIMITED BY SIZE,
+                    ' Cannot be accessed and DB2 SELECT failed.'
+                    DELIMITED BY SIZE,
+                    ' EIBRESP=' DELIMITED BY SIZE,
+                    ABND-RESPCODE DELIMITED BY SIZE,
+                    ' RESP2=' DELIMITED BY SIZE,
+                    ABND-RESP2CODE DELIMITED BY SIZE
+                    INTO ABND-FREEFORM
+             END-STRING
+             EXEC CICS LINK
+                  COMMAREA(ABNDINFO-REC)
+                  PROGRAM(WS-ABEND-PGM)
+             END-EXEC
+             DISPLAY 'CREACC - ACCOUNT NCS ' NCS-ACC-NO-NAME
+                ' CANNOT BE ACCESSED AND DB2 SELECT FAILED. SQLCODE='
+                SQLCODE-DISPLAY
+             EXEC CICS ABEND
+                  NODUMP
+                  ABCODE('HNCS')
+             END-EXEC
+           ELSE
+      D      MOVE SQLCODE TO SQLCODE-DISPLAY
+      D      DISPLAY 'SELECT WAS ' SQLCODE-DISPLAY ' AND FOUND '
+      D        HV-CONTROL-VALUE-NUM
+             ADD 1 TO HV-CONTROL-VALUE-NUM GIVING
+             COMM-NUMBER ACCOUNT-NUMBER REQUIRED-ACCT-NUMBER3
+             NCS-ACC-NO-VALUE HV-CONTROL-VALUE-NUM
+             EXEC SQL
+               UPDATE CONTROL
+               SET CONTROL_VALUE_NUM = :HV-CONTROL-VALUE-NUM
+               WHERE (CONTROL_NAME = :HV-CONTROL-NAME)
+             END-EXEC
+             IF SQLCODE IS NOT EQUAL TO ZERO
+               MOVE SQLCODE TO SQLCODE-DISPLAY
+               INITIALIZE ABNDINFO-REC
+               MOVE EIBRESP    TO ABND-RESPCODE
+               MOVE EIBRESP2   TO ABND-RESP2CODE
+               EXEC CICS ASSIGN
+                    APPLID(ABND-APPLID)
+               END-EXEC
+               MOVE EIBTASKN   TO ABND-TASKNO-KEY
+               MOVE EIBTRNID   TO ABND-TRANID
+               PERFORM POPULATE-TIME-DATE2
+               MOVE WS-ORIG-DATE TO ABND-DATE
+               STRING WS-TIME-NOW-GRP-HH DELIMITED BY SIZE,
+                    ':' DELIMITED BY SIZE,
+                     WS-TIME-NOW-GRP-MM DELIMITED BY SIZE,
+                     ':' DELIMITED BY SIZE,
+                     WS-TIME-NOW-GRP-MM DELIMITED BY SIZE
+                     INTO ABND-TIME
+               END-STRING
+               MOVE WS-U-TIME   TO ABND-UTIME-KEY
+               MOVE 'HNCS'      TO ABND-CODE
+               EXEC CICS ASSIGN
+                    PROGRAM(ABND-PROGRAM)
+               END-EXEC
+               MOVE SQLCODE-DISPLAY    TO ABND-SQLCODE
+               STRING 'FNAND010(2) - ACCOUNT NCS '
+                    DELIMITED BY SIZE,
+                    NCS-ACC-NO-NAME DELIMITED BY SIZE,
+                    ' Cannot be accessed and DB2 UPDATE failed.'
+                    DELIMITED BY SIZE,
+                    ' EIBRESP=' DELIMITED BY SIZE,
+                    ABND-RESPCODE DELIMITED BY SIZE,
+                    ' RESP2=' DELIMITED BY SIZE,
+                    ABND-RESP2CODE DELIMITED BY SIZE
+                    INTO ABND-FREEFORM
+               END-STRING
+               EXEC CICS LINK
+                    COMMAREA(ABNDINFO-REC)
+                    PROGRAM(WS-ABEND-PGM)
+               END-EXEC
+               DISPLAY 'CREACC - ACCOUNT NCS ' NCS-ACC-NO-NAME
+                  ' CANNOT BE ACCESSED AND DB2 UPDATE FAILED. SQLCODE='
+                SQLCODE-DISPLAY
+               EXEC CICS ABEND
+                    NODUMP
+                    ABCODE('HNCS')
+               END-EXEC
+             END-IF
+           END-IF
+           MOVE NCS-ACC-NO-VALUE TO
+           COMM-NUMBER ACCOUNT-NUMBER REQUIRED-ACCT-NUMBER3.
+           MOVE SPACES TO HV-CONTROL-NAME
+           MOVE ZERO TO HV-CONTROL-VALUE-NUM
+           MOVE SPACES TO HV-CONTROL-VALUE-STR
+           STRING SORTCODE DELIMITED BY SIZE
+           '-' DELIMITED BY SIZE
+           'ACCOUNT-COUNT' DELIMITED BY SIZE
+           INTO HV-CONTROL-NAME
+           EXEC SQL
+              SELECT CONTROL_NAME,
+                       CONTROL_VALUE_NUM,
+                       CONTROL_VALUE_STR
+              INTO :HV-CONTROL-NAME,
+                      :HV-CONTROL-VALUE-NUM,
+                      :HV-CONTROL-VALUE-STR
+              FROM CONTROL
+              WHERE CONTROL_NAME = :HV-CONTROL-NAME
+           END-EXEC.
+           IF SQLCODE IS NOT EQUAL TO ZERO
+             MOVE SQLCODE TO SQLCODE-DISPLAY
+             INITIALIZE ABNDINFO-REC
+             MOVE EIBRESP    TO ABND-RESPCODE
+             MOVE EIBRESP2   TO ABND-RESP2CODE
+             EXEC CICS ASSIGN
+                  APPLID(ABND-APPLID)
+             END-EXEC
+             MOVE EIBTASKN   TO ABND-TASKNO-KEY
+             MOVE EIBTRNID   TO ABND-TRANID
+             PERFORM POPULATE-TIME-DATE2
+             MOVE WS-ORIG-DATE TO ABND-DATE
+             STRING WS-TIME-NOW-GRP-HH DELIMITED BY SIZE,
+                    ':' DELIMITED BY SIZE,
+                     WS-TIME-NOW-GRP-MM DELIMITED BY SIZE,
+                     ':' DELIMITED BY SIZE,
+                     WS-TIME-NOW-GRP-MM DELIMITED BY SIZE
+                     INTO ABND-TIME
+             END-STRING
+             MOVE WS-U-TIME   TO ABND-UTIME-KEY
+             MOVE 'HNCS'      TO ABND-CODE
+             EXEC CICS ASSIGN
+                  PROGRAM(ABND-PROGRAM)
+             END-EXEC
+             MOVE SQLCODE-DISPLAY    TO ABND-SQLCODE
+             STRING 'FNAND010(3) - ACCOUNT NCS '
+                    DELIMITED BY SIZE,
+                    NCS-ACC-NO-NAME DELIMITED BY SIZE,
+                    ' Cannot be accessed and DB2 SELECT failed.'
+                    DELIMITED BY SIZE,
+                    ' EIBRESP=' DELIMITED BY SIZE,
+                    ABND-RESPCODE DELIMITED BY SIZE,
+                    ' RESP2=' DELIMITED BY SIZE,
+                    ABND-RESP2CODE DELIMITED BY SIZE
+                    INTO ABND-FREEFORM
+             END-STRING
+             EXEC CICS LINK
+                  COMMAREA(ABNDINFO-REC)
+                  PROGRAM(WS-ABEND-PGM)
+             END-EXEC
+             DISPLAY 'CREACC - ACCOUNT NCS ' NCS-ACC-NO-NAME
+                ' CANNOT BE ACCESSED AND DB2 SELECT FAILED. SQLCODE='
+                SQLCODE-DISPLAY
+             EXEC CICS ABEND
+                  NODUMP
+                  ABCODE('HNCS')
+             END-EXEC
+           ELSE
+      D      MOVE SQLCODE TO SQLCODE-DISPLAY
+      D      DISPLAY 'SELECT WAS ' SQLCODE-DISPLAY ' AND FOUND '
+      D        HV-CONTROL-VALUE-NUM
+             ADD 1 TO HV-CONTROL-VALUE-NUM GIVING
+             HV-CONTROL-VALUE-NUM
+             EXEC SQL
+               UPDATE CONTROL
+               SET CONTROL_VALUE_NUM = :HV-CONTROL-VALUE-NUM
+               WHERE (CONTROL_NAME = :HV-CONTROL-NAME)
+             END-EXEC
+             IF SQLCODE IS NOT EQUAL TO ZERO
+               MOVE SQLCODE TO SQLCODE-DISPLAY
+               INITIALIZE ABNDINFO-REC
+               MOVE EIBRESP    TO ABND-RESPCODE
+               MOVE EIBRESP2   TO ABND-RESP2CODE
+               EXEC CICS ASSIGN
+                    APPLID(ABND-APPLID)
+               END-EXEC
+               MOVE EIBTASKN   TO ABND-TASKNO-KEY
+               MOVE EIBTRNID   TO ABND-TRANID
+               PERFORM POPULATE-TIME-DATE2
+               MOVE WS-ORIG-DATE TO ABND-DATE
+               STRING WS-TIME-NOW-GRP-HH DELIMITED BY SIZE,
+                    ':' DELIMITED BY SIZE,
+                     WS-TIME-NOW-GRP-MM DELIMITED BY SIZE,
+                     ':' DELIMITED BY SIZE,
+                     WS-TIME-NOW-GRP-MM DELIMITED BY SIZE
+                     INTO ABND-TIME
+               END-STRING
+               MOVE WS-U-TIME   TO ABND-UTIME-KEY
+               MOVE 'HNCS'      TO ABND-CODE
+               EXEC CICS ASSIGN
+                    PROGRAM(ABND-PROGRAM)
+               END-EXEC
+               MOVE SQLCODE-DISPLAY    TO ABND-SQLCODE
+               STRING 'FNAND010(4) - ACCOUNT NCS '
+                    DELIMITED BY SIZE,
+                    NCS-ACC-NO-NAME DELIMITED BY SIZE,
+                    ' Cannot be accessed and DB2 UPDATE failed.'
+                    DELIMITED BY SIZE,
+                    ' EIBRESP=' DELIMITED BY SIZE,
+                    ABND-RESPCODE DELIMITED BY SIZE,
+                    ' RESP2=' DELIMITED BY SIZE,
+                    ABND-RESP2CODE DELIMITED BY SIZE
+                    INTO ABND-FREEFORM
+               END-STRING
+               EXEC CICS LINK
+                    COMMAREA(ABNDINFO-REC)
+                    PROGRAM(WS-ABEND-PGM)
+               END-EXEC
+               DISPLAY 'CREACC - ACCOUNT NCS ' NCS-ACC-NO-NAME
+                  ' CANNOT BE ACCESSED AND DB2 UPDATE FAILED. SQLCODE='
+                SQLCODE-DISPLAY
+               EXEC CICS ABEND
+                    NODUMP
+                    ABCODE('HNCS')
+               END-EXEC
+             END-IF
+           END-IF.
+
+## Variable Map:
+WS-U-TIME gettermapping this.getWsUTime()
+WS-U-TIME settermapping this.setWsUTime(val)
+WS-U-TIME PIC S9(15) JavaType long
+WS-TIME-NOW-GRP-MM gettermapping wsTimeNowGrp.getWsTimeNowGrpMm()
+WS-TIME-NOW-GRP-MM settermapping wsTimeNowGrp.setWsTimeNowGrpMm(val)
+WS-TIME-NOW-GRP-MM PIC 99 JavaType int
+WS-TIME-NOW-GRP-HH gettermapping wsTimeNowGrp.getWsTimeNowGrpHh()
+WS-TIME-NOW-GRP-HH settermapping wsTimeNowGrp.setWsTimeNowGrpHh(val)
+WS-TIME-NOW-GRP-HH PIC 99 JavaType int
+WS-ORIG-DATE gettermapping this.getWsOrigDate()
+WS-ORIG-DATE settermapping this.setWsOrigDate(val)
+WS-ORIG-DATE PIC X(10) JavaType String
+WS-ABEND-PGM gettermapping wsAbendPgm
+WS-ABEND-PGM settermapping wsAbendPgm = val
+WS-ABEND-PGM PIC X(8) JavaType String
+SQLCODE-DISPLAY gettermapping sqlcodeDisplay
+SQLCODE-DISPLAY settermapping sqlcodeDisplay = val
+SQLCODE-DISPLAY PIC S9(8) JavaType int
+SORTCODE gettermapping sortcode
+SORTCODE settermapping sortcode = val
+SORTCODE PIC 9(6) JavaType int
+REQUIRED-SORT-CODE gettermapping requiredSortCode
+REQUIRED-SORT-CODE settermapping requiredSortCode = val
+REQUIRED-SORT-CODE PIC 9(6) JavaType int
+REQUIRED-ACCT-NUMBER3 gettermapping accountKy3.getRequiredAcctNumber3()
+REQUIRED-ACCT-NUMBER3 settermapping accountKy3.setRequiredAcctNumber3(val)
+REQUIRED-ACCT-NUMBER3 PIC 9(8) JavaType int
+OUTPUT-DATA gettermapping outputData.getBytes()
+OUTPUT-DATA settermapping outputData.setBytes(val)
+OUTPUT-DATA GROUP JavaType OutputData
+NCS-ACC-NO-VALUE gettermapping this.getNcsAccNoValue()
+NCS-ACC-NO-VALUE settermapping this.setNcsAccNoValue(val)
+NCS-ACC-NO-VALUE PIC 9(16) JavaType long
+NCS-ACC-NO-NAME gettermapping ncsAccNoName.getBytes()
+NCS-ACC-NO-NAME settermapping ncsAccNoName.setBytes(val)
+NCS-ACC-NO-NAME GROUP JavaType NcsAccNoName
+NCS-ACC-NO-INC gettermapping ncsAccNoInc
+NCS-ACC-NO-INC settermapping ncsAccNoInc = val
+NCS-ACC-NO-INC PIC 9(16) JavaType long
+HV-CONTROL-VALUE-STR gettermapping hvControlValueStr
+HV-CONTROL-VALUE-STR settermapping hvControlValueStr = val
+HV-CONTROL-VALUE-STR PIC X(40) JavaType String
+HV-CONTROL-VALUE-NUM gettermapping hvControlValueNum
+HV-CONTROL-VALUE-NUM settermapping hvControlValueNum = val
+HV-CONTROL-VALUE-NUM PIC S9(9) JavaType int
+HV-CONTROL-NAME gettermapping hvControlName
+HV-CONTROL-NAME settermapping hvControlName = val
+HV-CONTROL-NAME PIC X(32) JavaType String
+COMM-NUMBER gettermapping dfhcommarea.getAccount().getAccountCustomerNumber()
+COMM-NUMBER settermapping dfhcommarea.getAccount().setAccountCustomerNumber(val)
+COMM-NUMBER PIC 9(8) JavaType String
+ACCOUNT-NUMBER gettermapping outputData.getAccount().getAccountCustomerNumber()
+ACCOUNT-NUMBER settermapping outputData.getAccount().setAccountCustomerNumber(val)
+ACCOUNT-NUMBER PIC 9(8) JavaType String
+ABNDINFO-REC gettermapping abndinfoRec.getBytes()
+ABNDINFO-REC settermapping abndinfoRec.setBytes(val)
+ABNDINFO-REC GROUP JavaType AbndinfoRec
+ABND-UTIME-KEY gettermapping abndinfoRec.getAbndUtimeKey()
+ABND-UTIME-KEY settermapping abndinfoRec.setAbndUtimeKey(val)
+ABND-UTIME-KEY PIC S9(15) JavaType long
+ABND-TRANID gettermapping abndinfoRec.getAbndTranid()
+ABND-TRANID settermapping abndinfoRec.setAbndTranid(val)
+ABND-TRANID PIC X(4) JavaType String
+ABND-TIME gettermapping abndinfoRec.getAbndTime()
+ABND-TIME settermapping abndinfoRec.setAbndTime(val)
+ABND-TIME PIC X(8) JavaType String
+ABND-TASKNO-KEY gettermapping abndinfoRec.getAbndTasknoKey()
+ABND-TASKNO-KEY settermapping abndinfoRec.setAbndTasknoKey(val)
+ABND-TASKNO-KEY PIC 9(4) JavaType int
+ABND-SQLCODE gettermapping abndinfoRec.getAbndSqlcode()
+ABND-SQLCODE settermapping abndinfoRec.setAbndSqlcode(val)
+ABND-SQLCODE PIC S9(8) JavaType int
+ABND-RESPCODE gettermapping abndinfoRec.getAbndRespcode()
+ABND-RESPCODE settermapping abndinfoRec.setAbndRespcode(val)
+ABND-RESPCODE PIC S9(8) JavaType int
+ABND-RESP2CODE gettermapping abndinfoRec.getAbndResp2Code()
+ABND-RESP2CODE settermapping abndinfoRec.setAbndResp2Code(val)
+ABND-RESP2CODE PIC S9(8) JavaType int
+ABND-PROGRAM gettermapping abndinfoRec.getAbndProgram()
+ABND-PROGRAM settermapping abndinfoRec.setAbndProgram(val)
+ABND-PROGRAM PIC X(8) JavaType String
+ABND-FREEFORM gettermapping abndinfoRec.getAbndFreeform()
+ABND-FREEFORM settermapping abndinfoRec.setAbndFreeform(val)
+ABND-FREEFORM PIC X(600) JavaType String
+ABND-DATE gettermapping abndinfoRec.getAbndDate()
+ABND-DATE settermapping abndinfoRec.setAbndDate(val)
+ABND-DATE PIC X(10) JavaType String
+ABND-CODE gettermapping abndinfoRec.getAbndCode()
+ABND-CODE settermapping abndinfoRec.setAbndCode(val)
+ABND-CODE PIC X(4) JavaType String
+ABND-APPLID gettermapping abndinfoRec.getAbndApplid()
+ABND-APPLID settermapping abndinfoRec.setAbndApplid(val)
+ABND-APPLID PIC X(8) JavaType String
+POPULATE-TIME-DATE2_PTD2010, populateTimeDate2Ptd2010()
+
+## Class Map:
+public void findNextAccountFna010(Dfhcommarea dfhcommarea, NcsAccNoName ncsAccNoName, int requiredSortCode){
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    AccountKy3 accountKy3 = new AccountKy3();
+    int accountLastStmtDate;
+    int accountNextStmtDate;
+    int accountOpened;
+    String hvControlName = "";
+    int hvControlValueNum;
+    String hvControlValueStr = "";
+    long ncsAccNoInc = 0L;
+    OutputData outputData = new OutputData();
+    int sortcode = 987654;
+    int sqlcodeDisplay;
+    String wsAbendPgm = "ABNDPROC";
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+}
+
+
+Output:

@@ -1,0 +1,181 @@
+public void findNextAccountFna010(Dfhcommarea dfhcommarea, NcsAccNoName ncsAccNoName, int requiredSortCode) {
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+    SttesterControl sttesterControl = new SttesterControl();
+    String wsAbendPgm = "ABNDPROC";
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+
+    OutputData outputData = new OutputData();
+    sttesterControl = new SttesterControl();
+    long ncsAccNoInc = 0L;
+    AccountKy3 accountKy3 = new AccountKy3();
+    int sortcode = 987654;
+    ncsAccNoInc = 1;
+    outputData.getAccount().setAccountCustomerNumber("");
+    sttesterControl.setControlName("");
+    sttesterControl.setControlValueNum(0);
+    sttesterControl.setControlValueStr("");
+    String sql = "SELECT CONTROL_NAME, CONTROL_VALUE_NUM, CONTROL_VALUE_STR FROM CONTROL WHERE CONTROL_NAME = ?";
+    PreparedStatement ps = null;
+    try {
+        ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setString(1, sttesterControl.getControlName());
+        ResultSet rs = ps.executeQuery();
+        if (!rs.next()) {
+
+            wsTimeNowGrp = new WsTimeNowGrp();
+            sttesterControl = new SttesterControl();
+            wsAbendPgm = "ABNDPROC";
+            abndinfoRec = new AbndinfoRec();
+
+            accountKy3 = new AccountKy3();
+            wsTimeNowGrp = new WsTimeNowGrp();
+            sttesterControl = new SttesterControl();
+            wsAbendPgm = "ABNDPROC";
+            outputData = new OutputData();
+            abndinfoRec = new AbndinfoRec();
+            sqlcodeDisplay = sttesterControl.getSqlcode();
+            abndinfoRec.setAbndRespcode(dfhcommarea.getEibresp());
+            abndinfoRec.setAbndResp2Code(dfhcommarea.getEibresp2());
+            abndinfoRec.setAbndApplid(Task.getTask().getApplicationContext().getPlatform());
+            abndinfoRec.setAbndTasknoKey(dfhcommarea.getEibtaskn());
+            abndinfoRec.setAbndTranid(dfhcommarea.getEibtrnid());
+            this.populateTimeDate2(wsTimeNowGrp);
+            abndinfoRec.setAbndDate(this.getWsOrigDate());
+            String wsTimeNowGrpHh = String.valueOf(wsTimeNowGrp.getWsTimeNowGrpHh());
+            String wsTimeNowGrpMm = String.valueOf(wsTimeNowGrp.getWsTimeNowGrpMm());
+            abndinfoRec.setAbndTime(wsTimeNowGrpHh + ":" + wsTimeNowGrpMm + ":" + wsTimeNowGrpMm);
+            abndinfoRec.setAbndUtimeKey(this.getWsUTime());
+            abndinfoRec.setAbndCode("HNCS");
+            abndinfoRec.setAbndProgram(Task.getTask().getProgramName());
+            abndinfoRec.setAbndSqlcode(sqlcodeDisplay);
+            String sqlcodeDisplayStr = String.valueOf(sqlcodeDisplay);
+            abndinfoRec.setAbndFreeform("FNAND010 - ACCOUNT NCS " + ncsAccNoName.getNcsAccNoName()
+                    + " Cannot be accessed and DB2 SELECT failed. SQLCODE=" + sqlcodeDisplayStr);
+            new Abndproc().abndproc(abndinfoRec, wsAbendPgm);
+            System.out.println("CREACC - ACCOUNT NCS " + ncsAccNoName.getNcsAccNoName()
+                    + " CANNOT BE ACCESSED AND DB2 SELECT FAILED. SQLCODE=" + sqlcodeDisplayStr);
+            Task.getTask().abend("HNCS", false);
+
+            try {
+                sql = "UPDATE CONTROL SET CONTROL_VALUE_NUM = ? WHERE (CONTROL_NAME = ?)";
+                ps = JdbcConnection.connection.prepareStatement(sql);
+                ps.setInt(1, sttesterControl.getControlValueNum());
+                ps.setString(2, sttesterControl.getControlName());
+                ps.executeUpdate();
+                ps.close();
+            } catch (SQLException exception) {
+                sqlcodeDisplay = exception.getErrorCode();
+                abndinfoRec.setAbndRespcode(dfhcommarea.getEibresp());
+                abndinfoRec.setAbndResp2Code(dfhcommarea.getEibresp2());
+                abndinfoRec.setAbndApplid(Region.getAPPLID());
+                abndinfoRec.setAbndTasknoKey(Task.getTask().getTaskNumber());
+                abndinfoRec.setAbndTranid(Task.getTask().getTransactionName());
+                wsTimeNowGrp.setWsTimeNowGrpHh(LocalTime.now().getHour());
+                wsTimeNowGrp.setWsTimeNowGrpMm(LocalTime.now().getMinute());
+                wsTimeNowGrp.setWsTimeNowGrpSs(LocalTime.now().getSecond());
+                abndinfoRec.setAbndDate(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+                abndinfoRec.setAbndTime(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+                abndinfoRec.setAbndUtimeKey(System.currentTimeMillis());
+                abndinfoRec.setAbndCode("HNCS");
+                abndinfoRec.setAbndProgram(Task.getTask().getProgramName());
+                abndinfoRec.setAbndSqlcode(sqlcodeDisplay);
+                String jdeclVar1 = "FNAND010(2) - ACCOUNT NCS " + ncsAccNoName.getNcsAccNoName()
+                        + " Cannot be accessed and DB2 UPDATE failed. EIBRESP=" + abndinfoRec.getAbndRespcode()
+                        + " RESP2=" + abndinfoRec.getAbndResp2Code();
+                abndinfoRec.setAbndFreeform(jdeclVar1);
+                new Abnd010().abnd010(abndinfoRec, wsAbendPgm);
+                System.out.println("CREACC - ACCOUNT NCS " + ncsAccNoName.getNcsAccNoName()
+                        + " CANNOT BE ACCESSED AND DB2 UPDATE FAILED. SQLCODE=" + sqlcodeDisplay);
+                Task.getTask().abend("HNCS", false);
+            }
+
+        }
+        rs.close();
+        ps.close();
+    } catch (SQLException e) {
+        System.out.println(e);
+    }
+    accountKy3.setRequiredAcctNumber3(this.getNcsAccNoValue());
+    outputData.getAccount().setAccountCustomerNumber(dfhcommarea.getAccount().getAccountCustomerNumber());
+    sttesterControl.setControlName("");
+    sttesterControl.setControlValueNum(0);
+    sttesterControl.setControlValueStr("");
+    sql = "SELECT CONTROL_NAME, CONTROL_VALUE_NUM, CONTROL_VALUE_STR FROM CONTROL WHERE CONTROL_NAME = ?";
+    try {
+        ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setString(1, sttesterControl.getControlName());
+        ResultSet rs = ps.executeQuery();
+        if (!rs.next()) {
+            System.out.println("SNIPPET-2");
+        }
+        rs.close();
+        ps.close();
+    } catch (SQLException e) {
+        System.out.println(e);
+    }
+
+    if (sqlcode != 0) {
+
+        wsTimeNowGrp = new WsTimeNowGrp();
+        sttesterControl = new SttesterControl();
+        wsAbendPgm = "ABNDPROC";
+        abndinfoRec = new AbndinfoRec();
+        sqlcodeDisplay = dfhcommarea.getSqlcode();
+        abndinfoRec.setAbndRespcode(dfhcommarea.getEibresp());
+        abndinfoRec.setAbndResp2Code(dfhcommarea.getEibresp2());
+        abndinfoRec.setAbndApplid(Task.getTask().getApplicationContext().getPlatform());
+        abndinfoRec.setAbndTasknoKey(dfhcommarea.getEibtaskn());
+        abndinfoRec.setAbndTranid(dfhcommarea.getEibtrnid());
+        wsTimeNowGrp.setWsTimeNowGrpHh(LocalTime.now().getHour());
+        wsTimeNowGrp.setWsTimeNowGrpMm(LocalTime.now().getMinute());
+        wsTimeNowGrp.setWsTimeNowGrpSs(LocalTime.now().getSecond());
+        abndinfoRec.setAbndDate(this.getWsOrigDate());
+        abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":"
+                + wsTimeNowGrp.getWsTimeNowGrpSs());
+        abndinfoRec.setAbndUtimeKey(this.getWsUTime());
+        abndinfoRec.setAbndCode("HNCS");
+        abndinfoRec.setAbndProgram(Task.getTask().getProgramName());
+        abndinfoRec.setAbndSqlcode(sqlcodeDisplay);
+        abndinfoRec.setAbndFreeform("FNAND010(3) - ACCOUNT NCS " + ncsAccNoName.getNcsAccNoName()
+                + " Cannot be accessed and DB2 SELECT failed. EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2="
+                + abndinfoRec.getAbndResp2Code());
+        new Abndproc().abndproc(abndinfoRec, wsAbendPgm);
+        System.out.println("CREACC - ACCOUNT NCS " + ncsAccNoName.getNcsAccNoName()
+                + " CANNOT BE ACCESSED AND DB2 SELECT FAILED. SQLCODE=" + sqlcodeDisplay);
+        Task.getTask().abend("HNCS", false);
+
+        try {
+            sql = "UPDATE CONTROL SET CONTROL_VALUE_NUM = ? WHERE (CONTROL_NAME = ?)";
+            ps = JdbcConnection.connection.prepareStatement(sql);
+            ps.setInt(1, sttesterControl.getControlValueNum());
+            ps.setString(2, sttesterControl.getControlName());
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException exception) {
+            sqlcodeDisplay = exception.getErrorCode();
+            abndinfoRec.setAbndRespcode(eibresp);
+            abndinfoRec.setAbndResp2Code(eibresp2);
+            abndinfoRec.setAbndApplid(applid);
+            abndinfoRec.setAbndTasknoKey(eibtaskn);
+            abndinfoRec.setAbndTranid(eibtrnid);
+            this.populateTimeDate2(wsTimeNowGrp);
+            abndinfoRec.setAbndDate(wsTimeNowGrp.getWsOrigDate());
+            String jdeclVar1 = wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":"
+                    + wsTimeNowGrp.getWsTimeNowGrpSs();
+            abndinfoRec.setAbndTime(jdeclVar1);
+            abndinfoRec.setAbndUtimeKey(this.getWsUTime());
+            abndinfoRec.setAbndCode("HNCS");
+            abndinfoRec.setAbndProgram(task.getProgramName());
+            abndinfoRec.setAbndSqlcode(sqlcodeDisplay);
+            String jdeclVar2 = "FNAND010(4) - ACCOUNT NCS " + ncsAccNoName.getNcsAccNoName()
+                    + " Cannot be accessed and DB2 UPDATE failed. EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2="
+                    + abndinfoRec.getAbndResp2Code();
+            abndinfoRec.setAbndFreeform(jdeclVar2);
+            Task.getTask().link(wsAbendPgm, abndinfoRec);
+            System.out.println("CREACC - ACCOUNT NCS " + ncsAccNoName.getNcsAccNoName()
+                    + " CANNOT BE ACCESSED AND DB2 UPDATE FAILED. SQLCODE=" + sqlcodeDisplay);
+            task.abend("HNCS", false);
+        }
+    }
+
+}

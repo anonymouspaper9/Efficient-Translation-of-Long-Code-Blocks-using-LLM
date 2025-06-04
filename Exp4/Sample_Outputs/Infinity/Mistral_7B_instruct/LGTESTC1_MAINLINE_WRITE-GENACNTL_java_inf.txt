@@ -1,0 +1,97 @@
+
+```java
+public void mainlineWriteGenacntl(CommArea commArea) {
+    String stsqName = "GENACNTL";
+    ReadMsg readMsg = new ReadMsg();
+    String writeMsgE = "**** GENAPP CNTL";
+    String writeMsgH = "HIGH CUSTOMER=";
+    long writeMsgHigh;
+    String writeMsgL = "LOW CUSTOMER=";
+    long writeMsgLow;
+    char wsFlagTsqh = ' ';
+    int wsItemCount = 0;
+    int wsResp;
+
+    try (CicsCobolCallableStatement cics = JdbcConnection.connection.prepareCall("CICS ENQ LENGTH(Length Of ?) RESOURCE(?) END-EXEC")) {
+        cics.setString(1, stsqName);
+        cics.registerOutParameter(2, Types.VARCHAR);
+        cics.execute();
+        wsFlagTsqh = 'Y';
+        wsItemCount = 1;
+
+        while (wsFlagTsqh == 'Y') {
+            try (CicsCobolCallableStatement cicsRead = JdbcConnection.connection.prepareCall("CICS READQ TS INTO(?) ITEM(?) QUEUE(?) RESP(?)")) {
+                cicsRead.setString(1, readMsg);
+                cicsRead.setInt(2, 1);
+                cicsRead.setString(3, stsqName);
+                cicsRead.registerOutParameter(4, Types.INTEGER);
+                cicsRead.execute();
+                wsResp = cicsRead.getInt(4);
+
+                if (wsResp == DFHRESP.NORMAL) {
+                    String msg = readMsg.getReadMsgMsg();
+                    if (msg.substring(0, 13).equals("HIGH CUSTOMER")) {
+                        writeMsgHigh = commArea.getCaCustomerNum();
+                        wsFlagTsqh = ' ';
+
+                        try (CicsCobolCallableStatement cicsWrite = JdbcConnection.connection.prepareCall("CICS WRITEQ TS REWRITE FROM(?) ITEM(?) LENGTH(?) QUEUE(?) RESP(?)")) {
+                            cicsWrite.setString(1, writeMsgH + writeMsgHigh);
+                            cicsWrite.setInt(2, wsItemCount);
+                            cicsWrite.setInt(3, F24);
+                            cicsWrite.setString(4, stsqName);
+                            cicsWrite.registerOutParameter(5, Types.INTEGER);
+                            cicsWrite.execute();
+                            wsResp = cicsWrite.getInt(5);
+                        }
+
+                        wsResp = 99;
+                    }
+                }
+
+                if (wsResp == DFHRESP.NORMAL) {
+                    wsItemCount++;
+                }
+            }
+        }
+    }
+
+    if (wsFlagTsqh == 'Y') {
+        try (CicsCobolCallableStatement cicsWrite = JdbcConnection.connection.prepareCall("CICS WRITEQ TS NOSUSPEND FROM(?) LENGTH(?) QUEUE(?) RESP(?)")) {
+            cicsWrite.setString(1, writeMsgE);
+            cicsWrite.setInt(2, 20);
+            cicsWrite.setString(3, stsqName);
+            cicsWrite.registerOutParameter(4, Types.INTEGER);
+            cicsWrite.execute();
+            wsResp = cicsWrite.getInt(4);
+        }
+
+        writeMsgLow = commArea.getCaCustomerNum();
+        writeMsgHigh = commArea.getCaCustomerNum();
+
+        try (CicsCobolCallableStatement cicsWrite = JdbcConnection.connection.prepareCall("CICS WRITEQ TS NOSUSPEND FROM(?) LENGTH(?) QUEUE(?) RESP(?)")) {
+            cicsWrite.setString(1, writeMsgL + writeMsgLow);
+            cicsWrite.setInt(2, 23);
+            cicsWrite.setString(3, stsqName);
+            cicsWrite.registerOutParameter(4, Types.INTEGER);
+            cicsWrite.execute();
+            wsResp = cicsWrite.getInt(4);
+        }
+
+        try (CicsCobolCallableStatement cicsWrite = JdbcConnection.connection.prepareCall("CICS WRITEQ TS NOSUSPEND FROM(?) LENGTH(?) QUEUE(?) RESP(?)")) {
+            cicsWrite.setString(1, writeMsgH + writeMsgHigh);
+            cicsWrite.setInt(2, 24);
+            cicsWrite.setString(3, stsqName);
+            cicsWrite.registerOutParameter(4, Types.INTEGER);
+            cicsWrite.execute();
+            wsResp = cicsWrite.getInt(4);
+        }
+    }
+
+    try (CicsCobolCallableStatement cics = JdbcConnection.connection.prepareCall("CICS DEQ LENGTH(Length Of ?) RESOURCE(?) END-EXEC")) {
+        cics.setString(1, stsqName);
+        cics.registerOutParameter(2, Types.VARCHAR);
+        cics.execute();
+    }
+}
+```
+

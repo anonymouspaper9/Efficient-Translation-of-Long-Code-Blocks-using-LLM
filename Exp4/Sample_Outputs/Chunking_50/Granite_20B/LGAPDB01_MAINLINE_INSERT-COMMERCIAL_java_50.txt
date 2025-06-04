@@ -1,0 +1,52 @@
+public void mainlineInsertCommercial(CaCommercial caCommercial, int db2PolicynumInt, ErrorMsg errorMsg) {
+    Db2InIntegers db2InIntegers = new Db2InIntegers();
+
+    db2InIntegers.setDb2BFirePerilInt(caCommercial.getCommercial().getFireperil());
+    db2InIntegers.setDb2BFirePremiumInt(caCommercial.getCommercial().getFirepremium());
+    db2InIntegers.setDb2BCrimePerilInt(caCommercial.getCommercial().getCrimeperil());
+    db2InIntegers.setDb2BCrimePremiumInt(caCommercial.getCommercial().getCrimepremium());
+    db2InIntegers.setDb2BFloodPerilInt(caCommercial.getCommercial().getFloodperil());
+    db2InIntegers.setDb2BFloodPremiumInt(caCommercial.getCommercial().getFloodpremium());
+    db2InIntegers.setDb2BWeatherPerilInt(caCommercial.getCommercial().getWeatherperil());
+    db2InIntegers.setDb2BWeatherPremiumInt(caCommercial.getCommercial().getWeatherpremium());
+    db2InIntegers.setDb2BStatusInt(caCommercial.getCommercial().getStatus());
+    errorMsg.getEmVariable().setEmSqlreq(" INSERT COMMER");
+
+    db2InIntegers = new Db2InIntegers();
+    try {
+        String sql = "INSERT INTO COMMERCIAL(PolicyNumber, RequestDate, StartDate, RenewalDate, Address, Zipcode, LatitudeN, LongitudeW, Customer, PropertyType, FirePeril, FirePremium, CrimePeril, CrimePremium, FloodPeril, FloodPremium, WeatherPeril, WeatherPremium, Status, RejectionReason)values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        PreparedStatement ps = JdbcConnection.connection.prepareStatement(sql);
+        ps.setInt(1, db2PolicynumInt);
+        ps.setString(2, caCommercial.getPolicy().getLastchanged().toString());
+        ps.setString(3, caCommercial.getPolicy().getIssuedate().toString());
+        ps.setString(4, caCommercial.getPolicy().getExpirydate().toString());
+        ps.setString(5, caCommercial.getCommercial().getAddress());
+        ps.setString(6, caCommercial.getCommercial().getZipcode());
+        ps.setString(7, caCommercial.getCommercial().getLatituden());
+        ps.setString(8, caCommercial.getCommercial().getLongitudew());
+        ps.setString(9, caCommercial.getCommercial().getCustomer());
+        ps.setString(10, caCommercial.getCommercial().getPropertytype());
+        ps.setInt(11, db2InIntegers.getDb2BFirePerilInt());
+        ps.setInt(12, db2InIntegers.getDb2BFirePremiumInt());
+        ps.setInt(13, db2InIntegers.getDb2BCrimePerilInt());
+        ps.setInt(14, db2InIntegers.getDb2BCrimePremiumInt());
+        ps.setInt(15, db2InIntegers.getDb2BFloodPerilInt());
+        ps.setInt(16, db2InIntegers.getDb2BFloodPremiumInt());
+        ps.setInt(17, db2InIntegers.getDb2BWeatherPerilInt());
+        ps.setInt(18, db2InIntegers.getDb2BWeatherPremiumInt());
+        ps.setInt(19, db2InIntegers.getDb2BStatusInt());
+        ps.setString(20, caCommercial.getCommercial().getRejectionreason());
+        ps.executeUpdate();
+        ps.close();
+    } catch (SQLException exception) {
+        System.out.println(exception);
+        return;
+    }
+
+    if (db2PolicynumInt != 0) {
+        caCommercial.setCaReturnCode(90);
+        errorMsg.writeErrorMessage();
+        Task.getTask().abend("LGSQ", false);
+    }
+
+}

@@ -1,0 +1,32 @@
+public void premiereP010(Dfhcommarea dfhcommarea) {
+    int sortcode = 987654;
+    WsOrigDateGrp wsOrigDateGrp = new WsOrigDateGrp();
+    int requiredSortCode = 0;
+
+    requiredSortCode = sortcode;
+    this.populateTimeDate();
+    this.creditCheck();
+    if (this.getWsCreditCheckError() == 'Y') {
+        dfhcommarea.setCommCreditScore(0);
+        String jdeclVar1 = String.valueOf(wsOrigDateGrp.getWsOrigDateDd())
+                + String.valueOf(wsOrigDateGrp.getWsOrigDateMm()) + String.valueOf(wsOrigDateGrp.getWsOrigDateYyyy());
+        this.setCommCsReviewDate(Integer.parseInt(jdeclVar1));
+        dfhcommarea.setCommSuccess('N');
+        dfhcommarea.setCommFailCode('G');
+        System.out
+                .println("WS-CREDIT-CHECK-ERROR = Y, RESP=" + this.getWsCicsResp() + " RESP2=" + this.getWsCicsResp2());
+        System.out.println("   Exiting CRECUST. COMMAREA=" + dfhcommarea.toByteString());
+        return;
+    }
+    this.dateOfBirthCheck();
+    if (this.getWsDateOfBirthError() == 'Y') {
+        dfhcommarea.setCommSuccess('N');
+        return;
+    }
+    this.enqNamedCounter();
+
+    updNcs();
+    writeCustomerVsam();
+    getMeOutOfHere();
+
+}

@@ -1,0 +1,91 @@
+You are tasked with evaluating a **Translated Java Code** against the **Original COBOL Code**. This evaluation should prioritize **functional equivalence**, ensuring that the **logic and behavior** of the original code are preserved accurately in the translated version.
+
+---
+
+### Evaluation Criteria
+
+Please assess the Translated Code based on the following **four key criteria**, with **functionality and completeness** prioritized over syntactic fidelity or initialization details:
+
+1. ### **Correctness (Functionality & Logic)**  
+   Evaluate how well the translated code **preserves the core logic, control flow, and intended behavior** of the original COBOL code.  
+   - Focus should be on **business rules, data handling logic, and branching structures**.
+   - Missing logic or early termination/truncation of the translation should significantly reduce the **Correctness** scores.
+   - **Score 100**: Exact functional equivalence.
+   - **Score 0**: Functional or logical mismatch.
+
+2. ### **Completeness (Coverage of Logic)**  
+   Assess whether the translated Java code **fully represents all significant elements** of the COBOL source, especially logical and procedural components.  
+   - **Truncations, partial translations, or missing logic** should result in severe penalties.
+   - **Score 100**: All logic and structure translated without omission.
+   - **Score 0**: Major portions or logic not translated.
+   - Missing logic or early termination/truncation of the translation should significantly reduce the **Completeness** scores.
+
+
+3. ### **Readability**  
+   Consider how **clear, organized, and understandable** the translated Java code is relative to the original COBOL code.  
+   - Score based on **clarity, structure, and naming conventions**.
+   - **Score 100**: Clear and professional code structure.
+   - **Score 0**: Poorly structured, unreadable code.
+
+4. ### **Idiomatic Usage of Java**  
+   Evaluate how well the translated code **leverages idiomatic constructs and best practices** of Java.  
+   - **Penalize COBOL-isms** or overly literal translations that ignore Java norms.
+   - **Score 100**: Proper use of classes, data types, control structures, and conventions.
+   - **Score 0**: Unidiomatic or awkward Java code.
+
+---
+
+### Penalties :
+
+- **Hallucinations**: Introduction of logic, variables, or flows **not present in the original COBOL code** should be **heavily penalized**.
+- **Truncated/Incomplete Translations**: Missing logic or early termination/truncation of the translation should significantly reduce the **Completeness** scores.
+- **Overemphasis on Initialization or Syntax** should not affect the functional score if the logic is correct.
+- Do **not** pay attention to declarations in the start and rate only translations.
+---
+
+### Input :
+
+**Original COBOL Code:**
+```COBOL
+<Input COBOL Code here >
+
+
+```
+
+which needs to be compared against the translated Java Code 
+
+**Translated Java Code:**
+```Java
+
+<Input Java code here >
+
+
+```
+
+
+
+### OUTPUT FORMAT ( STRICTLY FOLLOW THIS FORMAT )
+##Respond ONLY in the following JSON format. Do not include any other text, comments, or explanation outside the JSON."
+{
+  "reasoning": "<Your detailed justification for the above scores>",
+  "correctness_score: <Integer between 1 and 100>, // Correctness score
+  "completeness_score": <Integer between 1 and 100>, // Completeness score
+  "readability_score": <Integer between 1 and 100>, // Readability score
+  "idiomatic_usage_score": <Integer between 1 and 100>, // Idiomatic usage score
+  "similarity_score": similarity_score = (
+                                          correctness_score * 0.25 +
+                                          completeness_score * 0.25 +
+                                          readability_score * 0.25 +
+                                          idiomatic_usage_score * 0.25 +
+                                      ) // shoud be calculated on the basis of above formula
+}
+
+Example : 
+{
+  "reasoning": "The solution is mostly correct, complete, and readable. A few idiomatic improvements could be made.......",
+  "correctness_score: 99
+  "completeness_score": 99
+  "readability_score": 45
+  "idiomatic_usage_score": 87
+  "similarity_score": 92.3 
+}

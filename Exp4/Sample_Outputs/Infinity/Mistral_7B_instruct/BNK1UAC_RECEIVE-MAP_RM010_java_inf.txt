@@ -1,0 +1,55 @@
+```java
+public void receiveMapRm010() {
+    AbndinfoRec abndinfoRec = new AbndinfoRec();
+    String wsAbendPgm = "ABNDPROC";
+    WsFailInfo wsFailInfo = new WsFailInfo();
+    WsTimeNowGrp wsTimeNowGrp = new WsTimeNowGrp();
+
+    try {
+        CICSReceive cicsReceive = new CICSReceive();
+        cicsReceive.setMap("BNK1UAI");
+        cicsReceive.setMapSet("BNK1UAM");
+        cicsReceive.setResp(wsFailInfo);
+        cicsReceive.setResp2(wsFailInfo);
+        int response = cicsReceive.execute();
+
+        if (response != DFHRESP.NORMAL) {
+            abndinfoRec.setAbndRespcode(wsFailInfo.getEibResp());
+            abndinfoRec.setAbndResp2Code(wsFailInfo.getEibResp2());
+            CICSAssign cicsAssign = new CICSAssign();
+            cicsAssign.setApplid(abndinfoRec.getAbndApplid());
+            cicsAssign.setProgram(wsAbendPgm);
+            cicsAssign.execute();
+
+            abndinfoRec.setAbndTasknoKey(cicsReceive.getEibTaskn());
+            abndinfoRec.setAbndTranid(cicsReceive.getEibTrnid());
+            populateTimeDatePtd010(wsTimeNowGrp, abndinfoRec);
+            abndinfoRec.setAbndDate(wsTimeNowGrp.getWsOrigDate());
+            abndinfoRec.setAbndTime(wsTimeNowGrp.getWsTimeNowGrpHh() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm() + ":" + wsTimeNowGrp.getWsTimeNowGrpMm());
+            abndinfoRec.setAbndUtimeKey(wsTimeNowGrp.getWsUTime());
+            abndinfoRec.setAbndCode("HBNK");
+            abndinfoRec.setAbndProgram(wsAbendPgm);
+            abndinfoRec.setAbndFreeform("RM010 - RECEIVE MAP FAIL. EIBRESP=" + abndinfoRec.getAbndRespcode() + " RESP2=" + abndinfoRec.getAbndResp2Code());
+            CICSLink cicsLink = new CICSLink();
+            cicsLink.setCommaArea(abndinfoRec.getBytes());
+            cicsLink.setProgram(wsAbendPgm);
+            cicsLink.execute();
+
+            wsFailInfo.setWsCicsResp(abndinfoRec.getAbndRespcode());
+            wsFailInfo.setWsCicsResp2(abndinfoRec.getAbndResp2Code());
+            wsFailInfo.setWsCicsFailMsg("BNKUAC - RM010 - RECEIVE MAP FAIL ");
+            abendThisTaskAtt010(wsFailInfo);
+        }
+    } catch (Exception e) {
+        System.out.println(e);
+    }
+}
+
+public void populateTimeDatePtd010(WsTimeNowGrp wsTimeNowGrp, AbndinfoRec abndinfoRec) {
+    // Implement the logic to populate the time and date
+}
+
+public void abendThisTaskAtt010(WsFailInfo wsFailInfo) {
+    // Implement the logic to handle the abend
+}
+```

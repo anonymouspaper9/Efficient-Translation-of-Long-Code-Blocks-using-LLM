@@ -1,0 +1,65 @@
+       WRITE-GENACNTL.                                                  
+                                                                        
+           EXEC CICS ENQ Resource(STSQ-NAME)                            
+                         Length(Length Of STSQ-NAME)                    
+           END-EXEC.                                                    
+           Move 'Y' To WS-FLAG-TSQH                                     
+           Move 1   To WS-Item-Count                                    
+           Exec CICS ReadQ TS Queue(STSQ-NAME)                          
+                     Into(READ-MSG)                                     
+                     Resp(WS-RESP)                                      
+                     Item(1)                                            
+           End-Exec.                                                    
+           If WS-RESP = DFHRESP(NORMAL)                                 
+              Perform With Test after Until WS-RESP > 0                 
+                 Exec CICS ReadQ TS Queue(STSQ-NAME)                    
+                     Into(READ-MSG)                                     
+                     Resp(WS-RESP)                                      
+                     Next                                               
+                 End-Exec                                               
+                 Add 1 To WS-Item-Count                                 
+                 If WS-RESP = DFHRESP(NORMAL) And                       
+                      Read-Msg-Msg(1:13) = 'HIGH CUSTOMER'              
+                      Move CA-Customer-Num To Write-Msg-High            
+                      Move Space to WS-FLAG-TSQH                        
+                      Exec CICS WriteQ TS Queue(STSQ-NAME)              
+                          From(Write-Msg-H)                             
+                          Length(F24)                                   
+                          Resp(WS-RESP)                                 
+                          ReWrite                                       
+                          Item(WS-Item-Count)                           
+                      End-Exec                                          
+                      MOVE 99 To WS-RESP                                
+                 End-If                                                 
+              End-Perform                                               
+           End-If.                                                      
+      *                                                                 
+      *                                                                 
+           If WS-FLAG-TSQH = 'Y'                                        
+             EXEC CICS WRITEQ TS QUEUE(STSQ-NAME)                       
+                       FROM(WRITE-MSG-E)                                
+                       RESP(WS-RESP)                                    
+                       NOSUSPEND                                        
+                       LENGTH(20)                                       
+             END-EXEC                                                   
+             Move CA-Customer-Num To Write-Msg-Low                      
+             Move CA-Customer-Num To Write-Msg-High                     
+             EXEC CICS WRITEQ TS QUEUE(STSQ-NAME)                       
+                       FROM(WRITE-MSG-L)                                
+                       RESP(WS-RESP)                                    
+                       NOSUSPEND                                        
+                       LENGTH(23)                                       
+             END-EXEC                                                   
+             EXEC CICS WRITEQ TS QUEUE(STSQ-NAME)                       
+                       FROM(WRITE-MSG-H)                                
+                       RESP(WS-RESP)                                    
+                       NOSUSPEND                                        
+                       LENGTH(24)                                       
+             END-EXEC                                                   
+           End-If.                                                      
+                                                                        
+           EXEC CICS DEQ Resource(STSQ-NAME)                            
+                         Length(Length Of STSQ-NAME)                    
+           END-EXEC.                                                    
+                                                                        
+           EXIT.                                                        
